@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:orientation="vertical"
+    android:padding="5px">
+    <TextView android:layout_width="match_parent"
+        android:drawableTint="@color/colorAccentBlack"
+        android:drawableLeft="@drawable/ic_dashboard_black_24dp"
+        android:gravity="center"
+        android:textSize="10pt"
+        android:paddingLeft="200px"
+        android:layout_gravity="center"
+        android:paddingTop="10px"
+        android:textAlignment="textStart"
+        android:layout_height="wrap_content"
+        android:text="        Transaction"/>
+    <View
+        android:layout_marginTop="10px"
+        android:layout_width="match_parent"
+        android:layout_height="2sp"
+        android:background="@color/colorAccentBlack"></View>
+    <TextView
+        android:layout_marginTop="10sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="8pt"
+        android:text="Master Data"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/colorPrimary"></View>
+    <Button
+        android:id="@+id/twoaccounts"
+        android:drawableLeft="@drawable/accountsresized"
+        android:drawableTint="@color/colorAccent"
+        android:layout_width="match_parent"
+        android:layout_height="0sp"
+        android:textAllCaps="false"
+        android:text="Accounts"
+        android:textSize="10pt"
+        android:textColor="@color/colorAccent"
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_weight="1"/>
+    <Button
+        android:id="@+id/twocategory"
+        android:drawableLeft="@drawable/categoryresized"
+        android:drawableTint="@color/colorAccent"
+        android:layout_width="match_parent"
+        android:textAllCaps="false"
+        android:layout_height="0sp"
+        android:text="Category"
+        android:textSize="10pt"
+        android:textColor="@color/colorAccent"
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_weight="1"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="8pt"
+        android:text="Entry Transaction"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/colorPrimary"></View>
+    <Button
+        android:id="@+id/twocashin"
+        android:layout_width="match_parent"
+        android:textAllCaps="false"
+        android:layout_height="0sp"
+        android:text="Transfer / Mutasi"
+        android:drawableTint="@color/colorAccent"
+        android:drawableLeft="@drawable/cashinresized"
+        android:textSize="10pt"
+        android:textColor="@color/colorAccent"
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_weight="1"/>
+    <Button
+        android:id="@+id/twocashout"
+        android:drawableLeft="@drawable/cashoutresized"
+        android:drawableTint="@color/colorAccent"
+        android:layout_width="match_parent"
+        android:layout_height="0sp"
+        android:textAllCaps="false"
+        android:text="Cash Out"
+        android:textSize="10pt"
+        android:textColor="@color/colorAccent"
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_weight="1"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="8pt"
+        android:text="Misc"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/colorPrimary"></View>
+    <Button
+        android:id="@+id/tworeminder"
+        android:drawableLeft="@drawable/ic_notifications_black_24dp"
+        android:drawableTint="@color/colorAccent"
+        android:layout_width="match_parent"
+        android:layout_height="0sp"
+        android:textAllCaps="false"
+        android:text="Add Custom Reminder"
+        android:textSize="10pt"
+        android:textColor="@color/colorAccent"
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_weight="1"></Button>
+    <Button
+        android:id="@+id/twofixrem"
+        android:drawableLeft="@drawable/scheduleresized"
+        android:drawableTint="@color/colorAccent"
+        android:layout_width="match_parent"
+        android:layout_height="0sp"
+        android:textAllCaps="false"
+        android:text="Fix &amp; delete Schedule"
+        android:textSize="10pt"
+        android:textColor="@color/colorAccent"
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_weight="1"></Button>
+</LinearLayout>

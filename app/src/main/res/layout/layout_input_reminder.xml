@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView android:layout_width="match_parent"
+        android:drawableTint="@color/colorAccentBlack"
+        android:drawableLeft="@drawable/ic_notifications_black_24dp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:paddingTop="10px"
+        android:layout_height="wrap_content"
+        android:textAlignment="textStart"
+        android:text="Tambah Reminder"/>
+    <View
+        android:layout_marginTop="10px"
+        android:layout_width="match_parent"
+        android:layout_height="2sp"
+        android:background="@color/colorAccentBlack"></View>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textCursorDrawable="@null"
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_margin="10sp"
+        android:hint="Add A Tittle"
+        android:text=""/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="10sp"
+        android:padding="5sp"
+        android:layout_height="wrap_content">
+        <Spinner
+            android:layout_width="match_parent"
+            style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+            android:layout_height="50sp"></Spinner>
+        <Spinner
+            style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+            android:layout_width="match_parent"
+            android:layout_height="50sp"></Spinner>
+        <Spinner
+            style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+            android:layout_width="match_parent"
+            android:layout_height="50sp"></Spinner>
+    </LinearLayout>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="150px"
+        android:padding="5sp"
+        android:textCursorDrawable="@null"
+        android:gravity="start"
+        android:hint="Keterangan"
+        android:layout_margin="10sp"
+        android:background="@drawable/bordersbg"/>
+</LinearLayout>

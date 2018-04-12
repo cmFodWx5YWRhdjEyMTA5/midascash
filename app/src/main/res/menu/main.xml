@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_sync"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_cached_white_24dp"
+        android:title="Sync" />
+    <item
+        android:id="@+id/action_connection"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_rss_feed_white_24dp"
+        android:orderInCategory="100"
+        android:title="Check Connection" />
+    <item
+        android:id="@+id/action_help"
+        app:showAsAction="never"
+        android:orderInCategory="100"
+        android:title="Help" />
+    <item
+        android:id="@+id/action_about"
+        app:showAsAction="never"
+        android:orderInCategory="100"
+        android:title="About" />
+</menu>
