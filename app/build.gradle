@@ -31,4 +31,5 @@ dependencies {
     compile 'pl.rafman.widgets:scroll-calendar:1.5.1', {
         exclude group: 'com.android.support'
     }
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
 }

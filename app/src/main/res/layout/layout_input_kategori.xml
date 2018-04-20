@@ -10,7 +10,7 @@
         android:paddingTop="10px"
         android:layout_height="wrap_content"
         android:textAlignment="textStart"
-        android:text="Input Kategori"/>
+        android:text="New Category"/>
     <View
         android:layout_marginTop="10px"
         android:layout_width="match_parent"
@@ -26,9 +26,11 @@
             android:layout_weight="1"
             android:textAlignment="center"
             android:textSize="8pt"
-            android:text="Angka Kategori   :"
+            android:text="Name  :"
             android:layout_height="wrap_content" />
         <EditText
+            android:hint="Category Name"
+            android:textAlignment="center"
             android:textCursorDrawable="@null"
             android:backgroundTint="@color/colorPrimary"
             android:layout_width="0sp"
@@ -48,7 +50,7 @@
             android:layout_weight="1"
             android:textAlignment="center"
             android:textSize="8pt"
-            android:text="Nama Kategori   :"
+            android:text="Picture   :"
             android:layout_height="wrap_content" />
         <EditText
             android:textCursorDrawable="@null"
@@ -58,7 +60,19 @@
             android:layout_height="wrap_content" />
 
     </LinearLayout>
-    <EditText
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="400px">
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/profile_image"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:src="@drawable/add"
+            app:civ_border_width="2dp"
+            app:civ_border_color="#FF000000"/>
+    </ScrollView>
+    <!--<EditText
         android:layout_width="match_parent"
         android:layout_height="150px"
         android:hint="Keterangan"
@@ -66,7 +80,7 @@
         android:padding="5sp"
         android:textCursorDrawable="@null"
         android:layout_margin="10sp"
-        android:background="@drawable/bordersbg"/>
+        android:background="@drawable/bordersbg"/>-->
     <TextView
         android:layout_marginTop="10sp"
         android:layout_marginBottom="10sp"

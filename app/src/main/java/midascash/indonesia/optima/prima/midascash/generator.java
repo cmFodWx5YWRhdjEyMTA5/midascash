@@ -1,16 +1,19 @@
 package midascash.indonesia.optima.prima.midascash;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -18,6 +21,12 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,98 +44,133 @@ public class generator {
     public static String userlogin="";
     public static String ip="";
 
-    public void createdialod(Context context,String title , String message ,String yesmsg,String nomsg){
-        AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new AlertDialog.Builder(context, R.style.AppCompatAlertDialogStyle);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
-        builder.setTitle(title)
-                .setMessage(message)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // continue with delete
-                    }
-                })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
-                    }
-                })
-                .setIcon(R.drawable.dialoginfo)
-                .show();
+    public static void recallipsettings (final Activity context)
+    {
+
     }
-    public static void recallipsettings (final Activity context){
-            AlertDialog.Builder builder;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder = new AlertDialog.Builder(context, R.style.AppCompatAlertDialogStyle);
-            } else {
-                builder = new AlertDialog.Builder(context);
-            }
-            View view = context.getLayoutInflater().inflate(R.layout.layout_miniip, null);
-            final EditText ip;
-            ip = view.findViewById(R.id.dialogip);
 
-        ip.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    public static class checkconnection extends AsyncTask<String,String,String> {
+        private TextView statusField,roleField;
+        private Context context;
+        private Boolean connection = false;
+        private int byGetOrPost = 0;
+        private String user="";
+        private String pass="";
+        private ProgressDialog dialog;
 
-            }
+        //flag 0 means get and 1 means post.(By default it is get.)
+           /* public Logindata(Context context,TextView statusField,TextView roleField,int flag) {
+                this.context = context;
+                this.statusField = statusField;
+                this.roleField = roleField;
+                byGetOrPost = flag;
+            }*/
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(ip.getText().toString().length()==15){
-                    ip.setText(ip.getText().toString().substring(0,ip.getText().toString().length()-1));
-                    ip.setSelection(ip.getText().length());
+        public checkconnection(Context context) {
+            this.context = context;
+            this.dialog = new ProgressDialog(context, R.style.AppCompatAlertDialogStyle);
+        }
+
+        protected void onPreExecute(){
+            this.dialog.setMessage("Connecting");
+            this.dialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... arg0) {
+            try{
+
+                String link="http://"+generator.ip+"/android-db/connection.php";
+                Log.e("IP", generator.ip);
+                URL url = new URL(link);
+                URLConnection conn = url.openConnection();
+                conn.setConnectTimeout(5000);
+                conn.setDoOutput(true);
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+                BufferedReader reader = new BufferedReader(new
+                        InputStreamReader(conn.getInputStream()));
+
+                StringBuilder sb = new StringBuilder();
+                String line = null;
+
+                // Read Server Response
+                while((line = reader.readLine()) != null) {
+                    sb.append(line);
+                    break;
+                }
+
+                String link1="http://"+generator.ip+"/android-db/datatest.php";
+                String data1  = URLEncoder.encode("android", "UTF-8") + "=" +
+                        URLEncoder.encode("android", "UTF-8");
+                Log.e("IP", generator.ip);
+                URL url1 = new URL(link1);
+                URLConnection conn1 = url1.openConnection();
+                conn1.setConnectTimeout(5000);
+                conn1.setDoOutput(true);
+                OutputStreamWriter wr1 = new OutputStreamWriter(conn1.getOutputStream());
+
+                wr1.write(data1);
+                wr1.flush();
+
+                BufferedReader reader1 = new BufferedReader(new
+                        InputStreamReader(conn1.getInputStream()));
+
+                StringBuilder sb1 = new StringBuilder();
+                String line1 = null;
+
+                // Read Server Response
+                while((line1 = reader1.readLine()) != null) {
+                    sb1.append(line1);
+                    break;
+                }
+                String datatest="";
+                if(sb1.toString().equals("android")){
+                    datatest =" Working ";
                 }
                 else {
-                    try {
-                        String[] extensionRemoved = ip.getText().toString().split("\\.");
-                        int ipnum = 0, base = 3, declare = 4;
-                        for (base = 3; base < 12; base += declare) {
-                            if (ip.getText().toString().length() <= base) {
-                                ipnum++;
-                            }
-                        }
-                        int[] ipdata = new int[ipnum];
-                        String[] parts = ip.getText().toString().split("\\.");
-                        if (Integer.parseInt(parts[parts.length-1]) > 1000) {
-                            ip.setText(ip.getText().toString().substring(0, ip.getText().toString().length() - 4));
-                            ip.setSelection(ip.getText().length());
-                        }
-                        else if(Integer.parseInt(parts[parts.length-1]) > 255) {
-                            ip.setText(ip.getText().toString().substring(0, ip.getText().toString().length() - 3));
-                            ip.setSelection(ip.getText().length());
-                        }
-
-                    }catch (Exception e){
-                        Log.e("Eroor", e.getMessage());
-                    }
+                    datatest = "Error Occured";
                 }
+                String datatest2="";
+                if(sb.toString().equals("connected")){
+                    datatest2 =" Working ";
+                }
+                else {
+                    datatest2 = "Error Occured";
+                }
+
+                String words = "Connection : "+datatest2+"\n Data : "+datatest;
+
+                return words;
+            }catch (java.net.SocketTimeoutException e) {
+                return new String("Timeout : " + e.getMessage());
+            } catch (java.io.IOException e) {
+                return new String("Ioexception: " + e.getMessage());
+            } catch(Exception e){
+                Log.e("Exception",e.getMessage());
+                return new String("Exception: " + e.getMessage());
             }
+        }
 
-            @Override
-            public void afterTextChanged(Editable s) {
 
-            }
-        });
+        @Override
+        protected void onPostExecute(String result){
+            //this.statusField.setText("Login Successful");
+            dialog.dismiss();
+            //this.roleField.setText(result);
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context,R.style.AppCompatAlertDialogStyle);
+// ...Irrelevant code for customizing the buttons and title
+            dialogBuilder.setTitle("Connection Result");
+            dialogBuilder.setMessage(result);
+            dialogBuilder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
 
-            builder.setTitle("Reset IP")
-                    .setView(view)
-                    .setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            SharedPreferences.Editor editor = context.getSharedPreferences("primacash", MODE_PRIVATE).edit();
-                            editor.putString("ip", ip.getText().toString());
-                            editor.apply();
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .setIcon(R.drawable.logininfocolored)
-                    .show();
+            dialogBuilder.show();
+
+            Log.e("SOCR",result);
+        }
     }
 }

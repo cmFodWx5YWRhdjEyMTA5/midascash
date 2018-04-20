@@ -37,9 +37,8 @@ public class splashscreen extends AppCompatActivity {
                 handler1.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        SharedPreferences prefs = getSharedPreferences("primacash", MODE_PRIVATE);
+                        SharedPreferences prefs = getSharedPreferences("midascash", MODE_PRIVATE);
                         generator.ip = prefs.getString("ip", "");
-
                             Intent i = new Intent(splashscreen.this,MainActivity.class);
                             startActivity(i);
                             finish();

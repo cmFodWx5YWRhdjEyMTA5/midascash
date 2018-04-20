@@ -31,18 +31,6 @@
         android:layout_height="2px"
         android:background="@color/colorPrimary"></View>
     <Button
-        android:id="@+id/twoaccounts"
-        android:drawableLeft="@drawable/accountsresized"
-        android:drawableTint="@color/colorAccent"
-        android:layout_width="match_parent"
-        android:layout_height="0sp"
-        android:textAllCaps="false"
-        android:text="Accounts"
-        android:textSize="10pt"
-        android:textColor="@color/colorAccent"
-        android:backgroundTint="@color/colorPrimary"
-        android:layout_weight="1"/>
-    <Button
         android:id="@+id/twocategory"
         android:drawableLeft="@drawable/categoryresized"
         android:drawableTint="@color/colorAccent"
@@ -50,6 +38,18 @@
         android:textAllCaps="false"
         android:layout_height="0sp"
         android:text="Category"
+        android:textSize="10pt"
+        android:textColor="@color/colorAccent"
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_weight="1"/>
+    <Button
+        android:id="@+id/twoaccounts"
+        android:drawableLeft="@drawable/accountsresized"
+        android:drawableTint="@color/colorAccent"
+        android:layout_width="match_parent"
+        android:layout_height="0sp"
+        android:textAllCaps="false"
+        android:text="Accounts"
         android:textSize="10pt"
         android:textColor="@color/colorAccent"
         android:backgroundTint="@color/colorPrimary"

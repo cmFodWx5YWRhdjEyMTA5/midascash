@@ -1,10 +1,14 @@
 package midascash.indonesia.optima.prima.midascash;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,9 +23,14 @@ import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import java.util.zip.Inflater;
+
+import pl.rafman.scrollcalendar.ScrollCalendar;
+import pl.rafman.scrollcalendar.contract.MonthScrollListener;
+import pl.rafman.scrollcalendar.contract.OnDateClickListener;
 
 
 public class MainActivity extends AppCompatActivity
@@ -108,15 +117,99 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_sync) {
+
             return true;
         }
         if (id == R.id.action_connection) {
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this,R.style.AppCompatAlertDialogStyle);
+            dialogBuilder.setTitle("Connection Test");
+            dialogBuilder.setMessage("Proceed with testing or Recheck your ip setting ?");
+            dialogBuilder.setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    generator.checkconnection check = new generator.checkconnection(MainActivity.this);
+                    check.execute();
+                }
+            });
+
+            dialogBuilder.setNegativeButton("Recheck IP", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    AlertDialog.Builder builder;
+                    builder = new AlertDialog.Builder(MainActivity.this, R.style.AppCompatAlertDialogStyle);
+                    View view = getLayoutInflater().inflate(R.layout.layout_miniip, null);
+                    final EditText ip;
+                    ip = view.findViewById(R.id.dialogip);
+
+                    ip.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                            if(ip.getText().toString().length()==15){
+                                ip.setText(ip.getText().toString().substring(0,ip.getText().toString().length()-1));
+                                ip.setSelection(ip.getText().length());
+                            }
+                            else {
+                                try {
+                                    String[] extensionRemoved = ip.getText().toString().split("\\.");
+                                    int ipnum = 0, base = 3, declare = 4;
+                                    for (base = 3; base < 12; base += declare) {
+                                        if (ip.getText().toString().length() <= base) {
+                                            ipnum++;
+                                        }
+                                    }
+                                    int[] ipdata = new int[ipnum];
+                                    String[] parts = ip.getText().toString().split("\\.");
+                                    if (Integer.parseInt(parts[parts.length-1]) > 1000) {
+                                        ip.setText(ip.getText().toString().substring(0, ip.getText().toString().length() - 4));
+                                        ip.setSelection(ip.getText().length());
+                                    }
+                                    else if(Integer.parseInt(parts[parts.length-1]) > 255) {
+                                        ip.setText(ip.getText().toString().substring(0, ip.getText().toString().length() - 3));
+                                        ip.setSelection(ip.getText().length());
+                                    }
+
+                                }catch (Exception e){
+                                    Log.e("Eroor", e.getMessage());
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+
+                        }
+                    });
+
+                    builder.setTitle("Reset IP")
+                            .setView(view)
+                            .setPositiveButton("Save & Connect", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    SharedPreferences.Editor editor = getSharedPreferences("midascash", MODE_PRIVATE).edit();
+                                    editor.putString("ip", ip.getText().toString());
+                                    editor.apply();
+                                    generator.checkconnection check = new generator.checkconnection(MainActivity.this);
+                                    check.execute();
+                                }
+                            })
+                            .setIcon(R.drawable.logininfocolored)
+                            .show();
+                }
+            });
+
+            dialogBuilder.show();
             return true;
         }
         if (id == R.id.action_help) {
+
             return true;
         }
         if (id == R.id.action_sync) {
+
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -129,6 +222,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_dashboard) {
+            mainview.removeAllViews();
             // Handle the camera action
         } else if (id == R.id.nav_Transaction) {
             mainview.removeAllViews();
@@ -137,13 +231,21 @@ public class MainActivity extends AppCompatActivity
             mainview.addView(transaction);
 
         } else if (id == R.id.nav_report) {
-
+            mainview.removeAllViews();
+            View report = inflate.inflate(R.layout.layout_report_three,null);
+            reportmethod(report);
+            mainview.addView(report);
         } else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_mail) {
 
+        } else if (id == R.id.nav_calenderview) {
+            mainview.removeAllViews();
+            View calender = inflate.inflate(R.layout.layout_calender_one,null);
+            calendermethod(calender);
+            mainview.addView(calender);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -334,5 +436,43 @@ public class MainActivity extends AppCompatActivity
         });
 
     }
+
+    private void calendermethod(View v){
+        ScrollCalendar scrollCalendar = (ScrollCalendar) v.findViewById(R.id.scrollCalendar);
+        scrollCalendar.setOnDateClickListener(new OnDateClickListener() {
+            @Override
+            public void onCalendarDayClicked(int year, int month, int day) {
+                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this,R.style.AppCompatAlertDialogStyle).create();
+                alertDialog.setTitle(String.valueOf(day)+"/"+String.valueOf(month+1)+"/"+String.valueOf(year));
+                alertDialog.setMessage("No Events on "+String.valueOf(day)+"/"+String.valueOf(month+1)+"/"+String.valueOf(year));
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+            }
+        });
+
+
+        scrollCalendar.setMonthScrollListener(new MonthScrollListener() {
+            @Override
+            public boolean shouldAddNextMonth(int lastDisplayedYear, int lastDisplayedMonth) {
+                // return false if you don't want to show later months
+                return true;
+            }
+            @Override
+            public boolean shouldAddPreviousMonth(int firstDisplayedYear, int firstDisplayedMonth) {
+                // return false if you don't want to show previous months
+                return true;
+            }
+        });
+    }
+
+    public void reportmethod(View v){
+
+    }
+
 
 }
