@@ -43,6 +43,8 @@ public class generator {
     public static TextView statusConnection = null;
     public static String userlogin="";
     public static String ip="";
+    public static String port="";
+    public static String setupfirstisdone="";
 
     public static void recallipsettings (final Activity context)
     {
@@ -79,8 +81,12 @@ public class generator {
         @Override
         protected String doInBackground(String... arg0) {
             try{
-
-                String link="http://"+generator.ip+"/android-db/connection.php";
+                String link="";
+                if (generator.port.equals("")){
+                    link="http://"+generator.ip+"/android-db/connection.php";
+                }else {
+                    link="http://"+generator.ip+":"+generator.port+"/android-db/connection.php";
+                }
                 Log.e("IP", generator.ip);
                 URL url = new URL(link);
                 URLConnection conn = url.openConnection();
@@ -99,8 +105,13 @@ public class generator {
                     sb.append(line);
                     break;
                 }
+                String link1="";
+                if (generator.port.equals("")){
+                    link1="http://"+generator.ip+"/android-db/datatest.php";
+                }else {
+                    link1="http://"+generator.ip+":"+generator.port+"/android-db/datatest.php";
+                }
 
-                String link1="http://"+generator.ip+"/android-db/datatest.php";
                 String data1  = URLEncoder.encode("android", "UTF-8") + "=" +
                         URLEncoder.encode("android", "UTF-8");
                 Log.e("IP", generator.ip);

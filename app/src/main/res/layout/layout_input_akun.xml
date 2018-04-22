@@ -7,45 +7,28 @@
         android:drawableTint="@color/colorAccentBlack"
         android:drawableLeft="@drawable/accountsresized"
         android:gravity="center"
+        android:textSize="9pt"
         android:layout_gravity="center"
-        android:paddingTop="10px"
+        android:paddingTop="10sp"
         android:layout_height="wrap_content"
-        android:text="Input Akun (Pengeluaran &amp; Pemasukan)                   "/>
+        android:text="Create New Account                               "/>
     <View
-        android:layout_marginTop="10px"
+        android:layout_marginTop="10sp"
         android:layout_width="match_parent"
         android:layout_height="2sp"
         android:background="@color/colorAccentBlack"></View>
+
     <LinearLayout
+        android:layout_marginLeft="20sp"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:layout_height="wrap_content">
         <TextView
             android:layout_width="0sp"
             android:layout_weight="1"
-            android:textAlignment="center"
+            android:textAlignment="textStart"
             android:textSize="8pt"
-            android:text="Nomor Akun  :"
-            android:layout_height="wrap_content" />
-        <EditText
-            android:layout_width="0sp"
-            android:layout_weight="2"
-            android:textCursorDrawable="@null"
-            android:backgroundTint="@color/colorPrimary"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="horizontal"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="0sp"
-            android:layout_weight="1"
-            android:textAlignment="center"
-            android:textSize="8pt"
-            android:text="Nama Akun  :"
+            android:text="Name  :"
             android:layout_height="wrap_content" />
         <EditText
             android:layout_width="0sp"
@@ -56,17 +39,18 @@
 
     </LinearLayout>
     <LinearLayout
+
+        android:layout_marginLeft="20sp"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:layout_height="wrap_content">
         <TextView
             android:layout_width="0sp"
             android:layout_weight="1"
-            android:textAlignment="center"
+            android:textAlignment="textStart"
             android:textSize="8pt"
-            android:gravity="center"
             android:layout_gravity="center"
-            android:text="Kategori  :"
+            android:text="Category  :"
             android:layout_height="wrap_content" />
         <Spinner
             style="@style/Base.Widget.AppCompat.Spinner.Underlined"
@@ -77,15 +61,40 @@
     </LinearLayout>
 
     <LinearLayout
+
+        android:layout_marginLeft="20sp"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:layout_height="wrap_content">
         <TextView
             android:layout_width="0sp"
-            android:layout_weight="1"
-            android:textAlignment="center"
+            android:layout_weight="2"
+            android:textAlignment="textStart"
             android:textSize="8pt"
-            android:text="Saldo Awal  :"
+            android:layout_gravity="center"
+            android:text="Account Currency :"
+            android:layout_height="wrap_content" />
+        <Button
+            android:layout_width="0sp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/colorPrimary"
+            android:text="IDR - RP"
+            android:textColor="@color/colorAccent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginLeft="20sp"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="0sp"
+            android:layout_weight="1.5"
+            android:textAlignment="textStart"
+            android:textSize="8pt"
+            android:text="Initial Balance  :"
             android:layout_height="wrap_content" />
         <EditText
             android:layout_width="0sp"
@@ -93,6 +102,13 @@
             android:textCursorDrawable="@null"
             android:backgroundTint="@color/colorPrimary"
             android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="IDR"
+            android:paddingLeft="5sp"
+            android:paddingRight="5sp"
+            />
 
     </LinearLayout>
     <Button
@@ -101,6 +117,6 @@
         android:backgroundTint="@color/colorPrimary"
         android:textColor="@color/colorAccent"
         android:layout_height="wrap_content"
-        android:text="Edit Akun Keuangan"/>
+        android:text="Edit Accounts Created"/>
 
 </LinearLayout>

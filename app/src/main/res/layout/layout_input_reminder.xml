@@ -49,7 +49,7 @@
         android:padding="5sp"
         android:textCursorDrawable="@null"
         android:gravity="start"
-        android:hint="Keterangan"
+        android:hint="Notes"
         android:layout_margin="10sp"
         android:background="@drawable/bordersbg"/>
 </LinearLayout>

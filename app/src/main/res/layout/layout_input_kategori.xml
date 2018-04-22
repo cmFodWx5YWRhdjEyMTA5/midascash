@@ -3,6 +3,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView android:layout_width="match_parent"
+
         android:drawableTint="@color/colorAccentBlack"
         android:drawableLeft="@drawable/categoryresized"
         android:gravity="center"
@@ -18,13 +19,14 @@
         android:background="@color/colorAccentBlack"></View>
 
     <LinearLayout
+        android:layout_marginLeft="20sp"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:layout_height="wrap_content">
         <TextView
             android:layout_width="0sp"
             android:layout_weight="1"
-            android:textAlignment="center"
+            android:textAlignment="textStart"
             android:textSize="8pt"
             android:text="Name  :"
             android:layout_height="wrap_content" />
@@ -42,35 +44,252 @@
 
     </LinearLayout>
     <LinearLayout
+        android:layout_marginLeft="20sp"
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:layout_height="wrap_content">
         <TextView
             android:layout_width="0sp"
             android:layout_weight="1"
-            android:textAlignment="center"
+            android:textAlignment="textStart"
+            android:layout_gravity="center"
             android:textSize="8pt"
             android:text="Picture   :"
             android:layout_height="wrap_content" />
-        <EditText
-            android:textCursorDrawable="@null"
-            android:backgroundTint="@color/colorPrimary"
-            android:layout_width="0sp"
-            android:layout_weight="1.5"
-            android:layout_height="wrap_content" />
+        <de.hdodenhof.circleimageview.CircleImageView
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:id="@+id/selected-image"
+             android:layout_width="0sp"
+             android:layout_weight="1"
+             android:layout_height="48dp"
+             android:src="@drawable/nothing"
+             app:civ_border_width="2dp"
+             app:civ_border_color="#FF000000"/>
 
     </LinearLayout>
-    <ScrollView
+    <TextView
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Choose picture    :"
+        android:textAlignment="textStart"
+        android:layout_marginLeft="20sp"
+        android:textSize="9pt"/>
+    <ScrollView
+        android:layout_marginLeft="20sp"
+        android:layout_width="match_parent"
+        android:layout_marginTop="20sp"
         android:layout_height="400px">
-        <de.hdodenhof.circleimageview.CircleImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/profile_image"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:src="@drawable/add"
-            app:civ_border_width="2dp"
-            app:civ_border_color="#FF000000"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50sp"
+            android:orientation="horizontal">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="48dp"
+                android:src="@drawable/add"
+                app:civ_border_width="2dp"
+                app:civ_border_color="#FF000000"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="48dp"
+                android:src="@drawable/add"
+                app:civ_border_width="2dp"
+                app:civ_border_color="#FF000000"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="48dp"
+                android:src="@drawable/add"
+                app:civ_border_width="2dp"
+                app:civ_border_color="#FF000000"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="48dp"
+                android:src="@drawable/add"
+                app:civ_border_width="2dp"
+                app:civ_border_color="#FF000000"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="48dp"
+                android:src="@drawable/add"
+                app:civ_border_width="2dp"
+                app:civ_border_color="#FF000000"/>
+
+        </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50sp"
+                android:orientation="horizontal">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:src="@drawable/add"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"/>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:src="@drawable/add"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"/>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:src="@drawable/add"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"/>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:src="@drawable/add"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"/>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:src="@drawable/add"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50sp"
+                android:orientation="horizontal">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:src="@drawable/add"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"/>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:src="@drawable/add"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"/>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:src="@drawable/add"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"/>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:src="@drawable/add"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"/>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:src="@drawable/add"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50sp"
+                android:orientation="horizontal">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:src="@drawable/add"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"/>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:src="@drawable/add"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"/>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:src="@drawable/add"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"/>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:src="@drawable/add"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"/>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="48dp"
+                    android:src="@drawable/add"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"/>
+
+            </LinearLayout>
+        </LinearLayout>
     </ScrollView>
     <!--<EditText
         android:layout_width="match_parent"
@@ -88,12 +307,12 @@
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:textSize="8pt"
-        android:text="pengecekan kesalahan"
+        android:text="Error check"
         />
     <Button
         android:textColor="@color/colorAccent"
         android:backgroundTint="@color/colorPrimary"
         android:layout_width="match_parent"
-        android:text="Edit Data Kategori"
+        android:text="Edit Category data"
         android:layout_height="wrap_content" />
 </LinearLayout>

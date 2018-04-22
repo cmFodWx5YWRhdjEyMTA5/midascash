@@ -1,5 +1,7 @@
 package midascash.indonesia.optima.prima.midascash;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,7 +17,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class splashscreen extends AppCompatActivity {
+public class splashscreen extends Activity {
     ProgressBar barbanner;
 
     // Used to load the 'native-lib' library on application startup.
@@ -39,9 +41,19 @@ public class splashscreen extends AppCompatActivity {
                     public void run() {
                         SharedPreferences prefs = getSharedPreferences("midascash", MODE_PRIVATE);
                         generator.ip = prefs.getString("ip", "");
+                        generator.port= prefs.getString("port", "");
+                        generator.setupfirstisdone = prefs.getString("firstsetup", "");
+                        if(generator.setupfirstisdone.equals("")){
+                            Intent i = new Intent(splashscreen.this,firstpage.class);
+                            startActivity(i);
+                            finish();
+                        }
+                        else {
                             Intent i = new Intent(splashscreen.this,MainActivity.class);
                             startActivity(i);
                             finish();
+                        }
+
                     }
                 }, 2000);
             }

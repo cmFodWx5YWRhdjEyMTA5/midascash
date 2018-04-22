@@ -1,10 +1,18 @@
 package midascash.indonesia.optima.prima.midascash;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.text.Editable;
@@ -26,8 +34,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.Inflater;
 
+import midascash.indonesia.optima.prima.midascash.alarmnotification.NotificationID;
 import pl.rafman.scrollcalendar.ScrollCalendar;
 import pl.rafman.scrollcalendar.contract.MonthScrollListener;
 import pl.rafman.scrollcalendar.contract.OnDateClickListener;
@@ -115,11 +125,6 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_sync) {
-
-            return true;
-        }
         if (id == R.id.action_connection) {
             AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this,R.style.AppCompatAlertDialogStyle);
             dialogBuilder.setTitle("Connection Test");
@@ -210,6 +215,23 @@ public class MainActivity extends AppCompatActivity
         }
         if (id == R.id.action_sync) {
 
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(MainActivity.this)
+                    .setSmallIcon(R.drawable.ic_notifications_black_24dp)
+                    .setContentTitle("Midas Cash")
+                    .setContentText("Preference saved");
+
+            Intent resultIntent = new Intent(this, MainActivity.class);
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addParentStack(MainActivity.class);
+
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
+            mBuilder.setContentIntent(resultPendingIntent);
+
+            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+// notificationID allows you to update the notification later on.
+            mNotificationManager.notify(NotificationID.getID(), mBuilder.build());
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -297,14 +319,14 @@ public class MainActivity extends AppCompatActivity
                 LayoutInflater inflater = getLayoutInflater();
                 dialogBuilder.setTitle("Transaksi");
                 View dialogView = inflater.inflate(R.layout.layout_input_akun, null);
-                dialogBuilder.setPositiveButton("Simpan", new DialogInterface.OnClickListener() {
+                dialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
                 });
 
-                dialogBuilder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -326,14 +348,14 @@ public class MainActivity extends AppCompatActivity
                 dialogBuilder.setTitle("Transaksi");
                 View dialogView = inflater.inflate(R.layout.layout_input_kategori, null);
 
-                dialogBuilder.setPositiveButton("Simpan", new DialogInterface.OnClickListener() {
+                dialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
                 });
 
-                dialogBuilder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -352,24 +374,22 @@ public class MainActivity extends AppCompatActivity
                 AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this,R.style.AppCompatAlertDialogStyle);
 // ...Irrelevant code for customizing the buttons and title
                 LayoutInflater inflater = getLayoutInflater();
-                dialogBuilder.setTitle("Transaksi");
+                dialogBuilder.setTitle("New Transaction");
 
-                dialogBuilder.setPositiveButton("Simpan", new DialogInterface.OnClickListener() {
+                dialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
                 });
 
-                dialogBuilder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
                 });
 
-                View dialogView = inflater.inflate(R.layout.layout_input_kasmasuk, null);
-                dialogBuilder.setView(dialogView);
                 dialogBuilder.show();
 
             }
@@ -385,14 +405,14 @@ public class MainActivity extends AppCompatActivity
                 LayoutInflater inflater = getLayoutInflater();
                 dialogBuilder.setTitle("Transaksi");
 
-                dialogBuilder.setPositiveButton("Simpan", new DialogInterface.OnClickListener() {
+                dialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
                 });
 
-                dialogBuilder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -414,14 +434,14 @@ public class MainActivity extends AppCompatActivity
                 LayoutInflater inflater = getLayoutInflater();
                 dialogBuilder.setTitle("Transaksi");
 
-                dialogBuilder.setPositiveButton("Simpan", new DialogInterface.OnClickListener() {
+                dialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
                     }
                 });
 
-                dialogBuilder.setNegativeButton("Batal", new DialogInterface.OnClickListener() {
+                dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
