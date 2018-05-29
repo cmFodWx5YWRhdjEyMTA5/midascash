@@ -16,6 +16,7 @@
         android:layout_height="2px"
         android:background="@color/colorPrimary"></View>
     <Button
+        android:id="@+id/reportaccount"
         android:drawableLeft="@drawable/reportac"
         android:drawableTint="@color/colorAccent"
         android:layout_width="match_parent"
@@ -27,6 +28,7 @@
         android:backgroundTint="@color/colorPrimary"
         android:layout_weight="1"/>
     <Button
+        android:id="@+id/reportcashflow"
         android:drawableLeft="@drawable/reportcf"
         android:drawableTint="@color/colorAccent"
         android:layout_width="match_parent"
@@ -38,6 +40,7 @@
         android:backgroundTint="@color/colorPrimary"
         android:layout_weight="1"/>
     <Button
+        android:id="@+id/reportchart"
         android:drawableLeft="@drawable/reportcob"
         android:drawableTint="@color/colorAccent"
         android:layout_width="match_parent"
@@ -49,12 +52,25 @@
         android:backgroundTint="@color/colorPrimary"
         android:layout_weight="1"/>
     <Button
+        android:id="@+id/reportschedule"
         android:drawableLeft="@drawable/reportsl"
         android:drawableTint="@color/colorAccent"
         android:layout_width="match_parent"
         android:layout_height="0sp"
         android:textAllCaps="false"
         android:text="Schedule list"
+        android:textSize="10pt"
+        android:textColor="@color/colorAccent"
+        android:backgroundTint="@color/colorPrimary"
+        android:layout_weight="1"></Button>
+    <Button
+        android:id="@+id/reportsummary"
+        android:drawableLeft="@drawable/ic_done_all_white_24dp"
+        android:drawableTint="@color/colorAccent"
+        android:layout_width="match_parent"
+        android:layout_height="0sp"
+        android:textAllCaps="false"
+        android:text="Summary"
         android:textSize="10pt"
         android:textColor="@color/colorAccent"
         android:backgroundTint="@color/colorPrimary"

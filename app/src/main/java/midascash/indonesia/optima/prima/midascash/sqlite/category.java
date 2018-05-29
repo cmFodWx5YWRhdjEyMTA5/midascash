@@ -7,14 +7,15 @@ import java.util.Date;
  */
 
 public class category {
-    String category_name,category_image,username;
+    String category_name,username;
+    int category_image;
     Date category_createdate;
     int category_status;
 
     public category(){
 
     }
-    public category(String catname,String catim,String user,Date catdat,int catstat){
+    public category(String catname,int catim,String user,Date catdat,int catstat){
         category_name =catname;
         category_image =catim;
         username=user;
@@ -34,7 +35,7 @@ public class category {
         username = user;
     }
 
-    public void setCategory_image(String catim){
+    public void setCategory_image(int catim){
         category_image =catim;
     }
 
@@ -50,7 +51,7 @@ public class category {
     public String getCategory_name(){
         return category_name;
     }
-    public String getCategory_image(){
+    public int getCategory_image(){
         return category_image;
     }
     public String getUsername(){

@@ -1,22 +1,13 @@
 package midascash.indonesia.optima.prima.midascash;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutCompat;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,14 +21,49 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.zip.Inflater;
 
-import midascash.indonesia.optima.prima.midascash.alarmnotification.NotificationID;
+import com.fake.shopee.shopeefake.formula.commaedittext;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.mynameismidori.currencypicker.CurrencyPicker;
+import com.mynameismidori.currencypicker.CurrencyPickerListener;
+
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+import midascash.indonesia.optima.prima.midascash.recycleview.adapterviewcategory;
+import midascash.indonesia.optima.prima.midascash.reports.chartofbalance;
+import midascash.indonesia.optima.prima.midascash.reports.listexpense;
+import midascash.indonesia.optima.prima.midascash.reports.listincome;
+import midascash.indonesia.optima.prima.midascash.reports.listtransfer;
+import midascash.indonesia.optima.prima.midascash.reports.summary;
+import midascash.indonesia.optima.prima.midascash.transactionactivity.accountlist;
+import midascash.indonesia.optima.prima.midascash.transactionactivity.categorylist;
+import midascash.indonesia.optima.prima.midascash.transactionactivity.income;
+import midascash.indonesia.optima.prima.midascash.transactionactivity.expense;
+import midascash.indonesia.optima.prima.midascash.transactionactivity.transfer;
 import pl.rafman.scrollcalendar.ScrollCalendar;
 import pl.rafman.scrollcalendar.contract.MonthScrollListener;
 import pl.rafman.scrollcalendar.contract.OnDateClickListener;
@@ -46,16 +72,60 @@ import pl.rafman.scrollcalendar.contract.OnDateClickListener;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    FirebaseFirestore db;
     private Boolean isFabOpen = false;
-    private FloatingActionButton fab,fab1,fab2;
+    private TextView fab1txt,fab2txt,fab3txt;
+    private FloatingActionButton fab,fab1,fab2,fab3;
     private Animation fab_open,fab_close,rotate_forward,rotate_backward;
     private LinearLayout mainview;
     private LayoutInflater inflate;
+
+    DecimalFormat formatdecimal = new DecimalFormat("##.00");
+
+    private SQLiteHelper dbase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        db = FirebaseFirestore.getInstance();
+
+
+      /*  Map<String, Object> user = new HashMap<>();
+        user.put("username", "administrator");
+        user.put("password", "administrator");
+
+        Date c = Calendar.getInstance().getTime();
+        System.out.println("Current time => " + c);
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String formattedDate = df.format(c);
+
+        user.put("join_date", formattedDate);
+        user.put("isadmin",1);
+        user.put("status",1);
+
+// Add a new document with a generated ID
+        db.collection("users")
+                .add(user)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.e("added", "DocumentSnapshot added with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("error add", "Error adding document", e);
+                    }
+                });
+*/
+        loginprogram();
+
+        dbase = new SQLiteHelper(getApplicationContext());
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -77,6 +147,12 @@ public class MainActivity extends AppCompatActivity
         fab = (FloatingActionButton)findViewById(R.id.fab);
         fab1 = (FloatingActionButton)findViewById(R.id.fab1);
         fab2 = (FloatingActionButton)findViewById(R.id.fab2);
+        fab3 = (FloatingActionButton)findViewById(R.id.fab3);
+
+        fab1txt =(TextView) findViewById(R.id.fab1text);
+        fab2txt =(TextView) findViewById(R.id.fab2text);
+        fab3txt =(TextView) findViewById(R.id.fab3text);
+
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
         rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_foward);
@@ -91,12 +167,42 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 animateFAB();
+                Intent a = new Intent(MainActivity.this,expense.class);
+                startActivity(a);
             }
         });
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 animateFAB();
+                Intent a = new Intent(MainActivity.this,income.class);
+                startActivity(a);
+            }
+        });
+        fab3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                animateFAB();
+                Intent a = new Intent(MainActivity.this, transfer.class);
+                startActivity(a);
+            }
+        });
+        mainview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isFabOpen){
+                    fab.startAnimation(rotate_backward);
+                    fab1.startAnimation(fab_close);
+                    fab1txt.startAnimation(fab_close);
+                    fab2.startAnimation(fab_close);
+                    fab2txt.startAnimation(fab_close);
+                    fab3.startAnimation(fab_close);
+                    fab3txt.startAnimation(fab_close);
+                    fab1.setClickable(false);
+                    fab2.setClickable(false);
+                    isFabOpen = false;
+                    Log.d("Raj", "close");
+                }
             }
         });
     }
@@ -124,8 +230,7 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        if (id == R.id.action_connection) {
+/*
             AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this,R.style.AppCompatAlertDialogStyle);
             dialogBuilder.setTitle("Connection Test");
             dialogBuilder.setMessage("Proceed with testing or Recheck your ip setting ?");
@@ -208,13 +313,14 @@ public class MainActivity extends AppCompatActivity
 
             dialogBuilder.show();
             return true;
-        }
+            */
         if (id == R.id.action_help) {
+            Intent a = new Intent(MainActivity.this,help.class);
+            startActivity(a);
 
             return true;
         }
-        if (id == R.id.action_sync) {
-
+/*-----------------------notification--------------------//
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(MainActivity.this)
                     .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                     .setContentTitle("Midas Cash")
@@ -233,6 +339,11 @@ public class MainActivity extends AppCompatActivity
 // notificationID allows you to update the notification later on.
             mNotificationManager.notify(NotificationID.getID(), mBuilder.build());
             return true;
+            */
+
+        if(id==R.id.action_about){
+            Intent a = new Intent(MainActivity.this,about.class);
+            startActivity(a);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -245,6 +356,9 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_dashboard) {
             mainview.removeAllViews();
+            View dashboards = inflate.inflate(R.layout.layout_main,null);
+            mainview.addView(dashboards);
+
             // Handle the camera action
         } else if (id == R.id.nav_Transaction) {
             mainview.removeAllViews();
@@ -281,7 +395,11 @@ public class MainActivity extends AppCompatActivity
 
             fab.startAnimation(rotate_backward);
             fab1.startAnimation(fab_close);
+            fab1txt.startAnimation(fab_close);
             fab2.startAnimation(fab_close);
+            fab2txt.startAnimation(fab_close);
+            fab3.startAnimation(fab_close);
+            fab3txt.startAnimation(fab_close);
             fab1.setClickable(false);
             fab2.setClickable(false);
             isFabOpen = false;
@@ -291,7 +409,11 @@ public class MainActivity extends AppCompatActivity
 
             fab.startAnimation(rotate_forward);
             fab1.startAnimation(fab_open);
+            fab1txt.startAnimation(fab_open);
             fab2.startAnimation(fab_open);
+            fab2txt.startAnimation(fab_open);
+            fab3.startAnimation(fab_open);
+            fab3txt.startAnimation(fab_open);
             fab1.setClickable(true);
             fab2.setClickable(true);
             isFabOpen = true;
@@ -301,198 +423,768 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void transactionmethod(View v){
-        Button akun,cashin,cashout,reminder,category,editereminder;
+        final Button akun,cashin,listtransaction,reminder,category,editereminder;
 
         akun = v.findViewById(R.id.twoaccounts);
         reminder = v.findViewById(R.id.tworeminder);
         category = v.findViewById(R.id.twocategory);
         cashin =v.findViewById(R.id.twocashin);
-        cashout =v.findViewById(R.id.twocashout);
+        listtransaction =v.findViewById(R.id.twolisttransaction);
         editereminder =v.findViewById(R.id.twofixrem);
-
-
-        akun.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this,R.style.AppCompatAlertDialogStyle);
-// ...Irrelevant code for customizing the buttons and title
-                LayoutInflater inflater = getLayoutInflater();
-                dialogBuilder.setTitle("Transaksi");
-                View dialogView = inflater.inflate(R.layout.layout_input_akun, null);
-                dialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-
-                dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-
-                dialogBuilder.setView(dialogView);
-                dialogBuilder.show();
-
-            }
-        });
 
         category.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this,R.style.AppCompatAlertDialogStyle);
+
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.AppCompatAlertDialogStyle);
 // ...Irrelevant code for customizing the buttons and title
                 LayoutInflater inflater = getLayoutInflater();
-                dialogBuilder.setTitle("Transaksi");
+                dialogBuilder.setTitle("New Category");
                 View dialogView = inflater.inflate(R.layout.layout_input_kategori, null);
 
-                dialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                final CircleImageView selected = dialogView.findViewById(R.id.imgselected);
+                adapterviewcategory adapter = new adapterviewcategory(MainActivity.this, selected, 20);
 
+                RecyclerView recyclerView = dialogView.findViewById(R.id.recyclercategoryitem);
+                recyclerView.setHasFixedSize(true);
+                recyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this, 5));
+
+                recyclerView.setAdapter(adapter);
+
+                final EditText categoryname = dialogView.findViewById(R.id.categoryname);
+
+                Button buttonshowall = dialogView.findViewById(R.id.categoryedit);
+
+                buttonshowall.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent allcategory = new Intent(MainActivity.this,categorylist.class);
+                        startActivity(allcategory);
                     }
                 });
 
-                dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                dialogBuilder.setPositiveButton("Save", null);
 
-                    }
-                });
+                dialogBuilder.setNegativeButton("Cancel", null);
 
                 dialogBuilder.setView(dialogView);
-                dialogBuilder.show();
 
-            }
-        });
-
-        cashin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this,R.style.AppCompatAlertDialogStyle);
-// ...Irrelevant code for customizing the buttons and title
-                LayoutInflater inflater = getLayoutInflater();
-                dialogBuilder.setTitle("New Transaction");
-
-                dialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                final AlertDialog dialog1 = dialogBuilder.create();
+                dialog1.setOnShowListener(new DialogInterface.OnShowListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onShow(DialogInterface dialog) {
+                        Log.e("selected", "0");
+                        Button button = ((AlertDialog) dialog1).getButton(AlertDialog.BUTTON_POSITIVE);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Log.e("selected", "1");
+                                if (categoryname.getText().toString().equals("")) {
+                                    Toast.makeText(MainActivity.this,"Category name is Missing",Toast.LENGTH_SHORT).show();
+                                } else {
+                                    if (Integer.parseInt(selected.getTag().toString()) == 0) {
+                                        Toast.makeText(MainActivity.this,"Please Select Picture",Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        final int[] statuscode = {0};
+                                        Log.e("selected", "2");
+                                        Toast.makeText(MainActivity.this,"Please Wait",Toast.LENGTH_SHORT).show();
+                                        db.collection("category")
+                                                .get()
+                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                        if (task.isSuccessful()) {
+                                                            Log.e("selected", "2,5");
+                                                            int isdouble=0;
+                                                            for (DocumentSnapshot document : task.getResult()) {
+                                                                statuscode[0] =1;
+                                                                Log.e("selected", "3");
+                                                                if(document.getId()==null){
+                                                                    break;
+                                                                }
+                                                                else if (document.getData().get("category_name").toString().equals(categoryname.getText().toString()) && document.getData().get("category_name")!=null) {
+                                                                    Toast.makeText(MainActivity.this, categoryname.getText().toString() + " is Already Registered", Toast.LENGTH_SHORT).show();
+                                                                    isdouble = 1;
+                                                                }
+                                                                }
+                                                            if(statuscode[0]==0 || isdouble!=1){
+                                                                Date c = Calendar.getInstance().getTime();
+                                                                Map<String, Object> categorymap = new HashMap<>();
+                                                                categorymap.put("category_name", categoryname.getText().toString());
+                                                                categorymap.put("category_image", selected.getTag());
 
-                    }
-                });
+                                                                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                                                String formattedDate = df.format(c);
 
-                dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                                                                categorymap.put("category_createdate", formattedDate);
+                                                                categorymap.put("category_status",1);
+                                                                categorymap.put("username",generator.userlogin);
 
-                    }
-                });
+// Add a new document with a generated ID
+                                                                db.collection("category")
+                                                                        .add(categorymap)
+                                                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                            @Override
+                                                                            public void onSuccess(DocumentReference documentReference) {
+                                                                                dialog1.dismiss();
+                                                                                Toast.makeText(MainActivity.this, "New Category Saved", Toast.LENGTH_SHORT).show();
+                                                                                Log.e("added category", "DocumentSnapshot added with ID: " + documentReference.getId());
+                                                                            }
+                                                                        })
+                                                                        .addOnFailureListener(new OnFailureListener() {
+                                                                            @Override
+                                                                            public void onFailure(@NonNull Exception e) {
+                                                                                Toast.makeText(MainActivity.this, "Error Occured : "+ e.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                                                                                Log.e("error add", "Error adding document", e);
+                                                                            }
+                                                                        });
 
-                dialogBuilder.show();
+                                                            }
+                                                        } else {
+                                                            Log.e("category error add", "Error getting documents.", task.getException());
+                                                        }
+                                                    }
+                                                });
 
-            }
-        });
-
-        cashout.setVisibility(View.GONE);
-
-        reminder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this,R.style.AppCompatAlertDialogStyle);
-// ...Irrelevant code for customizing the buttons and title
-                LayoutInflater inflater = getLayoutInflater();
-                dialogBuilder.setTitle("Transaksi");
-
-                dialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-
-                dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-
-                View dialogView = inflater.inflate(R.layout.layout_input_reminder, null);
-                dialogBuilder.setView(dialogView);
-                dialogBuilder.show();
-
-            }
-        });
-
-        editereminder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this,R.style.AppCompatAlertDialogStyle);
-// ...Irrelevant code for customizing the buttons and title
-                LayoutInflater inflater = getLayoutInflater();
-                dialogBuilder.setTitle("Transaksi");
-
-                dialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-
-                dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-
-                View dialogView = inflater.inflate(R.layout.layout_input_reminder, null);
-                dialogBuilder.setView(dialogView);
-                dialogBuilder.show();
-
-            }
-        });
-
-    }
-
-    private void calendermethod(View v){
-        ScrollCalendar scrollCalendar = (ScrollCalendar) v.findViewById(R.id.scrollCalendar);
-        scrollCalendar.setOnDateClickListener(new OnDateClickListener() {
-            @Override
-            public void onCalendarDayClicked(int year, int month, int day) {
-                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this,R.style.AppCompatAlertDialogStyle).create();
-                alertDialog.setTitle(String.valueOf(day)+"/"+String.valueOf(month+1)+"/"+String.valueOf(year));
-                alertDialog.setMessage("No Events on "+String.valueOf(day)+"/"+String.valueOf(month+1)+"/"+String.valueOf(year));
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
+                                    }
+                                }
                             }
                         });
-                alertDialog.show();
+                    }
+                });
+
+                dialog1.show();
+
             }
         });
 
+                akun.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final String[] tempcurrencycode = {""};
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.AppCompatAlertDialogStyle);
+// ...Irrelevant code for customizing the buttons and title
+                        LayoutInflater inflater = getLayoutInflater();
+                        dialogBuilder.setTitle("New Account");
 
-        scrollCalendar.setMonthScrollListener(new MonthScrollListener() {
-            @Override
-            public boolean shouldAddNextMonth(int lastDisplayedYear, int lastDisplayedMonth) {
-                // return false if you don't want to show later months
-                return true;
+
+
+                        View dialogView = inflater.inflate(R.layout.layout_input_akun, null);
+
+                        Button editaccount = dialogView.findViewById(R.id.accountedit);
+                        final Button currency = dialogView.findViewById(R.id.btnaccountcurrency);
+
+                        final EditText accountname = dialogView.findViewById(R.id.account_name);
+                        final EditText accountbalance = dialogView.findViewById(R.id.account_balance);
+
+                        accountbalance.addTextChangedListener(new commaedittext(accountbalance));
+
+                        final Spinner accountcategory = dialogView.findViewById(R.id.account_category);
+
+                        final TextView currencyicon = dialogView.findViewById(R.id.accountcurrencysymbol);
+
+                        List<String> spinneritem = new ArrayList<String>();
+                        spinneritem.add("Select One");
+                        db.collection("category")
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                                        if (task.isSuccessful()) {
+                                            for (DocumentSnapshot document : task.getResult()) {
+                                                Log.e("getting data", document.getId() + " => " + document.getData());
+                                                spinneritem.add(document.getData().get("category_name").toString());
+                                            }
+                                        } else {
+                                            Log.e("", "Error getting documents.", task.getException());
+                                        }
+
+                                    }
+                                });
+
+                        //translatedcategory.add(allcategory.get(i).getCategory_name()+allcategory.get(i).getCategory_image());
+
+                        tempcurrencycode[0]="IDR";
+                        currency.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                final CurrencyPicker picker = CurrencyPicker.newInstance("Select Currency");  // dialog title
+                                picker.setListener(new CurrencyPickerListener() {
+                                    @Override
+                                    public void onSelectCurrency(String name, String code, String symbol, int flagDrawableResID) {
+                                        currency.setText(code + " - " + symbol);
+                                        tempcurrencycode[0] = code;
+                                        currencyicon.setText(code);
+                                        picker.dismiss();
+                                    }
+                                });
+                                picker.show(getSupportFragmentManager(), "CURRENCY_PICKER");
+                            }
+                        });
+
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,
+                                android.R.layout.simple_spinner_item, spinneritem);
+                        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                        accountcategory.setAdapter(adapter);
+
+                        editaccount.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent acountedit = new Intent(MainActivity.this, accountlist.class);
+                                startActivity(acountedit);
+                            }
+                        });
+
+                        dialogBuilder.setPositiveButton("Save", null);
+
+                        dialogBuilder.setNegativeButton("Cancel", null);
+
+                        dialogBuilder.setView(dialogView);
+
+                        final AlertDialog dialog1 = dialogBuilder.create();
+
+                        dialog1.setOnShowListener(new DialogInterface.OnShowListener() {
+                            @Override
+                            public void onShow(DialogInterface dialog) {
+
+                                Button button = ((AlertDialog) dialog1).getButton(AlertDialog.BUTTON_POSITIVE);
+                                button.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        if (accountname.getText().toString().equals("")) {
+                                            Toast.makeText(MainActivity.this, "Account Name is Empty", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            if (accountcategory.getSelectedItem().toString().equals("Select One")) {
+                                                Toast.makeText(MainActivity.this, "Please Select Account Category", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                if (accountbalance.getText().toString().equals("")) {
+                                                    Toast.makeText(MainActivity.this, "Account Balance default 0", Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    Toast.makeText(MainActivity.this,"Please Wait",Toast.LENGTH_SHORT).show();
+                                                    final int[] statuscode = {0};
+                                                    db.collection("account")
+                                                    .get()
+                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                            if (task.isSuccessful()) {
+                                                                int isdouble=0;
+                                                                for (DocumentSnapshot document : task.getResult()) {
+                                                                    statuscode[0] =1;
+                                                                    Log.d("data account", document.getId() + " => " + document.getData());
+                                                                    Log.e("occured", String.valueOf(1));
+                                                                    if(document.getId()==null){
+                                                                        break;
+                                                                    }
+                                                                    else {
+                                                                        if (document.getData().get("account_name").toString().equals(accountname.getText().toString()) && document.getData().get("account_name") != null) {
+                                                                            Toast.makeText(MainActivity.this, accountname.getText().toString() + " is Already Registered", Toast.LENGTH_SHORT).show();
+                                                                            isdouble =1;
+                                                                        }
+                                                                    }
+                                                                }
+                                                                if(statuscode[0]==0 || isdouble !=1){
+                                                                    Date c = Calendar.getInstance().getTime();
+                                                                    String balance = accountbalance.getText().toString().replace(",", "");Toast.makeText(MainActivity.this, "New Account Saved", Toast.LENGTH_SHORT).show();
+
+                                                                    Map<String, Object> accountsmap = new HashMap<>();
+                                                                    accountsmap.put("account_name", accountname.getText().toString());
+                                                                    accountsmap.put("account_category", accountcategory.getSelectedItem().toString());
+
+                                                                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                                                    String formattedDate = df.format(c);
+
+                                                                    accountsmap.put("account_createdate", formattedDate);
+                                                                    accountsmap.put("account_balance", accountbalance.getText().toString().replace(",",""));
+                                                                    accountsmap.put("account_balance_current", accountbalance.getText().toString().replace(",",""));
+                                                                    accountsmap.put("account_currency", tempcurrencycode[0]);
+                                                                    accountsmap.put("account_fullcurency", currency.getText().toString());
+                                                                    accountsmap.put("account_status", 1);
+                                                                    accountsmap.put("username", generator.userlogin);
+
+// Add a new document with a generated ID
+                                                                    db.collection("account")
+                                                                            .add(accountsmap)
+                                                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                                @Override
+                                                                                public void onSuccess(DocumentReference documentReference) {
+                                                                                    dialog1.dismiss();
+                                                                                    Toast.makeText(MainActivity.this, "New Account Saved", Toast.LENGTH_SHORT).show();
+                                                                                    Log.e("added account sc 2", "DocumentSnapshot added with ID: " + documentReference.getId());
+                                                                                }
+                                                                            })
+                                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                                @Override
+                                                                                public void onFailure(@NonNull Exception e) {
+                                                                                    Toast.makeText(MainActivity.this, "Error Occured : " + e.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                                                                                    Log.e("error add", "Error adding document", e);
+                                                                                }
+                                                                            });
+                                                                }
+                                                            } else {
+                                                                Log.w("error get data", "Error getting documents.", task.getException());
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                        dialog1.show();
+
+
+                    }
+                });
+
+                cashin.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.AppCompatAlertDialogStyle);
+// ...Irrelevant code for customizing the buttons and title
+                        LayoutInflater inflater = getLayoutInflater();
+
+                        dialogBuilder.setTitle("New Transaction");
+
+                        final CharSequence[] item = {"Income", "Expense", "Transfer"};
+                        dialogBuilder.setItems(item, new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int position) {
+                                if (position == 0) {
+                                    Intent a = new Intent(MainActivity.this, income.class);
+                                    startActivity(a);
+                                } else if (position == 1) {
+                                    Intent a = new Intent(MainActivity.this, expense.class);
+                                    startActivity(a);
+                                } else {
+                                    Intent a = new Intent(MainActivity.this, transfer.class);
+                                    startActivity(a);
+                                }
+                            }
+
+                        });
+
+
+                        dialogBuilder.show();
+
+                    }
+                });
+
+                listtransaction.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.AppCompatAlertDialogStyle);
+// ...Irrelevant code for customizing the buttons and title
+                        LayoutInflater inflater = getLayoutInflater();
+
+                        dialogBuilder.setTitle("New Transaction");
+
+                        final CharSequence[] item = {"List Income", "List Expense", "List Transfer"};
+                        dialogBuilder.setItems(item, new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int position) {
+                                if (position == 0) {
+                                    Intent a = new Intent(MainActivity.this, listincome.class);
+                                    startActivity(a);
+                                } else if (position == 1) {
+                                    Intent a = new Intent(MainActivity.this, listexpense.class);
+                                    startActivity(a);
+                                } else {
+                                    Intent a = new Intent(MainActivity.this, listtransfer.class);
+                                    startActivity(a);
+                                }
+                            }
+
+                        });
+
+
+                        dialogBuilder.show();
+                    }
+                });
+
+                reminder.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.AppCompatAlertDialogStyle);
+// ...Irrelevant code for customizing the buttons and title
+                        LayoutInflater inflater = getLayoutInflater();
+                        dialogBuilder.setTitle("Transaction");
+
+                        dialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+
+                        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+
+                        View dialogView = inflater.inflate(R.layout.layout_input_reminder, null);
+                        dialogBuilder.setView(dialogView);
+                        dialogBuilder.show();
+
+                    }
+                });
+
+                editereminder.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.AppCompatAlertDialogStyle);
+// ...Irrelevant code for customizing the buttons and title
+                        LayoutInflater inflater = getLayoutInflater();
+                        dialogBuilder.setTitle("Transaction");
+
+                        dialogBuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+
+                        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+
+                        View dialogView = inflater.inflate(R.layout.layout_input_reminder, null);
+                        dialogBuilder.setView(dialogView);
+                        dialogBuilder.show();
+
+                    }
+                });
+
             }
+
+            private void calendermethod(View v) {
+                ScrollCalendar scrollCalendar = (ScrollCalendar) v.findViewById(R.id.scrollCalendar);
+                scrollCalendar.setOnDateClickListener(new OnDateClickListener() {
+                    @Override
+                    public void onCalendarDayClicked(int year, int month, int day) {
+                        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this, R.style.AppCompatAlertDialogStyle).create();
+                        alertDialog.setTitle(String.valueOf(day) + "/" + String.valueOf(month + 1) + "/" + String.valueOf(year));
+                        alertDialog.setMessage("No Events on " + String.valueOf(day) + "/" + String.valueOf(month + 1) + "/" + String.valueOf(year));
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
+                    }
+                });
+
+
+                scrollCalendar.setMonthScrollListener(new MonthScrollListener() {
+                    @Override
+                    public boolean shouldAddNextMonth(int lastDisplayedYear, int lastDisplayedMonth) {
+                        // return false if you don't want to show later months
+                        return true;
+                    }
+
+                    @Override
+                    public boolean shouldAddPreviousMonth(int firstDisplayedYear, int firstDisplayedMonth) {
+                        // return false if you don't want to show previous months
+                        return true;
+                    }
+                });
+            }
+
+            public void reportmethod(View v) {
+                final Button accounts, cashflow, schedulelist, chartofbalanc, summaryd;
+
+                accounts = v.findViewById(R.id.reportaccount);
+                schedulelist = v.findViewById(R.id.reportschedule);
+                cashflow = v.findViewById(R.id.reportcashflow);
+                chartofbalanc = v.findViewById(R.id.reportchart);
+                summaryd = v.findViewById(R.id.reportsummary);
+
+                accounts.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.AppCompatAlertDialogStyle);
+// ...Irrelevant code for customizing the buttons and title
+                        LayoutInflater inflater = getLayoutInflater();
+
+                        dialogBuilder.setTitle("Choice");
+
+                        final CharSequence[] item = {"Accounts", "Category"};
+                        dialogBuilder.setItems(item, new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int position) {
+
+                                Toast.makeText(getApplicationContext(), "selected Item:" + position, Toast.LENGTH_SHORT).show();
+                            }
+
+                        });
+
+
+                        dialogBuilder.show();
+                    }
+                });
+
+                cashflow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.AppCompatAlertDialogStyle);
+// ...Irrelevant code for customizing the buttons and title
+                        LayoutInflater inflater = getLayoutInflater();
+
+                        dialogBuilder.setTitle("Choice");
+
+                        final CharSequence[] item = {"Income", "Expense", "Transfer", "All"};
+                        dialogBuilder.setItems(item, new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int position) {
+
+                                Toast.makeText(getApplicationContext(), "selected Item:" + position, Toast.LENGTH_SHORT).show();
+                            }
+
+                        });
+                        dialogBuilder.show();
+                    }
+                });
+
+                schedulelist.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.AppCompatAlertDialogStyle);
+// ...Irrelevant code for customizing the buttons and title
+                        LayoutInflater inflater = getLayoutInflater();
+
+                        dialogBuilder.setTitle("New Transaction");
+
+                        final CharSequence[] item = {"Scheduled", "Reminder", "All"};
+                        dialogBuilder.setItems(item, new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int position) {
+
+                                Toast.makeText(getApplicationContext(), "selected Item:" + position, Toast.LENGTH_SHORT).show();
+                            }
+
+                        });
+
+
+                        dialogBuilder.show();
+                    }
+                });
+
+                chartofbalanc.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent a = new Intent(MainActivity.this, chartofbalance.class);
+                        startActivity(a);
+
+                    }
+                });
+                summaryd.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent a = new Intent(MainActivity.this, summary.class);
+                        startActivity(a);
+                    }
+                });
+
+            }
+
+            private void categoryicons(View v, final CircleImageView circle) {
+
+       /* final CircleImageView food = v.findViewById(R.id.imgfood);
+        final CircleImageView cash = v.findViewById(R.id.imgcash);
+        final CircleImageView bank = v.findViewById(R.id.imgbank);
+        final CircleImageView cheque = v.findViewById(R.id.imgcheque);
+        final CircleImageView lend = v.findViewById(R.id.imglend);
+        final CircleImageView creditcard = v.findViewById(R.id.imgcreditcard);
+        final CircleImageView truck = v.findViewById(R.id.imgtruck);
+        final CircleImageView electric = v.findViewById(R.id.imgelectric);
+        final CircleImageView ball = v.findViewById(R.id.imgball);
+        final CircleImageView health = v.findViewById(R.id.imghealth);
+
+        Button buttonshowall = v.findViewById(R.id.categoryedit);
+
+        buttonshowall.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean shouldAddPreviousMonth(int firstDisplayedYear, int firstDisplayedMonth) {
-                // return false if you don't want to show previous months
-                return true;
+            public void onClick(View v) {
+                Intent allcategory = new Intent(MainActivity.this,categorylist.class);
+                startActivity(allcategory);
             }
         });
-    }
 
-    public void reportmethod(View v){
+        food.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                circle.setImageDrawable(food.getDrawable());
+                circle.setTag("6");
+            }
+        });
 
-    }
+        cash.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                circle.setImageDrawable(cash.getDrawable());
+                circle.setTag("1");
+            }
+        });
 
+        bank.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                circle.setImageDrawable(bank.getDrawable());
+                circle.setTag("2");
+            }
+        });
 
-}
+        cheque.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                circle.setImageDrawable(cheque.getDrawable());
+                circle.setTag("4");
+            }
+        });
+
+        lend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                circle.setImageDrawable(lend.getDrawable());
+                circle.setTag("3");
+            }
+        });
+
+        creditcard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                circle.setImageDrawable(creditcard.getDrawable());
+                circle.setTag("5");
+            }
+        });
+
+        electric.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                circle.setImageDrawable(electric.getDrawable());
+                circle.setTag("7");
+            }
+        });
+
+        truck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                circle.setImageDrawable(truck.getDrawable());
+                circle.setTag("8");
+            }
+        });
+
+        ball.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                circle.setImageDrawable(ball.getDrawable());
+                circle.setTag("10");
+            }
+        });
+
+        health.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                circle.setImageDrawable(health.getDrawable());
+                circle.setTag("9");
+            }
+        });
+
+    */
+                //2 places contain this coding above
+            }
+
+            public void loginprogram() {
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.AppCompatAlertDialogStyle);
+                dialogBuilder.setCancelable(false);
+// ...Irrelevant code for customizing the buttons and title
+                LayoutInflater inflater = getLayoutInflater();
+                dialogBuilder.setTitle("Login");
+                View dialogView = inflater.inflate(R.layout.layout_minilogin, null);
+
+                dialogBuilder.setPositiveButton("Login", null);
+
+                dialogBuilder.setNegativeButton("Exit", null);
+
+                EditText username = dialogView.findViewById(R.id.dialogusername);
+                EditText password = dialogView.findViewById(R.id.dialogpassword);
+
+                dialogBuilder.setView(dialogView);
+
+                final AlertDialog dialog1 = dialogBuilder.create();
+                dialog1.setOnShowListener(new DialogInterface.OnShowListener() {
+
+                    @Override
+                    public void onShow(DialogInterface dialogInterface) {
+
+                        Button button = ((AlertDialog) dialog1).getButton(AlertDialog.BUTTON_POSITIVE);
+                        button.setOnClickListener(new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View view) {
+
+                                Toast.makeText(MainActivity.this,"Checking...",Toast.LENGTH_SHORT).show();
+                                db.collection("users")
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                int count=0;
+                                                int declare=0;
+                                                if (task.isSuccessful()) {
+                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                        count++;
+                                                        declare++;
+                                                        if (username.getText().toString().equals(document.getData().get("username"))) {
+                                                            if (password.getText().toString().equals(document.getData().get("password"))) {
+                                                                count--;
+                                                                dialog1.dismiss();
+                                                                generator.userlogin=document.getData().get("username").toString();
+                                                                Toast.makeText(MainActivity.this, "Welcome " + document.getData().get("username"), Toast.LENGTH_SHORT).show();
+                                                            } else {
+                                                                Toast.makeText(MainActivity.this, "Username or password doesn't match", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        } else {
+
+                                                        }
+                                                    }
+                                                    if(declare==count){
+                                                        Toast.makeText(MainActivity.this, "Username not found ", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                } else {
+                                                    Toast.makeText(MainActivity.this, "Connection error Occured ", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+
+                            }
+                        });
+                        Button button1 = ((AlertDialog) dialog1).getButton(AlertDialog.BUTTON_NEGATIVE);
+                        button1.setOnClickListener(new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View view) {
+                                dialog1.dismiss();
+                                finish();
+                            }
+                        });
+                    }
+                });
+                dialog1.show();
+
+            }
+        }

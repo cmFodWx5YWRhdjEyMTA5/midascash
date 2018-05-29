@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/LinearLayout01"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="350dip"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:gravity="center">
+    <EditText android:id="@+id/searchbox"
+        android:maxLines="1"
+        android:lines="1"
+        android:visibility="gone"
+        android:hint="Search here"
+        android:textAlignment="center"
+        android:backgroundTint="@android:color/transparent"
+        android:singleLine="true"
+        android:layout_height="wrap_content"
+        android:layout_width="180dip"
+        android:gravity="left">
+    </EditText>
+    <ListView android:id="@+id/lvsnf"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:choiceMode="singleChoice">
+    </ListView>
+</LinearLayout>

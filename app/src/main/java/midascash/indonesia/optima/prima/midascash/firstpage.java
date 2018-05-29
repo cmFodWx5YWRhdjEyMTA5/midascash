@@ -174,7 +174,7 @@ public class firstpage extends Activity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(generator.ip.equals("")){
+                if(ip.getText().toString().equals("")){
 
                     AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(firstpage.this,R.style.AppCompatAlertDialogStyle);
                     dialogBuilder.setTitle("Warning");
@@ -182,8 +182,14 @@ public class firstpage extends Activity {
                     dialogBuilder.setPositiveButton("Proceed", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            generator.checkconnection check = new generator.checkconnection(firstpage.this);
-                            check.execute();
+                            generator.isoffline=1;
+                            SharedPreferences.Editor editor = getSharedPreferences("midascash", MODE_PRIVATE).edit();
+                            editor.putString("isoffline","1");
+                            editor.putString("firstsetup","done");
+                            editor.apply();
+                            Intent a = new Intent(firstpage.this,MainActivity.class);
+                            startActivity(a);
+                            finish();
                         }
                     });
 
@@ -197,7 +203,10 @@ public class firstpage extends Activity {
                     dialogBuilder.show();
                 }
                 else {
+                    generator.isoffline=0;
+
                     SharedPreferences.Editor editor = getSharedPreferences("midascash", MODE_PRIVATE).edit();
+                    editor.putString("isoffline","0");
                     if(ip.getText().toString().equals("")){
 
                     }else {

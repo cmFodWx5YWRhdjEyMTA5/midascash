@@ -4,8 +4,7 @@ import android.content.Intent;
 
 import org.xml.sax.DTDHandler;
 
-import java.math.BigInteger;
-import java.sql.Date;
+import java.util.Date;
 
 /**
  * Created by rwina on 4/20/2018.
@@ -13,7 +12,7 @@ import java.sql.Date;
 
 public class cost {
     String cost_name,cost_image,username,cost_category;
-    BigInteger cost_amount;
+    float cost_amount;
     int cost_type,cost_duration;
     Date cost_createdate;
 
@@ -21,7 +20,7 @@ public class cost {
 
     }
 
-    public cost(String cnam, String cim, String user, String ccat, BigInteger cmon, int ctype, int cdur, Date cdat){
+    public cost(String cnam, String cim, String user, String ccat, float cmon, int ctype, int cdur, Date cdat){
        cost_amount=cmon;
        cost_category=ccat;
        cost_duration=cdur;
@@ -48,7 +47,7 @@ public class cost {
     public  void setCost_category(String ccat){
         cost_category=ccat;
     }
-    public  void setCost_amount(BigInteger cmon){
+    public  void setCost_amount(float cmon){
         cost_amount=cmon;
     }
     public void  setCost_duration(int cdat){
@@ -75,7 +74,7 @@ public class cost {
     public Date getCost_createdate(){
         return cost_createdate;
     }
-    public BigInteger getCost_amount(){
+    public float getCost_amount(){
         return cost_amount;
     }
     public int getCost_type(){

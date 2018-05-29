@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:background="@drawable/borderradius1"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+   android:layout_marginBottom="5sp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="40sp"
+    android:orientation="horizontal">
+
+    <TextView
+        android:layout_width="0sp"
+        android:layout_weight="2"
+        android:layout_marginLeft="20sp"
+        android:textSize="9pt"
+        android:layout_gravity="center"
+        android:textAlignment="textStart"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:id="@+id/accountnameitem"
+        android:text="item" />
+    <TextView
+        android:layout_width="0sp"
+        android:textColor="@color/colorPrimary"
+        android:text="aaaaa"
+        android:gravity="center"
+        android:id="@+id/accountbalanceitem"
+        android:layout_weight="1"
+        android:layout_height="match_parent" />
+
+
+</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <android.support.v7.widget.SwitchCompat
+            android:layout_marginLeft="5sp"
+            android:layout_gravity="center"
+            android:id="@+id/accountsisactive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="false"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textAlignment="textStart"
+            android:layout_height="30sp"
+            android:layout_weight="0.5"
+            android:id="@+id/accountcategoryitem"
+            android:text="Category  :  "/>
+        <ImageView
+            android:layout_width="30sp"
+            android:layout_marginLeft="3sp"
+            android:id="@+id/accountsstatistics"
+            android:layout_gravity="center"
+            android:background="@drawable/baseline_visibility_black_36dp"
+            android:layout_height="30sp" />
+        <ImageView
+            android:layout_marginLeft="3sp"
+            android:layout_width="30sp"
+            android:id="@+id/accountstransactions"
+            android:layout_gravity="center"
+            android:background="@drawable/baseline_list_black_36dp"
+            android:layout_height="30sp" />
+        <ImageView
+            android:layout_width="30sp"
+            android:layout_marginLeft="3sp"
+            android:id="@+id/accountstransfer"
+            android:layout_gravity="center"
+            android:background="@drawable/baseline_repeat_black_36dp"
+            android:layout_height="30sp" />
+        <TextView
+            android:id="@+id/textViewOptions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="textStart"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:paddingLeft="10sp"
+            android:paddingRight="20sp"
+            android:layout_marginLeft="10sp"
+            android:text="&#8942;"
+            android:textAppearance="?android:textAppearanceLarge" />
+    </LinearLayout>
+
+
+</LinearLayout>

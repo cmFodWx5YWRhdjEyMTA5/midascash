@@ -8,12 +8,11 @@
         android:drawableLeft="@drawable/ic_dashboard_black_24dp"
         android:gravity="center"
         android:textSize="10pt"
-        android:paddingLeft="200px"
         android:layout_gravity="center"
         android:paddingTop="10px"
-        android:textAlignment="textStart"
+        android:textAlignment="center"
         android:layout_height="wrap_content"
-        android:text="        Transaction"/>
+        android:text="Transaction"/>
     <View
         android:layout_marginTop="10px"
         android:layout_width="match_parent"
@@ -77,13 +76,13 @@
         android:backgroundTint="@color/colorPrimary"
         android:layout_weight="1"/>
     <Button
-        android:id="@+id/twocashout"
+        android:id="@+id/twolisttransaction"
         android:drawableLeft="@drawable/cashoutresized"
         android:drawableTint="@color/colorAccent"
         android:layout_width="match_parent"
         android:layout_height="0sp"
         android:textAllCaps="false"
-        android:text="Cash Out"
+        android:text="List Transactions"
         android:textSize="10pt"
         android:textColor="@color/colorAccent"
         android:backgroundTint="@color/colorPrimary"

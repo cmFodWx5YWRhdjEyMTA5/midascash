@@ -2,6 +2,7 @@ package midascash.indonesia.optima.prima.midascash.sqlite;
 
 import android.content.Intent;
 
+import java.sql.Time;
 import java.util.Date;
 
 /**
@@ -9,14 +10,16 @@ import java.util.Date;
  */
 
 public class reminder {
-    String reminder_name,reminder_note,reminder_expense,reminder_income;
-    Date reminder_createdate,reminder_time;
+    String reminder_name,reminder_note,reminder_expense,reminder_income,username;
+    Date reminder_createdate;
+    Time reminder_time;
     int reminder_status;
 
     public reminder(){
         
     }
-    public reminder(String rnam,String rnot,String rexp, String rin,Date rcdat,Date rtim,int rstat){
+    public reminder(String rnam,String rnot,String rexp, String rin,Date rcdat,Time rtim,int rstat,String user){
+        username=user;
         reminder_name=rnam;
         reminder_note=rnot;
         reminder_expense=rexp;
@@ -28,6 +31,9 @@ public class reminder {
 
     //setter
 
+    public void setUsername(String user){
+        username = user;
+    }
     public void setReminder_name(String rnam){
         reminder_name=rnam;
     }
@@ -45,7 +51,7 @@ public class reminder {
     public void setReminder_createdate(Date rcdat){
         reminder_createdate =rcdat;
     }
-    public void setReminder_time(Date rtim){
+    public void setReminder_time(Time rtim){
         reminder_time=rtim;
     }
     public void setReminder_status(int stat){
@@ -53,6 +59,11 @@ public class reminder {
     }
 
     //getter
+
+
+    public String getUsername() {
+        return username;
+    }
 
     public String getReminder_name(){
         return reminder_name;
@@ -66,7 +77,7 @@ public class reminder {
     public Date getReminder_createdate(){
         return reminder_createdate;
     }
-    public  Date getReminder_time(){
+    public Time getReminder_time(){
         return reminder_time;
     }
     public int getReminder_status(){

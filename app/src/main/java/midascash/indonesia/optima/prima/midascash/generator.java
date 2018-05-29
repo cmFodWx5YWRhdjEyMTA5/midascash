@@ -38,13 +38,45 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class generator {
 
+    public static int cashflowchoice=0;
+    public static int scheduledchoice=0;
+    public static int acountschoice=0;
+
+    public static String usedcurrency="";
+    public static TextView fragmentpassdate;
+
     public static List<String> listcategory = new ArrayList<String>();
 
     public static TextView statusConnection = null;
     public static String userlogin="";
     public static String ip="";
     public static String port="";
+    public static int isoffline=0;
+    public static int isadmin=0;
     public static String setupfirstisdone="";
+
+    //----------------------income helper-------------------//
+
+    public static EditText incfrom;
+    public static EditText incnote;
+    public static EditText incamount;
+
+    public static String incaccount;
+    public static String incategory;
+    public static String incdate;
+
+    //----------------------income helper-------------------//
+    //----------------------income helper-------------------//
+
+    public static EditText incfrom1;
+    public static EditText incnote1;
+    public static EditText incamount1;
+
+    public static String incaccount1;
+    public static String incategory1;
+    public static String incdate1;
+
+    //----------------------income helper-------------------//
 
     public static void recallipsettings (final Activity context)
     {

@@ -24,6 +24,38 @@
     <include layout="@layout/content_main" />
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="230dp"
+        android:layout_gravity="bottom|end"
+        android:visibility="invisible"
+        android:layout_marginRight="@dimen/fab_margin"
+        app:backgroundTint="@color/colorPrimaryOrange"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
+        android:src="@drawable/transferbutton" />
+
+    <TextView
+        android:id="@+id/fab3text"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:textSize="9pt"
+        android:text="Transfer"
+        android:background="@drawable/borderradius"
+        android:gravity="center"
+        android:textColor="@color/colorAccent"
+        android:padding="10sp"
+        android:paddingStart="20sp"
+        android:paddingEnd="20sp"
+        android:textAlignment="center"
+        android:backgroundTint="@color/colorAccentBlack"
+        android:layout_marginBottom="235dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="70dp"/>
+
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,6 +67,24 @@
         app:elevation="6dp"
         app:pressedTranslationZ="12dp"
         android:src="@drawable/ic_add_white_24dp" />
+    <TextView
+        android:id="@+id/fab2text"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:text="Income"
+        android:textSize="9pt"
+        android:background="@drawable/borderradius"
+        android:gravity="center"
+        android:textColor="@color/colorAccent"
+        android:padding="10sp"
+        android:paddingStart="20sp"
+        android:paddingEnd="20sp"
+        android:textAlignment="center"
+        android:backgroundTint="@color/colorAccentBlack"
+        android:layout_marginBottom="165dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="70dp"/>
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab1"
         android:layout_width="wrap_content"
@@ -47,6 +97,24 @@
         app:backgroundTint="@color/colorPrimaryRed"
         app:pressedTranslationZ="12dp"
         android:src="@drawable/ic_remove_white_24dp" />
+    <TextView
+        android:textSize="9pt"
+        android:id="@+id/fab1text"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:text="Expense"
+        android:layout_height="wrap_content"
+        android:background="@drawable/borderradius"
+        android:gravity="center"
+        android:textColor="@color/colorAccent"
+        android:padding="10sp"
+        android:paddingStart="20sp"
+        android:paddingEnd="20sp"
+        android:textAlignment="center"
+        android:backgroundTint="@color/colorAccentBlack"
+        android:layout_marginBottom="95dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="70dp"/>
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"

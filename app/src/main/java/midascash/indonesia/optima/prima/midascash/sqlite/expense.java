@@ -1,20 +1,20 @@
 package midascash.indonesia.optima.prima.midascash.sqlite;
 
-import java.math.BigInteger;
-import java.sql.Date;
+import java.util.Date;
 
 /**
  * Created by rwina on 4/20/2018.
  */
 
 public class expense {
-    String expense_account,username,expense_to,expense_notes,expense_type,expense_id;
+    String expense_account,username,expense_to,expense_notes,expense_type,expense_id,expense_image;
     Date expense_date,expense_createdate;
-    BigInteger expense_amount;
+    float expense_amount;
 
     public expense(){}
 
-    public expense(String eacc,String etype,String efr,String enot,String eid,Date edat,Date ecdat,BigInteger emon){
+    public expense(String eacc,String etype,String efr,String enot,String eid,Date edat,Date ecdat,float emon,String user){
+        username = user;
         expense_account=eacc;
         expense_amount=emon;
         expense_createdate=ecdat;
@@ -26,6 +26,9 @@ public class expense {
     }
 
     //setter
+    public void setUsername(String euser){username=euser;}
+
+    public void setExpense_image(String eim){expense_image=eim;}
 
     public void setexpense_account(String eacc){
         expense_account=eacc;
@@ -54,11 +57,24 @@ public class expense {
     public void setexpense_createdate(Date ecdat){
         expense_createdate=ecdat;
     }
-    public void setexpense_amount(BigInteger emon){
+    public void setexpense_amount(float emon){
         expense_amount=emon;
     }
 
     //getter
+
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getExpense_image() {
+        return expense_image;
+    }
+
+    public Date getExpense_createdate() {
+        return expense_createdate;
+    }
 
     public String getexpense_account(){
         return expense_account;
@@ -72,7 +88,7 @@ public class expense {
     public String getexpense_notes(){
         return expense_notes;
     }
-    public BigInteger getexpense_amount(){
+    public float getexpense_amount(){
         return expense_amount;
     }
     public String getexpense_id(){
@@ -80,8 +96,5 @@ public class expense {
     }
     public Date getexpense_date(){
         return expense_date;
-    }
-    public Date getexpense_createdate(){
-        return expense_createdate;
     }
 }

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <android.support.design.widget.TextInputLayout
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:backgroundTint="@color/colorAccentBlack"
+        android:id="@+id/input_valuecatch"
+        android:layout_width="0sp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:nextFocusUp="@id/input_value"
+            android:nextFocusLeft="@id/input_value"
+            android:backgroundTint="@color/colorAccentBlack"
+            android:id="@+id/input_value"
+            android:inputType="numberDecimal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Value" />
+
+
+    </android.support.design.widget.TextInputLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:id="@+id/allcurrency"
+            android:textSize="10pt"
+            android:layout_height="match_parent"
+            android:text="$"/>
+        <LinearLayout
+            android:layout_width="0sp"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:id="@+id/expcalc"
+                android:src="@drawable/calcresized"
+                />
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="34dp"
+            android:layout_margin="10sp"
+            android:layout_height="34dp"
+            android:src="@drawable/add"
+            app:civ_border_width="2dp"
+            app:civ_border_color="#FF000000"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="  Account chosen"
+            android:gravity="center"
+            android:textAlignment="textStart"
+            android:textSize="10pt"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10sp"
+            android:background="@drawable/ic_account_balance_black_24dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="  Wallet"
+            android:gravity="center"
+            android:textAlignment="textStart"
+            android:textSize="10pt"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10sp"
+            android:background="@drawable/ic_event_black_24dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="  25/04/2018"
+            android:gravity="center"
+            android:textAlignment="textStart"
+            android:textSize="10pt"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:id="@+id/allscheduled"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10sp"
+            android:background="@drawable/ic_person_black_24dp"/>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/allinput"
+            android:backgroundTint="@color/colorAccentBlack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:hint="To (Optional)"
+                android:backgroundTint="@color/colorAccentBlack"
+                android:id="@+id/allfrom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
+        </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10sp"
+            android:background="@drawable/ic_mode_edit_black_24dp"/>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/allnotes"
+            android:backgroundTint="@color/colorAccentBlack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:backgroundTint="@color/colorAccentBlack"
+                android:id="@+id/allnotesdata"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Notes (Optional)" />
+
+
+        </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageButton
+            android:layout_width="0sp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/colorPrimaryRed"
+            android:layout_height="55sp"
+            android:src="@drawable/baseline_camera_enhance_white_36dp">
+        </ImageButton>
+        <ImageButton
+            android:layout_width="0sp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/colorPrimaryRed"
+            android:layout_height="55sp"
+            android:src="@drawable/baseline_image_white_36dp">
+        </ImageButton>
+
+    </LinearLayout>
+</LinearLayout>

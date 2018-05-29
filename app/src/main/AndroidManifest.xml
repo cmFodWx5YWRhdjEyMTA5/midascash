@@ -30,10 +30,87 @@
         <activity android:name=".MainActivity"
             android:theme="@style/AppTheme"
         android:screenOrientation="portrait"></activity>
+        <activity android:name=".transactionactivity.categorylist"
+            android:label="Category"
+            android:theme="@style/AppThemeactionbar"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".transactionactivity.accountlist"
+            android:label="Accounts"
+            android:theme="@style/AppThemeactionbar"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".transactionactivity.income"
+            android:label="Income"
+            android:theme="@style/AppThemeactionbargreen"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".transactionactivity.expense"
+            android:theme="@style/AppThemeactionbarred"
+            android:label="Expense"
+            android:screenOrientation="portrait"></activity>
+
+        <activity android:name=".transactionactivity.transfer"
+            android:theme="@style/AppThemeactionbarorange"
+            android:label="Transfer"
+            android:screenOrientation="portrait"></activity>
+
+        <activity android:name=".transactionactivity.reminderdata"
+            android:theme="@style/AppThemeactionbar"
+            android:label="Reiminder"
+            android:screenOrientation="portrait"></activity>
+
+        <activity android:name=".reports.accountsandcategory"
+            android:theme="@style/AppThemeactionbar"
+            android:label="Accounts"
+            android:screenOrientation="portrait"></activity>
+
+        <activity android:name=".reports.cashflow"
+            android:theme="@style/AppThemeactionbar"
+            android:label="Cash Flow"
+            android:screenOrientation="portrait"></activity>
+
+        <activity android:name=".reports.chartofbalance"
+            android:theme="@style/AppThemeactionbar"
+            android:label="Report By Chart"
+            android:screenOrientation="portrait"></activity>
+
+        <activity android:name=".reports.schedulelist"
+            android:theme="@style/AppThemeactionbar"
+            android:label="Schedules"
+            android:screenOrientation="portrait"></activity>
+
+        <activity android:name=".reports.summary"
+            android:theme="@style/AppThemeactionbar"
+            android:label="Summary"
+            android:screenOrientation="portrait"></activity>
+
+        <activity android:name=".help"
+            android:theme="@style/AppThemeactionbar"
+            android:label="Summary"
+            android:screenOrientation="portrait"></activity>
+
+        <activity android:name=".about"
+            android:theme="@style/AppThemeactionbar"
+            android:label="Summary"
+            android:screenOrientation="portrait"></activity>
 
         <activity android:name=".firstpage"
             android:theme="@style/NoActionBar"
             android:screenOrientation="portrait"></activity>
+
+        <activity android:name=".reports.listexpense"
+            android:theme="@style/AppThemeactionbar"
+            android:label="Summary"
+            android:screenOrientation="portrait"></activity>
+
+        <activity android:name=".reports.listincome"
+            android:theme="@style/AppThemeactionbar"
+            android:label="Summary"
+            android:screenOrientation="portrait"></activity>
+
+        <activity android:name=".reports.listtransfer"
+            android:theme="@style/NoActionBar"
+            android:screenOrientation="portrait"></activity>
+
+
 
         <receiver android:name=".alarmnotification.alarmreceiver"
             android:enabled="true">

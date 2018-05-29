@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "295323727797",
+    "firebase_url": "https://midascash-27552.firebaseio.com",
+    "project_id": "midascash-27552",
+    "storage_bucket": "midascash-27552.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:295323727797:android:89fce4ddbecf3992",
+        "android_client_info": {
+          "package_name": "midascash.indonesia.optima.prima.midascash"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "295323727797-bae1tgmud8o1qp3dmeujija9dn9a15ii.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "midascash.indonesia.optima.prima.midascash",
+            "certificate_hash": "622465487c1d1377da28927e9e4523c470b56865"
+          }
+        },
+        {
+          "client_id": "295323727797-auhu45b7b0sb4hb8d2fb39kkgg1qqjsv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "midascash.indonesia.optima.prima.midascash",
+            "certificate_hash": "b649b6d1f6a7b890920a19b541c5388f19066621"
+          }
+        },
+        {
+          "client_id": "295323727797-l2p1ug9empgi62cb0ams6be56hr2ghil.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "295323727797-l2p1ug9empgi62cb0ams6be56hr2ghil.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWx-ldPia7PfGtwTPZCFkXFOboltdcuxo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "295323727797-l2p1ug9empgi62cb0ams6be56hr2ghil.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

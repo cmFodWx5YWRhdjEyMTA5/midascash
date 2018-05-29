@@ -42,9 +42,11 @@ public class splashscreen extends Activity {
                         SharedPreferences prefs = getSharedPreferences("midascash", MODE_PRIVATE);
                         generator.ip = prefs.getString("ip", "");
                         generator.port= prefs.getString("port", "");
+                        generator.isoffline= Integer.parseInt(prefs.getString("isoffline", "0"));
                         generator.setupfirstisdone = prefs.getString("firstsetup", "");
                         if(generator.setupfirstisdone.equals("")){
-                            Intent i = new Intent(splashscreen.this,firstpage.class);
+
+                            Intent i = new Intent(splashscreen.this,MainActivity.class);
                             startActivity(i);
                             finish();
                         }
