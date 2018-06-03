@@ -31,6 +31,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:singleLine="true"
                     android:backgroundTint="@color/colorAccentBlack"
                     android:id="@+id/allrepeatevery"
                     android:layout_width="match_parent"
@@ -42,6 +43,7 @@
         </LinearLayout>
         <Spinner
             android:layout_width="0sp"
+            android:id="@+id/allrepeatrepriod"
             android:layout_weight="0.7"
             style="@style/Widget.AppCompat.Spinner.Underlined"
             android:layout_height="match_parent"></Spinner>
@@ -68,6 +70,7 @@
                 <EditText
                     android:backgroundTint="@color/colorAccentBlack"
                     android:id="@+id/allrepeattime"
+                    android:singleLine="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Number of times" />

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
@@ -222,9 +223,15 @@ public class accountlist extends AppCompatActivity{
             String[] parts = string.split("-");
             String part1 = parts[0]; // 004
             String part2 = parts[1]; // 034556
-
-            holder.accountbalance.setText(formatter.format(Double.parseDouble(acc.getAccount_balance()))+" "+part1.trim());
+            holder.accountbalance.setText(formatter.format(Double.parseDouble(acc.getAccount_balance_current()))+" "+part1.trim());
+            if(Double.parseDouble(acc.getAccount_balance_current())>=0){
+                holder.accountbalance.setTextColor(generator.green);
+            }
+            else {
+                holder.accountbalance.setTextColor(generator.red);
+            }
             holder.accountname.setText(acc.getAccount_name());
+            holder.accountname.setTextColor(Color.BLACK);
 
             holder.isactive.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

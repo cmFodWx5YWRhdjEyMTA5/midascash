@@ -607,7 +607,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         td.setIncome_from(c.getString(c.getColumnIndex(KEY_INCOME_FROM)));
         td.setIncome_id(c.getString(c.getColumnIndex(KEY_INCOME_ID)));
 
-        td.setIncome_image(c.getString(c.getColumnIndex(KEY_INCOME_IMAGE)));
+        td.setIncome_image(c.getInt(c.getColumnIndex(KEY_INCOME_IMAGE)));
         td.setIncome_notes(c.getString(c.getColumnIndex(KEY_INCOME_NOTES)));
         td.setIncome_type(c.getString(c.getColumnIndex(KEY_INCOME_TYPE)));
 
@@ -656,7 +656,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 td.setIncome_from(c.getString(c.getColumnIndex(KEY_INCOME_FROM)));
                 td.setIncome_id(c.getString(c.getColumnIndex(KEY_INCOME_ID)));
 
-                td.setIncome_image(c.getString(c.getColumnIndex(KEY_INCOME_IMAGE)));
+                td.setIncome_image(c.getInt(c.getColumnIndex(KEY_INCOME_IMAGE)));
                 td.setIncome_notes(c.getString(c.getColumnIndex(KEY_INCOME_NOTES)));
                 td.setIncome_type(c.getString(c.getColumnIndex(KEY_INCOME_TYPE)));
 

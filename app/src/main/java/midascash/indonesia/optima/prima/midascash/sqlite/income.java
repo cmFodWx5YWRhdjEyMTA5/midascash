@@ -2,18 +2,15 @@ package midascash.indonesia.optima.prima.midascash.sqlite;
 
 import java.util.Date;
 
-/**
- * Created by rwina on 4/20/2018.
- */
-
 public class income {
-    String income_account,income_type,income_from,income_notes,income_id,username,income_image;
+    String income_account,income_type,income_from,income_notes,income_id,username;
+    int income_image;
     Date income_date,income_createdate;
-    float income_amount;
+    double income_amount;
 
     public income(){}
 
-    public income(String iacc,String itype,String ifr,String inot,String iid,Date idat,Date icdat,float imon,String user){
+    public income(String iacc,String itype,String ifr,String inot,String iid,Date idat,Date icdat,double imon,int image,String user){
         username=user;
         income_account=iacc;
         income_amount=imon;
@@ -23,6 +20,7 @@ public class income {
         income_type=itype;
         income_notes=inot;
         income_id=iid;
+        income_image= image;
     }
 
     //setter
@@ -35,7 +33,7 @@ public class income {
         username=user;
     }
 
-    public void setIncome_image(String image){ income_image=image;}
+    public void setIncome_image(int image){ income_image=image;}
 
     public void setIncome_type(String itype){
         income_type=itype;
@@ -60,7 +58,7 @@ public class income {
     public void setIncome_createdate(Date icdat){
         income_createdate=icdat;
     }
-    public void setIncome_amount(float imon){
+    public void setIncome_amount(double imon){
         income_amount=imon;
     }
 
@@ -71,7 +69,7 @@ public class income {
         return username;
     }
 
-    public String getIncome_image() {
+    public int getIncome_image() {
         return income_image;
     }
 
@@ -89,7 +87,7 @@ public class income {
     public String getIncome_notes(){
         return income_notes;
     }
-    public float getIncome_amount(){
+    public double getIncome_amount(){
         return income_amount;
     }
     public String getIncome_id(){

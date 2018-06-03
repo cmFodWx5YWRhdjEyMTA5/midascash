@@ -96,17 +96,17 @@
             android:theme="@style/NoActionBar"
             android:screenOrientation="portrait"></activity>
 
-        <activity android:name=".reports.listexpense"
-            android:theme="@style/AppThemeactionbar"
+        <activity android:name=".fragment_list_transaction.listexpense"
+            android:theme="@style/AppThemeactionbarred"
             android:label="Summary"
             android:screenOrientation="portrait"></activity>
 
-        <activity android:name=".reports.listincome"
-            android:theme="@style/AppThemeactionbar"
+        <activity android:name=".fragment_list_transaction.listincome"
+            android:theme="@style/AppThemeactionbargreen"
             android:label="Summary"
             android:screenOrientation="portrait"></activity>
 
-        <activity android:name=".reports.listtransfer"
+        <activity android:name=".fragment_list_transaction.listtransfer"
             android:theme="@style/NoActionBar"
             android:screenOrientation="portrait"></activity>
 

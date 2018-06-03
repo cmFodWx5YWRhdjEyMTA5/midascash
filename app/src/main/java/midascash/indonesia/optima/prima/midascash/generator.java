@@ -6,6 +6,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.app.AlertDialog;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +39,9 @@ import static android.content.Context.MODE_PRIVATE;
  */
 
 public class generator {
+    public static int green =Color.parseColor("#00dd00");
+    public static int red =Color.parseColor("#dd0000");
+    public static int blue =Color.parseColor("#0000dd");
 
     public static int cashflowchoice=0;
     public static int scheduledchoice=0;
@@ -55,6 +60,8 @@ public class generator {
     public static int isadmin=0;
     public static String setupfirstisdone="";
 
+    public static String isdone="0";
+
     //----------------------income helper-------------------//
 
     public static EditText incfrom;
@@ -64,9 +71,11 @@ public class generator {
     public static String incaccount;
     public static String incategory;
     public static String incdate;
+    public static String incdocument;
+    public static String incbalanceleft;
 
     //----------------------income helper-------------------//
-    //----------------------income helper-------------------//
+    //----------------------incomelist helper-------------------//
 
     public static EditText incfrom1;
     public static EditText incnote1;
@@ -75,8 +84,44 @@ public class generator {
     public static String incaccount1;
     public static String incategory1;
     public static String incdate1;
+    public static String incdocument1;
+    public static String incbalanceleft1;
 
-    //----------------------income helper-------------------//
+    public static EditText repeatevery;
+    public static EditText repeattime;
+    public static Spinner period;
+
+    //----------------------incomelist helper-------------------//
+    //----------------------expense helper-------------------//
+
+    public static EditText expto;
+    public static EditText expnote;
+    public static EditText expamount;
+
+    public static String expaccount;
+    public static String expategory;
+    public static String expdate;
+    public static String expdocument;
+    public static String expbalanceleft;
+
+    //----------------------expense helper-------------------//
+    //----------------------expenselist helper-------------------//
+
+    public static EditText expto1;
+    public static EditText expnote1;
+    public static EditText expamount1;
+
+    public static String expaccount1;
+    public static String expategory1;
+    public static String expdate1;
+    public static String getExpdocument1;
+    public static String expbalanceleft1;
+
+    public static EditText exprepeatevery;
+    public static EditText exprepeattime;
+    public static Spinner expperiod;
+
+    //----------------------expenselist helper-------------------//
 
     public static void recallipsettings (final Activity context)
     {

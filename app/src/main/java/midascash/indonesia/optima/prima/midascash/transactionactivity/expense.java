@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -12,14 +13,31 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import midascash.indonesia.optima.prima.midascash.R;
 import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_expense;
 import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_expenselist;
+import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_income;
+import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_incomelist;
+import midascash.indonesia.optima.prima.midascash.generator;
 
 /**
  * Created by rwina on 4/23/2018.
@@ -28,8 +46,15 @@ import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_
 public class expense extends AppCompatActivity {
 
 
-    ViewPager vpincome;
+    ViewPager vpexpense;
     Button save,cancel;
+
+    FirebaseFirestore db;
+
+    int positiondata;
+
+    fragment_expense expensepg1;
+    fragment_expenselist expensepg2;
 
     // Create an adapter that knows which fragment should be shown on each page
     SimpleFragmentPagerAdapter adapter;
@@ -53,10 +78,12 @@ public class expense extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense);
 
+        db =FirebaseFirestore.getInstance();
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        vpincome = (ViewPager) findViewById(R.id.viewpagerexpense);
+        vpexpense = (ViewPager) findViewById(R.id.viewpagerexpense);
         tabLayout = (TabLayout) findViewById(R.id.tabexpense);
 
 
@@ -65,12 +92,7 @@ public class expense extends AppCompatActivity {
         save = (Button) findViewById(R.id.btnsaveexpense);
         cancel = findViewById(R.id.btncancelexpense);
 
-        save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-            }
-        });
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,8 +115,106 @@ public class expense extends AppCompatActivity {
             }
         });
 
-        vpincome.setAdapter(adapter);
-        tabLayout.setupWithViewPager(vpincome);
+        vpexpense.setAdapter(adapter);
+        tabLayout.setupWithViewPager(vpexpense);
+
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener(){
+            @Override
+            public void onTabSelected(TabLayout.Tab tab){
+                positiondata  = tab.getPosition();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(positiondata==0){
+                    expensepg1 = new fragment_expense();
+                    expensepg1.check(expense.this);
+                    expensepg1.writeobjects();
+                    if(expensepg1.issaveable(expense.this)==false){
+                        Toast.makeText(expense.this, "Please Check Some Fields", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                        Date strDate = null;
+                        try {
+                            strDate = sdf.parse(generator.expdate);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        if (new Date().after(strDate) || new Date().equals(strDate)) {
+                            expensepg1.calculatebalance();
+                            generator.isdone="1";
+                        }
+                        expensepg1.writeobjects();
+                        Toast.makeText(expense.this, "Saving expense...", Toast.LENGTH_SHORT).show();
+                        db.collection("expense")
+                                .add(expensepg1.getthemap())
+                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                    @Override
+                                    public void onSuccess(DocumentReference documentReference) {
+                                        Map<String, Object> data = new HashMap<>();
+                                        data.put("account_balance_current", generator.expbalanceleft );
+
+                                        db.collection("account").document(generator.expdocument)
+                                                .set(data, SetOptions.merge());
+                                        generator.isdone="0";
+                                        finish();
+                                        Toast.makeText(expense.this, "New expense Added", Toast.LENGTH_SHORT).show();
+                                        Log.e("Add data", "DocumentSnapshot added with ID: " + documentReference.getId());
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.e("error data add", "Error adding document", e);
+                                    }
+                                });
+                    }
+                }
+                else if (positiondata==1) {
+                    expensepg2 = new fragment_expenselist();
+                    expensepg2.check(expense.this);
+                    expensepg2.writeobjects();
+                    if(expensepg2.issaveable(expense.this)==false){
+                        Toast.makeText(expense.this, "Please Check Some Fields", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Toast.makeText(expense.this, "Saving Scheduled expense...", Toast.LENGTH_SHORT).show();
+                        db.collection("expense")
+                                .add(expensepg2.getthemap())
+                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                    @Override
+                                    public void onSuccess(DocumentReference documentReference) {
+                                        finish();
+                                        Toast.makeText(expense.this, "New Scheduled expense Added", Toast.LENGTH_SHORT).show();
+                                        Log.e("Add data", "DocumentSnapshot added with ID: " + documentReference.getId());
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(expense.this, "Error Adding Scheduled expense : "+e.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                                        Log.e("error data add", "Error adding document", e);
+                                    }
+                                });
+                    }
+                }
+            }
+        });
+
 
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
             tabLayout.getTabAt(0).setIcon(R.drawable.ic_list_white_24dp);
@@ -150,14 +270,14 @@ public class expense extends AppCompatActivity {
         expense.this.overridePendingTransition(R.anim.trans_right_in,
                 R.anim.trans_right_out);
 
-        if (vpincome.getCurrentItem() == 0) {
+        if (vpexpense.getCurrentItem() == 0) {
             // If the user is currently looking at the first step, allow the system to handle the
             // Back button. This calls finish() on this activity and pops the back stack.
             super.onBackPressed();
             finish();
         } else {
             // Otherwise, select the previous step.
-            vpincome.setCurrentItem(vpincome.getCurrentItem() - 1);
+            vpexpense.setCurrentItem(vpexpense.getCurrentItem() - 1);
         }
     }
 
@@ -170,7 +290,7 @@ public class expense extends AppCompatActivity {
 
 
         if (id == android.R.id.home) {
-            if (vpincome.getCurrentItem() == 0) {
+            if (vpexpense.getCurrentItem() == 0) {
                 // If the user is currently looking at the first step, allow the system to handle the
                 // Back button. This calls finish() on this activity and pops the back stack.
                 super.onBackPressed();
@@ -178,7 +298,7 @@ public class expense extends AppCompatActivity {
                 return true;
             } else {
                 // Otherwise, select the previous step.
-                vpincome.setCurrentItem(vpincome.getCurrentItem() - 1);
+                vpexpense.setCurrentItem(vpexpense.getCurrentItem() - 1);
                 return true;
             }
         }

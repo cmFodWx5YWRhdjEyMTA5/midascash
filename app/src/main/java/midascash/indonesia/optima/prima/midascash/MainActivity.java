@@ -2,6 +2,7 @@ package midascash.indonesia.optima.prima.midascash;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -40,10 +41,13 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.mynameismidori.currencypicker.CurrencyPicker;
 import com.mynameismidori.currencypicker.CurrencyPickerListener;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -55,9 +59,9 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 import midascash.indonesia.optima.prima.midascash.recycleview.adapterviewcategory;
 import midascash.indonesia.optima.prima.midascash.reports.chartofbalance;
-import midascash.indonesia.optima.prima.midascash.reports.listexpense;
-import midascash.indonesia.optima.prima.midascash.reports.listincome;
-import midascash.indonesia.optima.prima.midascash.reports.listtransfer;
+import midascash.indonesia.optima.prima.midascash.fragment_list_transaction.listexpense;
+import midascash.indonesia.optima.prima.midascash.fragment_list_transaction.listincome;
+import midascash.indonesia.optima.prima.midascash.fragment_list_transaction.listtransfer;
 import midascash.indonesia.optima.prima.midascash.reports.summary;
 import midascash.indonesia.optima.prima.midascash.transactionactivity.accountlist;
 import midascash.indonesia.optima.prima.midascash.transactionactivity.categorylist;
@@ -73,6 +77,9 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     FirebaseFirestore db;
+    SharedPreferences prefs;
+    SharedPreferences.Editor editor;
+    DecimalFormat formatter = new DecimalFormat("###,###,###.00");
     private Boolean isFabOpen = false;
     private TextView fab1txt,fab2txt,fab3txt;
     private FloatingActionButton fab,fab1,fab2,fab3;
@@ -91,7 +98,10 @@ public class MainActivity extends AppCompatActivity
 
         db = FirebaseFirestore.getInstance();
 
+        prefs = getSharedPreferences("midascash", MODE_PRIVATE);
+        editor = getSharedPreferences("midascash", MODE_PRIVATE).edit();
 
+        syncdata();
       /*  Map<String, Object> user = new HashMap<>();
         user.put("username", "administrator");
         user.put("password", "administrator");
@@ -1186,5 +1196,281 @@ public class MainActivity extends AppCompatActivity
                 });
                 dialog1.show();
 
+            }
+
+
+            private void syncdata(){
+                DateFormat mainformat = new SimpleDateFormat("dd/MM/yyyy");
+                if(prefs.getString("dateprocess","").equals("")){
+                    db.collection("income")
+                            .whereEqualTo("income_isdone", "0")
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            Log.e("data splash", document.getId() + " => " + document.getData());
+
+                                            if(!document.getData().get("income_repeat_period").toString().equals("")){
+
+
+                                            }
+                                            else {
+                                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                                                Date strDate = null;
+                                                try {
+                                                    strDate = sdf.parse(document.getData().get("income_date").toString());
+                                                } catch (ParseException e) {
+                                                    e.printStackTrace();
+                                                }
+                                                if (mainformat.format(new Date()).equals(mainformat.format(strDate)) || new Date().after(strDate)){
+                                                    Double pendingamount= Double.parseDouble(document.getData().get("income_amount").toString());
+                                                    db.collection("account")
+                                                            .whereEqualTo("account_name", document.getData().get("income_account").toString())
+                                                            .get()
+                                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                    if (task.isSuccessful()) {
+                                                                        for (QueryDocumentSnapshot document1 : task.getResult()) {
+                                                                            Log.e("data splash", document1.getId() + " => " + document1.getData());
+                                                                            Map<String, Object> data = new HashMap<>();
+                                                                            data.put("account_balance_current", formatter.format(pendingamount +Double.parseDouble(document1.getData().get("account_balance_current").toString())).replace(",","") );
+                                                                            db.collection("account").document(document1.getId())
+                                                                                    .set(data, SetOptions.merge());
+
+                                                                            Map<String, Object> data1 = new HashMap<>();
+                                                                            data1.put("income_isdone","1");
+                                                                            db.collection("income").document(document.getId())
+                                                                                    .set(data1, SetOptions.merge());
+                                                                        }
+                                                                    } else {
+                                                                        Log.d("data splash weeor", "Error getting documents: ", task.getException());
+                                                                    }
+                                                                }
+                                                            });
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        Log.d("data splash weeor", "Error getting documents: ", task.getException());
+                                    }
+                                }
+                            });
+                    //  DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                    // final String date = df.format(Calendar.getInstance().getTime());
+                    // editor.putString("dateprocess",date);
+                    //  editor.apply();
+                    db.collection("expense")
+                            .whereEqualTo("expense_isdone", "0")
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                            Log.e("data splash", document.getId() + " => " + document.getData());
+
+                                            if(!document.getData().get("expense_repeat_period").toString().equals("")){
+
+
+                                            }
+                                            else {
+                                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                                                Date strDate = null;
+                                                try {
+                                                    strDate = sdf.parse(document.getData().get("expense_date").toString());
+                                                } catch (ParseException e) {
+                                                    e.printStackTrace();
+                                                }
+                                                if (mainformat.format(new Date()).equals(mainformat.format(strDate)) || new Date().after(strDate)){
+                                                    Log.e("Date result : ","Same");
+                                                    Double pendingamount= Double.parseDouble(document.getData().get("expense_amount").toString());
+                                                    db.collection("account")
+                                                            .whereEqualTo("account_name", document.getData().get("expense_account").toString())
+                                                            .get()
+                                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                    if (task.isSuccessful()) {
+                                                                        for (QueryDocumentSnapshot document1 : task.getResult()) {
+                                                                            Log.e("data splash", document1.getId() + " => " + document1.getData());
+                                                                            Map<String, Object> data = new HashMap<>();
+                                                                            data.put("account_balance_current", formatter.format(Double.parseDouble(document1.getData().get("account_balance_current").toString()) - pendingamount).replace(",","")  );
+                                                                            db.collection("account").document(document1.getId())
+                                                                                    .set(data, SetOptions.merge());
+
+                                                                            Map<String, Object> data1 = new HashMap<>();
+                                                                            data.put("expense_isdone","1" );
+                                                                            db.collection("expense").document(document.getId())
+                                                                                    .set(data, SetOptions.merge());
+                                                                        }
+                                                                    } else {
+                                                                        Log.d("data splash weeor", "Error getting documents: ", task.getException());
+                                                                    }
+                                                                }
+                                                            });
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        Log.d("data splash weeor", "Error getting documents: ", task.getException());
+                                    }
+                                }
+                            });
+
+                    DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                    final String date = df.format(Calendar.getInstance().getTime());
+                    editor.putString("dateprocess",date);
+                    editor.apply();
+                }else {
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                    Date strDate = null;
+                    try {
+                        strDate = sdf.parse(prefs.getString("dateprocess",""));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    Log.e("date new", "syncdata: "+sdf.format(Calendar.getInstance().getTime()));
+                    Log.e("date old", "syncdata: "+prefs.getString("dateprocess",""));
+                    Log.e("date old date", "syncdata: "+sdf.format(new Date()));
+                    if (mainformat.format(new Date()).equals(mainformat.format(strDate))){
+                        Toast.makeText(this, "Loading Preferences...", Toast.LENGTH_SHORT).show();
+                    } else if(new Date().after(strDate)) {
+                        Toast.makeText(this, "Loading Preferences...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Refreshing Pending Balances...", Toast.LENGTH_SHORT).show();
+
+
+                        db.collection("income")
+                                .whereEqualTo("income_isdone", "0")
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                Log.e("data splash", document.getId() + " => " + document.getData());
+
+                                                if(!document.getData().get("income_repeat_period").toString().equals("")){
+
+
+                                                }
+                                                else {
+                                                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                                                    Date strDate = null;
+                                                    try {
+                                                        strDate = sdf.parse(document.getData().get("income_date").toString());
+                                                    } catch (ParseException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                    if (mainformat.format(new Date()).equals(mainformat.format(strDate)) || new Date().after(strDate)){
+                                                        Double pendingamount= Double.parseDouble(document.getData().get("income_amount").toString());
+                                                        db.collection("account")
+                                                                .whereEqualTo("account_name", document.getData().get("income_account").toString())
+                                                                .get()
+                                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                        if (task.isSuccessful()) {
+                                                                            for (QueryDocumentSnapshot document1 : task.getResult()) {
+                                                                                Log.e("data splash", document1.getId() + " => " + document1.getData());
+                                                                                Map<String, Object> data = new HashMap<>();
+                                                                                data.put("account_balance_current", formatter.format(pendingamount +Double.parseDouble(document1.getData().get("account_balance_current").toString())).replace(",","") );
+                                                                                db.collection("account").document(document1.getId())
+                                                                                        .set(data, SetOptions.merge());
+
+                                                                                Map<String, Object> data1 = new HashMap<>();
+                                                                                data1.put("income_isdone","1");
+                                                                                db.collection("income").document(document.getId())
+                                                                                        .set(data1, SetOptions.merge());
+                                                                            }
+                                                                        } else {
+                                                                            Log.d("data splash weeor", "Error getting documents: ", task.getException());
+                                                                        }
+                                                                    }
+                                                                });
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            Log.d("data splash weeor", "Error getting documents: ", task.getException());
+                                        }
+                                    }
+                                });
+                        //  DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                        // final String date = df.format(Calendar.getInstance().getTime());
+                        // editor.putString("dateprocess",date);
+                        //  editor.apply();
+                        db.collection("expense")
+                                .whereEqualTo("expense_isdone", "0")
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                Log.e("data splash", document.getId() + " => " + document.getData());
+
+                                                if(!document.getData().get("expense_repeat_period").toString().equals("")){
+
+
+                                                }
+                                                else {
+                                                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                                                    Date strDate = null;
+                                                    try {
+                                                        strDate = sdf.parse(document.getData().get("expense_date").toString());
+                                                    } catch (ParseException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                    if (mainformat.format(new Date()).equals(mainformat.format(strDate)) || new Date().after(strDate)){
+                                                        Log.e("Date result : ","Same");
+                                                        Double pendingamount= Double.parseDouble(document.getData().get("expense_amount").toString());
+                                                        db.collection("account")
+                                                                .whereEqualTo("account_name", document.getData().get("expense_account").toString())
+                                                                .get()
+                                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                        if (task.isSuccessful()) {
+                                                                            for (QueryDocumentSnapshot document1 : task.getResult()) {
+                                                                                Log.e("data splash", document1.getId() + " => " + document1.getData());
+                                                                                Map<String, Object> data = new HashMap<>();
+                                                                                data.put("account_balance_current", formatter.format(Double.parseDouble(document1.getData().get("account_balance_current").toString()) - pendingamount).replace(",","")  );
+                                                                                db.collection("account").document(document1.getId())
+                                                                                        .set(data, SetOptions.merge());
+
+                                                                                Map<String, Object> data1 = new HashMap<>();
+                                                                                data1.put("expense_isdone","1");
+                                                                                db.collection("expense").document(document.getId())
+                                                                                        .set(data1, SetOptions.merge());
+                                                                            }
+                                                                        } else {
+                                                                            Log.d("data splash weeor", "Error getting documents: ", task.getException());
+                                                                        }
+                                                                    }
+                                                                });
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            Log.d("data splash weeor", "Error getting documents: ", task.getException());
+                                        }
+                                    }
+                                });
+                        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                        final String date = df.format(Calendar.getInstance().getTime());
+                        editor.putString("dateprocess",date);
+                        editor.apply();
+
+                    }else if(new Date().before(strDate)){
+                        Toast.makeText(this, "Internal Error ! Fixing preferences..", Toast.LENGTH_SHORT).show();
+                        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                        final String date = df.format(Calendar.getInstance().getTime());
+                        editor.putString("dateprocess",date);
+                        editor.apply();
+                    }
+                }
             }
         }

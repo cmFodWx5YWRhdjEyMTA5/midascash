@@ -8,7 +8,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,7 +45,7 @@ public class calculatordialog {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 
-        View v = inflater.inflate(R.layout.layour_calculator,null);
+        View v = inflater.inflate(R.layout.layout_calculator,null);
 
         current = v.findViewById(R.id.txtInput);
         current.setText("0");

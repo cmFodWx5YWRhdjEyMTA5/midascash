@@ -51,6 +51,7 @@
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
+        android:id="@+id/linearcattap"
         android:layout_height="wrap_content">
         <de.hdodenhof.circleimageview.CircleImageView
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -58,17 +59,20 @@
             android:layout_margin="10sp"
             android:layout_height="34dp"
             android:src="@drawable/add"
-            app:civ_border_width="2dp"
+            android:id="@+id/expcatpic"
             app:civ_border_color="#FF000000"/>
         <TextView
+            android:layout_marginLeft="10sp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="  Account chosen"
+            android:text="Category Selection"
+            android:id="@+id/expcat"
             android:gravity="center"
             android:textAlignment="textStart"
             android:textSize="10pt"/>
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/linearacctap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ImageView
@@ -81,12 +85,15 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="  Wallet"
+            android:text="Account Selection"
+            android:layout_marginLeft="10sp"
+            android:id="@+id/expacc"
             android:gravity="center"
             android:textAlignment="textStart"
             android:textSize="10pt"/>
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/linearaccdat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ImageView
@@ -96,6 +103,7 @@
             android:layout_margin="10sp"
             android:background="@drawable/ic_event_black_24dp"/>
         <TextView
+            android:id="@+id/expdat"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="  25/04/2018"
@@ -128,7 +136,7 @@
             <EditText
                 android:hint="To (Optional)"
                 android:backgroundTint="@color/colorAccentBlack"
-                android:id="@+id/allfrom"
+                android:id="@+id/expto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -152,7 +160,7 @@
 
             <EditText
                 android:backgroundTint="@color/colorAccentBlack"
-                android:id="@+id/allnotesdata"
+                android:id="@+id/expnote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Notes (Optional)" />

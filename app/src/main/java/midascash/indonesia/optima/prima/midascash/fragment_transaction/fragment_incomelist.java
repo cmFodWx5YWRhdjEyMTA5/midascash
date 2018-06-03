@@ -22,7 +22,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -52,6 +54,9 @@ public class fragment_incomelist extends Fragment {
     LayoutInflater inflater;
     LinearLayout contain,subcontain;
 
+    Spinner period;
+    EditText repettimes,repeatcount;
+
     calculatordialog calculatorchoice;
 
     TextView datetext;
@@ -60,7 +65,7 @@ public class fragment_incomelist extends Fragment {
 
     Calendar myCalendar = Calendar.getInstance();
 
-    String amountdata="",accountdata="",categorydata="",typedata="",datedata="",fromdata="",notesdata="",repeattime="",repeatperiod="",repeatcount="";
+    String amountdata="",accountdata="",categorydata="",typedata="",datedata="",fromdata="",notesdata="",repeattimedata="",repeatperioddata="",repeatcountdata="";
 
     MySimpleArrayAdapter adapter;
     myaccountlisadapter adapteraccount;
@@ -138,6 +143,7 @@ public class fragment_incomelist extends Fragment {
         datedata="";
         fromdata="";
         notesdata="";
+
     }
     public fragment_incomelist(){
 
@@ -153,6 +159,7 @@ public class fragment_incomelist extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        clearvalues();
         LinearLayout accountselect,categoryselect,dateselect;
         TextView changedcurrency;
 
@@ -164,12 +171,16 @@ public class fragment_incomelist extends Fragment {
         contain = view.findViewById(R.id.llincomelist);
 
         inflater = getActivity().getLayoutInflater();
+
         View child = inflater.inflate(R.layout.layout_transactionincome, null);
-        EditText editfrom = child.findViewById(R.id.input_value);
-        editfrom.setSelected(false);
 
         TextInputLayout editformcat = child.findViewById(R.id.input_valuecatch);
         editformcat.setSelected(false);
+
+        viewcat = child.findViewById(R.id.inccatpic);
+        categorytext = child.findViewById(R.id.inccatname);
+
+        accounttext = child.findViewById(R.id.incacctxt);
 
         ImageView calc = child.findViewById(R.id.inccalc);
 
@@ -182,6 +193,11 @@ public class fragment_incomelist extends Fragment {
         dateselect = child.findViewById(R.id.incdatetap);
 
         invokelistenerforlinears(changedcurrency,categoryselect,accountselect,dateselect);
+
+        generator.incamount1 = child.findViewById(R.id.input_value);
+        generator.incamount1.setSelected(false);
+
+        generator.incamount1.addTextChangedListener(new com.fake.shopee.shopeefake.formula.commaedittext(generator.incamount1));
 
         calc.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,7 +223,7 @@ public class fragment_incomelist extends Fragment {
 
                 ColorStateList myList = new ColorStateList(states, colors);
 
-                calculatorchoice = new calculatordialog(getActivity(),editfrom,myList);
+                calculatorchoice = new calculatordialog(getActivity(),generator.incamount1,myList);
                 calculatorchoice.showcalculatordialog();
             }
         });
@@ -216,9 +232,24 @@ public class fragment_incomelist extends Fragment {
         subcontain = child.findViewById(R.id.allscheduled);
 
         //find more items here
+        String[] weeks = new String[]{
+                "daily","weekly","Monthly","Yearly"
+        };
+
+
 
         View child1 = inflater.inflate(R.layout.layout_allscheduled, null);
 
+        generator.period = child1.findViewById(R.id.allrepeatrepriod);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_spinner_item, weeks);
+        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+
+        generator.period.setAdapter(adapter);
+
+        generator.repeatevery = child1.findViewById(R.id.allrepeatevery);
+        generator.repeattime = child1.findViewById(R.id.allrepeattime);
         //find more items here
 
         subcontain.addView(child1);
@@ -228,20 +259,53 @@ public class fragment_incomelist extends Fragment {
         return view;
     }
 
-    public Boolean issaveable(){
-        try {
-
-            if (!amountdata.equals("") && !accountdata.equals("") && !typedata.equals("") && !datedata.equals("") && !categorydata.equals("") && !repeatcount.equals("") && !repeatperiod.equals("") && !repeattime.equals("")) {
-                return true;
-            } else {
-                Log.e("data ", amountdata + " " + accountdata + " " + typedata + " " + datedata + " " + categorydata + " ");
+    public Boolean issaveable(Context con){
+        if(accountdata==null){
+            accountdata="";
+        }
+        if(categorydata==null){
+            categorydata="";
+        }
+        if (!amountdata.equals("")){
+            if(!categorydata.equals("")){
+                if(!typedata.equals("")){
+                    if(!datedata.equals("")){
+                        if( !accountdata.equals("")) {
+                            if(generator.repeatevery.getText().toString().equals("")){
+                                Toast.makeText(con, "Please Input Repeatance", Toast.LENGTH_SHORT).show();
+                                return false;
+                            }
+                            else {
+                                if(generator.repeattime.getText().toString().equals("")){
+                                    Toast.makeText(con, "Please Input Repeat Occurance", Toast.LENGTH_SHORT).show();
+                                    return false;
+                                }
+                                else {
+                                    return true;
+                                }
+                            }
+                        }     else {
+                            Toast.makeText(con, "Please Select Account", Toast.LENGTH_SHORT).show();
+                            return false;
+                        }
+                    }    else {
+                        Toast.makeText(con, "Please Select date", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                }     else {
+                    Toast.makeText(con, "Type error", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            }  else {
+                Toast.makeText(con, "Please Select Category", Toast.LENGTH_SHORT).show();
                 return false;
             }
-        }catch (NullPointerException e){
-            Log.e("Nulldataerror",e.getMessage().toString());
+        }else {
+            Toast.makeText(con, "Value Field Required", Toast.LENGTH_SHORT).show();
             return false;
         }
     }
+
     public void writeobjects(){
         Date c = Calendar.getInstance().getTime();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -260,6 +324,10 @@ public class fragment_incomelist extends Fragment {
         accountdata=generator.incaccount1;
         categorydata=generator.incategory1;
 
+        repeatcountdata=generator.repeattime.getText().toString();
+        repeatperioddata=generator.period.getSelectedItem().toString();
+        repeattimedata=generator.repeatevery.getText().toString();
+
         mapdata.put("income_createdate",formattedDate);
         mapdata.put("income_amount",amountdata);
         mapdata.put("income_account",accountdata);
@@ -268,9 +336,10 @@ public class fragment_incomelist extends Fragment {
         mapdata.put("income_notes",notesdata);
         mapdata.put("income_date",datedata);
         mapdata.put("income_from",fromdata);
-        mapdata.put("income_repeat_time",notesdata);
-        mapdata.put("income_repeat_period",datedata);
-        mapdata.put("income_repeat_count",fromdata);
+        mapdata.put("income_repeat_time",repeattimedata);
+        mapdata.put("income_repeat_period",repeatperioddata);
+        mapdata.put("income_repeat_count",repeatcountdata);
+        mapdata.put("income_isdone",generator.isdone);
         mapdata.put("username", generator.userlogin);
     }
 
@@ -314,6 +383,7 @@ public class fragment_incomelist extends Fragment {
             @Override
             public void onClick(View view) {
 
+                Toast.makeText(getActivity(), "Loading Category..", Toast.LENGTH_SHORT).show();
 
                 AlertDialog.Builder dialog1 = new AlertDialog.Builder(getActivity(),R.style.AppCompatAlertDialogStyle)
                         .setTitle("Select Category");
@@ -374,6 +444,7 @@ public class fragment_incomelist extends Fragment {
         account.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Toast.makeText(getActivity(), "Loading Accounts..", Toast.LENGTH_SHORT).show();
 
                 AlertDialog.Builder build = new AlertDialog.Builder(getActivity(),R.style.AppCompatAlertDialogStyle);
                 build.setTitle("Select Account");
@@ -574,6 +645,7 @@ public class fragment_incomelist extends Fragment {
         }
 
         private class ViewHolder {
+            String balance;
             TextView accountname;
             TextView accountcategory;
             TextView accountbalance;
@@ -604,8 +676,16 @@ public class fragment_incomelist extends Fragment {
             String part1 = parts[0]; // 004
             String part2 = parts[1]; // 034556
 
+            holder.balance=rowItem.getAccountbalance();
             holder.accountbalance.setText(formatter.format(Double.parseDouble(rowItem.getAccountbalance())) +" "+ parts[0].trim());
             holder.accountcategory.setText("Category : "+ rowItem.getAccountcategory());
+
+            if(Double.parseDouble(holder.balance)>=0){
+                holder.accountbalance.setTextColor(generator.green);
+            }
+            else {
+                holder.accountbalance.setTextColor(generator.red);
+            }
 
 
             myaccountlisadapter.ViewHolder finalHolder2 = holder;
@@ -631,12 +711,17 @@ public class fragment_incomelist extends Fragment {
     }
 
     private class accountobject {
+        private  String document;
         private String accountname;
         private String accountcategory;
         private String accountbalance;
         private String accountfullcurrency;
 
         private accountobject(){
+        }
+
+        public String getDocument() {
+            return document;
         }
 
         public String getAccountbalance() {
@@ -663,6 +748,10 @@ public class fragment_incomelist extends Fragment {
             this.accountcategory = accountcategory;
         }
 
+        public void setDocument(String document) {
+            this.document = document;
+        }
+
         public void setAccountbalance(String accountbalance) {
             this.accountbalance = accountbalance;
         }
@@ -677,7 +766,30 @@ public class fragment_incomelist extends Fragment {
     private void updateLabel1() {
         String myFormat = "dd/MM/yyyy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+        datetext.setText(sdf.format(myCalendar.getTime()));
         generator.incdate1=sdf.format(myCalendar.getTime());
+    }
+    public void clearvalues(){
+        try {
+            if (generator.incfrom1.getText().toString() != null)
+                generator.incfrom1.setText("");
+            if (generator.incamount1.getText().toString() != null)
+                generator.incamount1.setText("");
+            if (generator.incnote1.getText().toString() != null)
+                generator.incnote1.setText("");
+            if (generator.incaccount1 != null)
+                generator.incaccount1 = "";
+            if (generator.incategory1 != null)
+                generator.incategory1 = "";
+            if (generator.incdate1 != null)
+                generator.incdate1 = "";
+            if (generator.repeattime.getText().toString() != null)
+                generator.repeattime.setText("");
+            if (generator.repeatevery.getText().toString() != null)
+                generator.repeatevery.setText("");
+        }catch (Exception e){
+            Log.e("error clear", e.getMessage().toString());
+        }
     }
 
 }

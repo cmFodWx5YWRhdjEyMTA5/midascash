@@ -68,7 +68,7 @@ public class fragment_income extends Fragment {
 
     Calendar myCalendar = Calendar.getInstance();
 
-    String amountdata="",accountdata="",categorydata="",typedata="",datedata="",fromdata="",notesdata="";
+    String amountdata="",accountdata="",categorydata="",typedata="",datedata="",fromdata="",notesdata="",repeattime="",repeatperiod="",repeatcount="";
 
     MySimpleArrayAdapter adapter;
     myaccountlisadapter adapteraccount;
@@ -87,6 +87,8 @@ public class fragment_income extends Fragment {
     Map<String,Object> mapdata = new HashMap<>();
 
     LinearLayout accountchoice,categorychoice,datechoice;
+
+    List<String> documents = new ArrayList<>();
 
     TextInputLayout editformcat;
 
@@ -162,6 +164,7 @@ public class fragment_income extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        clearvalues();
         LinearLayout accountselect,categoryselect,dateselect;
         TextView changedcurrency;
 
@@ -228,7 +231,7 @@ public class fragment_income extends Fragment {
 
                 ColorStateList myList = new ColorStateList(states, colors);
 
-                calculatorchoice = new calculatordialog(getActivity(),editfrom,myList);
+                calculatorchoice = new calculatordialog(getActivity(),generator.incamount,myList);
                 calculatorchoice.showcalculatordialog();
             }
         });
@@ -241,6 +244,10 @@ public class fragment_income extends Fragment {
         return view;
     }
 
+    public void calculatebalance(){
+        generator.incbalanceleft=String.valueOf(Double.parseDouble(generator.incbalanceleft.replace(",",""))+Double.parseDouble(generator.incamount.getText().toString().replace(",","")));
+    }
+
     public Boolean issaveable(Context con){
         if(accountdata==null){
             accountdata="";
@@ -249,13 +256,13 @@ public class fragment_income extends Fragment {
             categorydata="";
         }
             if (!amountdata.equals("")){
-                if(!accountdata.equals("")){
+                if(!categorydata.equals("")){
                     if(!typedata.equals("")){
                         if(!datedata.equals("")){
-                            if( !categorydata.equals("")) {
+                            if( !accountdata.equals("")) {
                                 return true;
                             }     else {
-                                Toast.makeText(con, "Please Select Category", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(con, "Please Select Account", Toast.LENGTH_SHORT).show();
                                 return false;
                             }
                         }    else {
@@ -267,7 +274,7 @@ public class fragment_income extends Fragment {
                         return false;
                     }
                 }  else {
-                    Toast.makeText(con, "Please Select Account", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(con, "Please Select Category", Toast.LENGTH_SHORT).show();
                     return false;
                 }
             }else {
@@ -301,6 +308,10 @@ public class fragment_income extends Fragment {
         mapdata.put("income_notes",notesdata);
         mapdata.put("income_date",datedata);
         mapdata.put("income_from",fromdata);
+        mapdata.put("income_repeat_time",repeattime);
+        mapdata.put("income_repeat_period",repeatperiod);
+        mapdata.put("income_repeat_count",repeatcount);
+        mapdata.put("income_isdone",generator.isdone);
         mapdata.put("username", generator.userlogin);
     }
 
@@ -344,6 +355,7 @@ public class fragment_income extends Fragment {
             @Override
             public void onClick(View view) {
 
+                Toast.makeText(getActivity(), "Loading Category..", Toast.LENGTH_SHORT).show();
 
                 AlertDialog.Builder dialog1 = new AlertDialog.Builder(getActivity(),R.style.AppCompatAlertDialogStyle)
                         .setTitle("Select Category");
@@ -404,6 +416,7 @@ public class fragment_income extends Fragment {
         account.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Toast.makeText(getActivity(), "Loading Accounts..", Toast.LENGTH_SHORT).show();
 
                 AlertDialog.Builder build = new AlertDialog.Builder(getActivity(),R.style.AppCompatAlertDialogStyle);
                 build.setTitle("Select Account");
@@ -449,6 +462,7 @@ public class fragment_income extends Fragment {
                                         }
                                         if(document.getData().get("account_status").toString().equals("1")) {
                                             accountobject object = new accountobject();
+                                            object.setAccountdocument(document.getId());
                                             object.setAccountfullcurrency(document.getData().get("account_fullcurency").toString());
                                             object.setAccountname(document.getData().get("account_name").toString());
                                             object.setAccountcategory(document.getData().get("account_category").toString());
@@ -604,6 +618,8 @@ public class fragment_income extends Fragment {
         }
 
         private class ViewHolder {
+            String document;
+            String balance;
             TextView accountname;
             TextView accountcategory;
             TextView accountbalance;
@@ -633,8 +649,16 @@ public class fragment_income extends Fragment {
             String[] parts = string.split("-");
             String part1 = parts[0]; // 004
             String part2 = parts[1]; // 034556
+            holder.document = rowItem.getAccountdocument();
 
             holder.accountbalance.setText(formatter.format(Double.parseDouble(rowItem.getAccountbalance())) +" "+ parts[0].trim());
+            holder.balance=rowItem.getAccountbalance();
+            if(Double.parseDouble(holder.balance)>=0){
+                holder.accountbalance.setTextColor(generator.green);
+            }
+            else {
+                holder.accountbalance.setTextColor(generator.red);
+            }
             holder.accountcategory.setText("Category : "+ rowItem.getAccountcategory());
 
 
@@ -645,6 +669,8 @@ public class fragment_income extends Fragment {
                     currencies.setText(part2);
                     accounttext.setText(finalHolder2.accountname.getText().toString());
                     generator.incaccount=accounttext.getText().toString();
+                    generator.incdocument=finalHolder2.document;
+                    generator.incbalanceleft=finalHolder2.balance;
                     dialogaccount.dismiss();
                 }
             });
@@ -665,8 +691,13 @@ public class fragment_income extends Fragment {
         private String accountcategory;
         private String accountbalance;
         private String accountfullcurrency;
+        private String accountdocument;
 
         private accountobject(){
+        }
+
+        public String getAccountdocument() {
+            return accountdocument;
         }
 
         public String getAccountbalance() {
@@ -697,6 +728,10 @@ public class fragment_income extends Fragment {
             this.accountbalance = accountbalance;
         }
 
+        public void setAccountdocument(String accountdocument) {
+            this.accountdocument = accountdocument;
+        }
+
         public void setAccountfullcurrency(String accountfullcurrency) {
             this.accountfullcurrency = accountfullcurrency;
         }
@@ -707,7 +742,29 @@ public class fragment_income extends Fragment {
     private void updateLabel1() {
         String myFormat = "dd/MM/yyyy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+        datetext.setText(sdf.format(myCalendar.getTime()));
         generator.incdate=sdf.format(myCalendar.getTime());
+    }
+
+    public void clearvalues(){
+        try {
+            if (generator.incfrom.getText().toString() != null)
+                generator.incfrom.setText("");
+            if (generator.incamount.getText().toString() != null)
+                generator.incamount.setText("");
+            if (generator.incnote.getText().toString() != null)
+                generator.incnote.setText("");
+            if (generator.incaccount != null)
+                generator.incaccount = "";
+            if (generator.incategory != null)
+                generator.incategory = "";
+            if (generator.incdate != null)
+                generator.incdate = "";
+            if (generator.incbalanceleft != null)
+                generator.incbalanceleft = "";
+        }catch (Exception e){
+            Log.e("Error clear",e.getMessage());
+        }
     }
 
 }

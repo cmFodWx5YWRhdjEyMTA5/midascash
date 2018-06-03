@@ -27,13 +27,19 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.SetOptions;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import midascash.indonesia.optima.prima.midascash.MainActivity;
 import midascash.indonesia.optima.prima.midascash.R;
 import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_income;
 import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_incomelist;
+import midascash.indonesia.optima.prima.midascash.generator;
 
 /**
  * Created by rwina on 4/23/2018.
@@ -135,16 +141,35 @@ public class income extends AppCompatActivity {
                     incomepg1 = new fragment_income();
                     incomepg1.check(income.this);
                     incomepg1.writeobjects();
+
                     if(incomepg1.issaveable(income.this)==false){
                         Toast.makeText(income.this, "Please Check Some Fields", Toast.LENGTH_SHORT).show();
                     }
                     else {
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                        Date strDate = null;
+                        try {
+                            strDate = sdf.parse(generator.incdate);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        if (new Date().after(strDate) || new Date().equals(strDate)) {
+                            incomepg1.calculatebalance();
+                            generator.isdone="1";
+                        }
+                        incomepg1.writeobjects();
                         Toast.makeText(income.this, "Saving Income...", Toast.LENGTH_SHORT).show();
                         db.collection("income")
                                 .add(incomepg1.getthemap())
                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                     @Override
                                     public void onSuccess(DocumentReference documentReference) {
+                                        Map<String, Object> data = new HashMap<>();
+                                        data.put("account_balance_current", generator.incbalanceleft );
+
+                                        db.collection("account").document(generator.incdocument)
+                                                .set(data, SetOptions.merge());
+                                        generator.isdone="0";
                                         finish();
                                         Toast.makeText(income.this, "New Income Added", Toast.LENGTH_SHORT).show();
                                         Log.e("Add data", "DocumentSnapshot added with ID: " + documentReference.getId());
@@ -166,20 +191,23 @@ public class income extends AppCompatActivity {
                         Toast.makeText(income.this, "Please Check Some Fields", Toast.LENGTH_SHORT).show();
                     }
                     else {
+
                         Toast.makeText(income.this, "Saving Scheduled Income...", Toast.LENGTH_SHORT).show();
                         db.collection("income")
-                                .add(incomepg1.getthemap())
+                                .add(incomepg2.getthemap())
                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                     @Override
                                     public void onSuccess(DocumentReference documentReference) {
                                         finish();
-                                        Toast.makeText(income.this, "New Income Added", Toast.LENGTH_SHORT).show();
+                                        generator.isdone="0";
+                                        Toast.makeText(income.this, "New Scheduled Income Added", Toast.LENGTH_SHORT).show();
                                         Log.e("Add data", "DocumentSnapshot added with ID: " + documentReference.getId());
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(income.this, "Error Adding Scheduled Income : "+e.getMessage().toString(), Toast.LENGTH_SHORT).show();
                                         Log.e("error data add", "Error adding document", e);
                                     }
                                 });

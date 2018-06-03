@@ -7,18 +7,36 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class splashscreen extends Activity {
     ProgressBar barbanner;
+    FirebaseFirestore db;
+    SharedPreferences prefs;
+    SharedPreferences.Editor editor;
 
     // Used to load the 'native-lib' library on application startup.
 
@@ -26,9 +44,14 @@ public class splashscreen extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_banner);
+        db = FirebaseFirestore.getInstance();
+
+        prefs = getSharedPreferences("midascash", MODE_PRIVATE);
+        editor = getSharedPreferences("midascash", MODE_PRIVATE).edit();
 
         barbanner = (ProgressBar) findViewById(R.id.barbanner);
         barbanner.setVisibility(View.GONE);
+
 
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -39,23 +62,9 @@ public class splashscreen extends Activity {
                 handler1.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        SharedPreferences prefs = getSharedPreferences("midascash", MODE_PRIVATE);
-                        generator.ip = prefs.getString("ip", "");
-                        generator.port= prefs.getString("port", "");
-                        generator.isoffline= Integer.parseInt(prefs.getString("isoffline", "0"));
-                        generator.setupfirstisdone = prefs.getString("firstsetup", "");
-                        if(generator.setupfirstisdone.equals("")){
-
                             Intent i = new Intent(splashscreen.this,MainActivity.class);
                             startActivity(i);
                             finish();
-                        }
-                        else {
-                            Intent i = new Intent(splashscreen.this,MainActivity.class);
-                            startActivity(i);
-                            finish();
-                        }
-
                     }
                 }, 2000);
             }
