@@ -1,46 +1,18 @@
 package midascash.indonesia.optima.prima.midascash.recycleview;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SwitchCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.PopupMenu;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.mynameismidori.currencypicker.CurrencyPicker;
-import com.mynameismidori.currencypicker.CurrencyPickerListener;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import midascash.indonesia.optima.prima.midascash.R;
-import midascash.indonesia.optima.prima.midascash.SQLiteHelper;
-import midascash.indonesia.optima.prima.midascash.extramenuactivity.accounttransactions;
-import midascash.indonesia.optima.prima.midascash.generator;
-import midascash.indonesia.optima.prima.midascash.sqlite.account;
-import midascash.indonesia.optima.prima.midascash.sqlite.category;
-import midascash.indonesia.optima.prima.midascash.transactionactivity.accountlist;
+import midascash.indonesia.optima.prima.midascash.objects.account;
 
 public class adapterviewcategory extends RecyclerView.Adapter<adapterviewcategory.MyViewHolder> {
 
@@ -125,7 +97,6 @@ public class adapterviewcategory extends RecyclerView.Adapter<adapterviewcategor
 
     @Override
     public void onBindViewHolder(final adapterviewcategory.MyViewHolder holder, int position) {
-        Log.e("position", "onBindViewHolder: "+String.valueOf(position));
         Drawable resImg = contexts.getResources().getDrawable(images[times]);
         holder.a.setImageDrawable(resImg);
         holder.a.setTag(position+1);

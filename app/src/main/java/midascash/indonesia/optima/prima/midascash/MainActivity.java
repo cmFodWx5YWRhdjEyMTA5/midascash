@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,11 +60,14 @@ import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.realm.Realm;
+import midascash.indonesia.optima.prima.midascash.administrator.Mainadministrator;
 import midascash.indonesia.optima.prima.midascash.recycleview.adapterviewcategory;
+import midascash.indonesia.optima.prima.midascash.recycleview.mainactivityviews;
 import midascash.indonesia.optima.prima.midascash.reports.chartofbalance;
-import midascash.indonesia.optima.prima.midascash.fragment_list_transaction.listexpense;
-import midascash.indonesia.optima.prima.midascash.fragment_list_transaction.listincome;
-import midascash.indonesia.optima.prima.midascash.fragment_list_transaction.listtransfer;
+import midascash.indonesia.optima.prima.midascash.transactionactivity.listexpense;
+import midascash.indonesia.optima.prima.midascash.transactionactivity.listincome;
+import midascash.indonesia.optima.prima.midascash.transactionactivity.listtransfer;
 import midascash.indonesia.optima.prima.midascash.reports.summary;
 import midascash.indonesia.optima.prima.midascash.transactionactivity.accountlist;
 import midascash.indonesia.optima.prima.midascash.transactionactivity.categorylist;
@@ -95,6 +101,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Realm.init(MainActivity.this);
 
         db = FirebaseFirestore.getInstance();
 
@@ -143,7 +151,9 @@ public class MainActivity extends AppCompatActivity
 
         inflate = LayoutInflater.from(MainActivity.this);
 
-
+        View dashboards = inflate.inflate(R.layout.layout_main,null);
+        loadmainmenu(dashboards);
+        mainview.addView(dashboards);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -230,6 +240,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -330,6 +341,23 @@ public class MainActivity extends AppCompatActivity
 
             return true;
         }
+        if (id == R.id.action_logout) {
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.AppCompatAlertDialogStyle);
+
+            dialogBuilder.setMessage("Are you sure to Log out from System ?")
+                    .setTitle("Confirm").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    loginprogram();
+                }
+            }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            }).show();
+            return true;
+        }
 /*-----------------------notification--------------------//
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(MainActivity.this)
                     .setSmallIcon(R.drawable.ic_notifications_black_24dp)
@@ -367,6 +395,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_dashboard) {
             mainview.removeAllViews();
             View dashboards = inflate.inflate(R.layout.layout_main,null);
+            loadmainmenu(dashboards);
             mainview.addView(dashboards);
 
             // Handle the camera action
@@ -376,6 +405,15 @@ public class MainActivity extends AppCompatActivity
             transactionmethod(transaction);
             mainview.addView(transaction);
 
+        }else if(id == R.id.nav_expenselist){
+            Intent a = new Intent(MainActivity.this, listexpense.class);
+            startActivity(a);
+        } else if(id == R.id.nav_incomelist){
+            Intent a = new Intent(MainActivity.this, listincome.class);
+            startActivity(a);
+        } else if(id == R.id.nav_accountlist){
+            Intent a = new Intent(MainActivity.this, accountlist.class);
+            startActivity(a);
         } else if (id == R.id.nav_report) {
             mainview.removeAllViews();
             View report = inflate.inflate(R.layout.layout_report_three,null);
@@ -387,6 +425,9 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_mail) {
 
+        } else if (id == R.id.nav_supervisor) {
+            Intent a = new Intent(MainActivity.this, Mainadministrator.class);
+            startActivity(a);
         } else if (id == R.id.nav_calenderview) {
             mainview.removeAllViews();
             View calender = inflate.inflate(R.layout.layout_calender_one,null);
@@ -526,7 +567,7 @@ public class MainActivity extends AppCompatActivity
                                                                 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                                                 String formattedDate = df.format(c);
 
-                                                                categorymap.put("category_createdate", formattedDate);
+                                                                categorymap.put("category_createdate", c);
                                                                 categorymap.put("category_status",1);
                                                                 categorymap.put("username",generator.userlogin);
 
@@ -576,8 +617,6 @@ public class MainActivity extends AppCompatActivity
 // ...Irrelevant code for customizing the buttons and title
                         LayoutInflater inflater = getLayoutInflater();
                         dialogBuilder.setTitle("New Account");
-
-
 
                         View dialogView = inflater.inflate(R.layout.layout_input_akun, null);
 
@@ -705,7 +744,7 @@ public class MainActivity extends AppCompatActivity
                                                                     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                                                     String formattedDate = df.format(c);
 
-                                                                    accountsmap.put("account_createdate", formattedDate);
+                                                                    accountsmap.put("account_createdate", c);
                                                                     accountsmap.put("account_balance", accountbalance.getText().toString().replace(",",""));
                                                                     accountsmap.put("account_balance_current", accountbalance.getText().toString().replace(",",""));
                                                                     accountsmap.put("account_currency", tempcurrencycode[0]);
@@ -1165,6 +1204,16 @@ public class MainActivity extends AppCompatActivity
                                                                 dialog1.dismiss();
                                                                 generator.userlogin=document.getData().get("username").toString();
                                                                 Toast.makeText(MainActivity.this, "Welcome " + document.getData().get("username"), Toast.LENGTH_SHORT).show();
+
+                                                                NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+                                                                Menu nav_Menu = navigationView.getMenu();
+
+                                                                if(generator.userlogin.equals("admin")) {
+                                                                    nav_Menu.findItem(R.id.nav_supervisor).setVisible(true);
+                                                                }else {
+                                                                    nav_Menu.findItem(R.id.nav_supervisor).setVisible(false);
+                                                                }
+
                                                             } else {
                                                                 Toast.makeText(MainActivity.this, "Username or password doesn't match", Toast.LENGTH_SHORT).show();
                                                             }
@@ -1473,4 +1522,22 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
             }
+
+            public void loadmainmenu(View v){
+                RecyclerView recycler = v.findViewById(R.id.dashboard);
+
+                List<String> title = new ArrayList<>();
+                title.add("Summary");
+                title.add("Accounts");
+                title.add("Income - Last 7 days");
+                title.add("Expense - Last 7 days");
+                title.add("Transactions");
+
+                generator.adapter = new mainactivityviews(MainActivity.this,title);
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                recycler.setLayoutManager(mLayoutManager);
+                recycler.setItemAnimator(new DefaultItemAnimator());
+                recycler.setAdapter(generator.adapter);
+            }
+
         }

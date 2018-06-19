@@ -96,20 +96,43 @@
             android:theme="@style/NoActionBar"
             android:screenOrientation="portrait"></activity>
 
-        <activity android:name=".fragment_list_transaction.listexpense"
+        <activity android:name=".transactionactivity.listexpense"
             android:theme="@style/AppThemeactionbarred"
-            android:label="Summary"
+            android:label="Expense List"
             android:screenOrientation="portrait"></activity>
 
-        <activity android:name=".fragment_list_transaction.listincome"
+        <activity android:name=".transactionactivity.listincome"
             android:theme="@style/AppThemeactionbargreen"
-            android:label="Summary"
+            android:label="Income List"
             android:screenOrientation="portrait"></activity>
 
-        <activity android:name=".fragment_list_transaction.listtransfer"
+        <activity android:name=".transactionactivity.listtransfer"
             android:theme="@style/NoActionBar"
             android:screenOrientation="portrait"></activity>
 
+        <activity android:name=".administrator.Mainadministrator"
+            android:theme="@style/AppTheme"
+            android:label="Administrator Panel"
+            android:screenOrientation="portrait"></activity>
+
+        <activity android:name=".transactionactivity.modify.editexpense"
+            android:theme="@style/AppThemeactionbarred"
+            android:label="Edit Expense"
+            android:screenOrientation="portrait"></activity>
+
+        <activity android:name=".transactionactivity.modify.editexpensesch"
+            android:theme="@style/AppThemeactionbarred"
+            android:label="Edit Scheduled Expense"
+            android:screenOrientation="portrait"></activity>
+
+        <activity android:name=".transactionactivity.modify.editincome"
+            android:theme="@style/AppThemeactionbargreen"
+            android:label="Edit Income"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".transactionactivity.modify.editincomesch"
+            android:theme="@style/AppThemeactionbargreen"
+            android:label="Edit Scheduled Income"
+            android:screenOrientation="portrait"></activity>
 
 
         <receiver android:name=".alarmnotification.alarmreceiver"

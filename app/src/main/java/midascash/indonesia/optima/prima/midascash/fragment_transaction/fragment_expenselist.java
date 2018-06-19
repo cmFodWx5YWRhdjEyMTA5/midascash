@@ -63,6 +63,8 @@ public class fragment_expenselist extends Fragment {
 
     TextView datetext;
 
+    long datesys;
+
     EditText fromtxt,notestxt;
 
     Calendar myCalendar = Calendar.getInstance();
@@ -135,9 +137,10 @@ public class fragment_expenselist extends Fragment {
             ,R.drawable.add};
 
 
-    public void check(Context con){
+    public fragment_expenselist(){
         amountdata="";
         accountdata="";
+        datesys = 0L;
         categorydata="";
         typedata="";
         datedata="";
@@ -317,6 +320,7 @@ public class fragment_expenselist extends Fragment {
         }
 
         datedata= generator.expdate1;
+        datesys = generator.expdatesys1;
 
         notesdata=generator.expnote1.getText().toString();
 
@@ -329,18 +333,20 @@ public class fragment_expenselist extends Fragment {
         repeatperioddata=generator.expperiod.getSelectedItem().toString();
         repeattimedata=generator.exprepeatevery.getText().toString();
 
-        mapdata.put("income_createdate",formattedDate);
-        mapdata.put("income_amount",amountdata);
-        mapdata.put("income_account",accountdata);
-        mapdata.put("income_type",typedata);
-        mapdata.put("income_category",categorydata);
-        mapdata.put("income_notes",notesdata);
-        mapdata.put("income_date",datedata);
-        mapdata.put("income_from",fromdata);
-        mapdata.put("income_repeat_time",repeattimedata);
-        mapdata.put("income_repeat_period",repeatperioddata);
-        mapdata.put("income_repeat_count",repeatcountdata);
-        mapdata.put("income_isdone",generator.isdone);
+        mapdata.put("expense_createdate",c);
+        mapdata.put("expense_amount",amountdata);
+        mapdata.put("expense_account",accountdata);
+        mapdata.put("expense_type",typedata);
+        mapdata.put("expense_category",categorydata);
+        mapdata.put("expense_notes",notesdata);
+        mapdata.put("expense_date",datedata);
+        mapdata.put("expense_datesys",datesys);
+        mapdata.put("expense_to",fromdata);
+        mapdata.put("expense_repeat_time",repeattimedata);
+        mapdata.put("expense_repeat_period",repeatperioddata);
+        mapdata.put("expense_repeat_count",repeatcountdata);
+        mapdata.put("expense_isdone",generator.isdone);
+        mapdata.put("expense_isdated","1");
         mapdata.put("username", generator.userlogin);
     }
 
@@ -356,6 +362,7 @@ public class fragment_expenselist extends Fragment {
         final String date = df.format(Calendar.getInstance().getTime());
 
         generator.expdate1= date;
+        generator.expdatesys1=Calendar.getInstance().getTimeInMillis();
 
         datetext.setText(date);
 
@@ -417,7 +424,6 @@ public class fragment_expenselist extends Fragment {
                                         b.setCategoryname(document.getData().get("category_name").toString());
                                         b.setImage(Integer.parseInt(document.getData().get("category_image").toString()));
                                         b.setHiddendata(document.getId());
-                                        b.setCreatedate(document.getData().get("category_createdate").toString());
                                         valuemyobjectlist.add(b);
                                     }
 
@@ -481,14 +487,7 @@ public class fragment_expenselist extends Fragment {
                                             break;
                                         }
                                         Date c=null;
-                                        String dtStart = document.getData().get("account_createdate").toString();
-                                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                        try {
-                                            c = format.parse(dtStart);
-                                            System.out.println(c);
-                                        } catch (ParseException e) {
-                                            e.printStackTrace();
-                                        }
+
                                         if(document.getData().get("account_status").toString().equals("1")) {
                                             accountobject object = new accountobject();
                                             object.setAccountfullcurrency(document.getData().get("account_fullcurency").toString());
@@ -530,7 +529,6 @@ public class fragment_expenselist extends Fragment {
             CircleImageView imageView;
             TextView textView;
             TextView hiddentextView;
-            String categorycreatedate;
         }
 
         @Override
@@ -550,7 +548,6 @@ public class fragment_expenselist extends Fragment {
             holder.textView = (TextView) convertView.findViewById(R.id.categorynameitem);
             holder.imageView =  convertView.findViewById(R.id.categoryitemimage);
             holder.hiddentextView =  convertView.findViewById(R.id.categorydatadocument);
-            holder.categorycreatedate = rowItem.getCreatedate();
 
 
             holder.textView.setText(rowItem.getCategoryitem());
@@ -678,6 +675,12 @@ public class fragment_expenselist extends Fragment {
 
             holder.accountbalance.setText(formatter.format(Double.parseDouble(rowItem.getAccountbalance())) +" "+ parts[0].trim());
             holder.accountcategory.setText("Category : "+ rowItem.getAccountcategory());
+            if(Double.parseDouble(rowItem.getAccountbalance())>=0){
+                holder.accountbalance.setTextColor(generator.green);
+            }
+            else {
+                holder.accountbalance.setTextColor(generator.red);
+            }
 
 
             myaccountlisadapter.ViewHolder finalHolder2 = holder;
@@ -751,6 +754,7 @@ public class fragment_expenselist extends Fragment {
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
         datetext.setText(sdf.format(myCalendar.getTime()));
         generator.expdate1=sdf.format(myCalendar.getTime());
+        generator.expdatesys1=myCalendar.getTimeInMillis();
     }
     public void clearvalues(){
         try {
@@ -766,6 +770,8 @@ public class fragment_expenselist extends Fragment {
                 generator.expategory1 = "";
             if (generator.expdate1 != null)
                 generator.expdate1 = "";
+            if (generator.expdatesys1 != 0L)
+                generator.expdatesys1 = 0L;
             if (generator.exprepeattime.getText().toString() != null)
                 generator.exprepeattime.setText("");
             if (generator.exprepeatevery.getText().toString() != null)

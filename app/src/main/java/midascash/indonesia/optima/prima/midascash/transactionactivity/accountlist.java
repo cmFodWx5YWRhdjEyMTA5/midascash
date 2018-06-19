@@ -16,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.mynameismidori.currencypicker.CurrencyPicker;
@@ -44,7 +46,6 @@ import com.mynameismidori.currencypicker.CurrencyPickerListener;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,13 +55,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import midascash.indonesia.optima.prima.midascash.MainActivity;
 import midascash.indonesia.optima.prima.midascash.R;
 import midascash.indonesia.optima.prima.midascash.SQLiteHelper;
 import midascash.indonesia.optima.prima.midascash.extramenuactivity.accounttransactions;
 import midascash.indonesia.optima.prima.midascash.generator;
-import midascash.indonesia.optima.prima.midascash.sqlite.account;
-import midascash.indonesia.optima.prima.midascash.sqlite.firebasedocument;
+import midascash.indonesia.optima.prima.midascash.objects.account;
+import midascash.indonesia.optima.prima.midascash.objects.firebasedocument;
 
 /**
  * Created by rwina on 4/23/2018.
@@ -70,6 +70,10 @@ public class accountlist extends AppCompatActivity{
 
     FirebaseFirestore db;
 
+    RecyclerView accountlist;
+
+    List<account> allaccount;
+    List<firebasedocument> alldoc;
 
 
     int[] images = new int[]{R.drawable.cashicon, R.drawable.bank, R.drawable.lendresized, R.drawable.cheque, R.drawable.creditcardresized,R.drawable.food,R.drawable.electric,R.drawable.truck,R.drawable.health,R.drawable.ball,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add,R.drawable.add};
@@ -85,14 +89,15 @@ public class accountlist extends AppCompatActivity{
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        final RecyclerView accountlist = findViewById(R.id.lvaccount);
+        accountlist = findViewById(R.id.lvaccount);
 
         db = FirebaseFirestore.getInstance();
 
-        List<account> allaccount=new ArrayList<account>();
-        List<firebasedocument> alldoc=new ArrayList<firebasedocument>();
+        allaccount=new ArrayList<account>();
+        alldoc=new ArrayList<firebasedocument>();
 
         db.collection("account")
+                .orderBy("account_name", Query.Direction.ASCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -103,16 +108,10 @@ public class accountlist extends AppCompatActivity{
                                     break;
                                 }
                                 Date c=null;
-                                String dtStart = document.getData().get("account_createdate").toString();
+                                Object dtStart = document.getData().get("account_createdate");
                                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                try {
-                                    c = format.parse(dtStart);
-                                    System.out.println(c);
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
-                                }
                                 alldoc.add(new firebasedocument(document.getId().toString()));
-                                allaccount.add(new account(document.getData().get("account_name").toString(),document.getData().get("account_category").toString(),document.getData().get("account_createdate").toString(),document.getData().get("account_balance").toString(),document.getData().get("account_balance_current").toString(),document.getData().get("username").toString(),Integer.parseInt(document.getData().get("account_status").toString()),document.getData().get("account_currency").toString(),document.getData().get("account_fullcurency").toString()));
+                                allaccount.add(new account(document.getData().get("account_name").toString(),document.getData().get("account_category").toString(),document.getData().get("account_createdate"),document.getData().get("account_balance").toString(),document.getData().get("account_balance_current").toString(),document.getData().get("username").toString(),Integer.parseInt(document.getData().get("account_status").toString()),document.getData().get("account_currency").toString(),document.getData().get("account_fullcurency").toString()));
                                 Log.d("Get data account", document.getId() + " => " + document.getData());
                             }
                             adapter = new adapteraccounts(accountlist.this,accountlist.this,allaccount,alldoc);
@@ -141,6 +140,180 @@ public class accountlist extends AppCompatActivity{
 
         if (id == android.R.id.home) {
             this.finish();
+        }
+        if (id == R.id.action_addacc) {
+            final String[] tempcurrencycode = {""};
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(accountlist.this, R.style.AppCompatAlertDialogStyle);
+// ...Irrelevant code for customizing the buttons and title
+            LayoutInflater inflater = getLayoutInflater();
+            dialogBuilder.setTitle("New Account");
+
+
+
+            View dialogView = inflater.inflate(R.layout.layout_input_akun, null);
+
+            Button editaccount = dialogView.findViewById(R.id.accountedit);
+            final Button currency = dialogView.findViewById(R.id.btnaccountcurrency);
+
+            final EditText accountname = dialogView.findViewById(R.id.account_name);
+            final EditText accountbalance = dialogView.findViewById(R.id.account_balance);
+
+            accountbalance.addTextChangedListener(new com.fake.shopee.shopeefake.formula.commaedittext(accountbalance));
+
+            final Spinner accountcategory = dialogView.findViewById(R.id.account_category);
+
+            final TextView currencyicon = dialogView.findViewById(R.id.accountcurrencysymbol);
+
+            List<String> spinneritem = new ArrayList<String>();
+            spinneritem.add("Select One");
+            db.collection("category")
+                    .orderBy("category_name", Query.Direction.ASCENDING)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                            if (task.isSuccessful()) {
+                                for (DocumentSnapshot document : task.getResult()) {
+                                    Log.e("getting data", document.getId() + " => " + document.getData());
+                                    spinneritem.add(document.getData().get("category_name").toString());
+                                }
+                            } else {
+                                Log.e("", "Error getting documents.", task.getException());
+                            }
+
+                        }
+                    });
+
+            //translatedcategory.add(allcategory.get(i).getCategory_name()+allcategory.get(i).getCategory_image());
+
+            tempcurrencycode[0]="IDR";
+            currency.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final CurrencyPicker picker = CurrencyPicker.newInstance("Select Currency");  // dialog title
+                    picker.setListener(new CurrencyPickerListener() {
+                        @Override
+                        public void onSelectCurrency(String name, String code, String symbol, int flagDrawableResID) {
+                            currency.setText(code + " - " + symbol);
+                            tempcurrencycode[0] = code;
+                            currencyicon.setText(code);
+                            picker.dismiss();
+                        }
+                    });
+                    picker.show(getSupportFragmentManager(), "CURRENCY_PICKER");
+                }
+            });
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(accountlist.this,
+                    android.R.layout.simple_spinner_item, spinneritem);
+            adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+            accountcategory.setAdapter(adapter);
+
+            editaccount.setVisibility(View.GONE);
+
+            dialogBuilder.setPositiveButton("Save", null);
+
+            dialogBuilder.setNegativeButton("Cancel", null);
+
+            dialogBuilder.setView(dialogView);
+
+            final AlertDialog dialog1 = dialogBuilder.create();
+
+            dialog1.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
+
+                    Button button = ((AlertDialog) dialog1).getButton(AlertDialog.BUTTON_POSITIVE);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (accountname.getText().toString().equals("")) {
+                                Toast.makeText(accountlist.this, "Account Name is Empty", Toast.LENGTH_SHORT).show();
+                            } else {
+                                if (accountcategory.getSelectedItem().toString().equals("Select One")) {
+                                    Toast.makeText(accountlist.this, "Please Select Account Category", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    if (accountbalance.getText().toString().equals("")) {
+                                        Toast.makeText(accountlist.this, "Account Balance default 0", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(accountlist.this,"Please Wait",Toast.LENGTH_SHORT).show();
+                                        final int[] statuscode = {0};
+                                        db.collection("account")
+                                                .orderBy("account_name", Query.Direction.ASCENDING)
+                                                .get()
+                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                        if (task.isSuccessful()) {
+                                                            int isdouble=0;
+                                                            for (DocumentSnapshot document : task.getResult()) {
+                                                                statuscode[0] =1;
+                                                                Log.d("data account", document.getId() + " => " + document.getData());
+                                                                Log.e("occured", String.valueOf(1));
+                                                                if(document.getId()==null){
+                                                                    break;
+                                                                }
+                                                                else {
+                                                                    if (document.getData().get("account_name").toString().equals(accountname.getText().toString()) && document.getData().get("account_name") != null) {
+                                                                        Toast.makeText(accountlist.this, accountname.getText().toString() + " is Already Registered", Toast.LENGTH_SHORT).show();
+                                                                        isdouble =1;
+                                                                    }
+                                                                }
+                                                            }
+                                                            if(statuscode[0]==0 || isdouble !=1){
+                                                                Date c = Calendar.getInstance().getTime();
+                                                                String balance = accountbalance.getText().toString().replace(",", "");Toast.makeText(accountlist.this, "New Account Saved", Toast.LENGTH_SHORT).show();
+
+                                                                Map<String, Object> accountsmap = new HashMap<>();
+                                                                accountsmap.put("account_name", accountname.getText().toString());
+                                                                accountsmap.put("account_category", accountcategory.getSelectedItem().toString());
+
+                                                                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                                                String formattedDate = df.format(c);
+
+                                                                accountsmap.put("account_createdate", c);
+                                                                accountsmap.put("account_balance", accountbalance.getText().toString().replace(",",""));
+                                                                accountsmap.put("account_balance_current", accountbalance.getText().toString().replace(",",""));
+                                                                accountsmap.put("account_currency", tempcurrencycode[0]);
+                                                                accountsmap.put("account_fullcurency", currency.getText().toString());
+                                                                accountsmap.put("account_status", 1);
+                                                                accountsmap.put("username", generator.userlogin);
+
+// Add a new document with a generated ID
+                                                                db.collection("account")
+                                                                        .add(accountsmap)
+                                                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                            @Override
+                                                                            public void onSuccess(DocumentReference documentReference) {
+                                                                                dialog1.dismiss();
+                                                                                Toast.makeText(accountlist.this, "New Account Saved", Toast.LENGTH_SHORT).show();
+                                                                                reloaddata();
+                                                                                Log.e("added account sc 2", "DocumentSnapshot added with ID: " + documentReference.getId());
+                                                                            }
+                                                                        })
+                                                                        .addOnFailureListener(new OnFailureListener() {
+                                                                            @Override
+                                                                            public void onFailure(@NonNull Exception e) {
+                                                                                Toast.makeText(accountlist.this, "Error Occured : " + e.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                                                                                Log.e("error add", "Error adding document", e);
+                                                                            }
+                                                                        });
+                                                            }
+                                                        } else {
+                                                            Log.w("error get data", "Error getting documents.", task.getException());
+                                                        }
+                                                    }
+                                                });
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+            dialog1.show();
+
         }
         return  true;
     }
@@ -218,7 +391,7 @@ public class accountlist extends AppCompatActivity{
             }
 
             holder.documenref = doc.getDocument();
-            holder.accountcategory.setText(holder.accountcategory.getText().toString()+" "+acc.getAccount_category());
+            holder.accountcategory.setText("Category :"+" "+acc.getAccount_category());
             String string = acc.getFullaccount_currency();
             String[] parts = string.split("-");
             String part1 = parts[0]; // 004
@@ -335,6 +508,7 @@ public class accountlist extends AppCompatActivity{
                                             List<String> spinneritem = new ArrayList<String>();
                                             spinneritem.add("Select One");;
                                             fdb.collection("category")
+                                                    .orderBy("category_name", Query.Direction.ASCENDING)
                                                     .get()
                                                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                         @Override
@@ -446,9 +620,7 @@ public class accountlist extends AppCompatActivity{
                                                                                     @Override
                                                                                     public void onSuccess(Void aVoid) {
                                                                                         Log.d("status write", "DocumentSnapshot successfully written!");
-                                                                                        Intent reloadaccount = new Intent(accountlist.this,accountlist.class);
-                                                                                        startActivity(reloadaccount);
-                                                                                        finish();
+                                                                                        reloaddata();
                                                                                         Toast.makeText(accountlist.this,thisaccount[0].getAccount_name() +" changed into " + accountname.getText().toString(),Toast.LENGTH_SHORT).show();
                                                                                     }
                                                                                 })
@@ -489,9 +661,7 @@ public class accountlist extends AppCompatActivity{
                                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                         @Override
                                                         public void onSuccess(Void aVoid) {
-                                                            Intent reload = new Intent(accountlist.this,accountlist.class);
-                                                            startActivity(reload);
-                                                            finish();
+                                                            reloaddata();
                                                             Toast.makeText(accountlist.this,"Deleted Account "+ holder.accountname.getText().toString(),Toast.LENGTH_SHORT).show();
                                                         }
                                                     })
@@ -528,5 +698,49 @@ public class accountlist extends AppCompatActivity{
         public int getItemCount() {
             return accountList.size();
         }
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+
+        getMenuInflater().inflate(R.menu.menuaccount, menu);
+        return true;
+    }
+
+    public void reloaddata(){
+        alldoc.clear();
+        allaccount.clear();
+        if(adapter!= null){
+            adapter.notifyDataSetChanged();
+        }
+        db.collection("account")
+                .orderBy("account_name", Query.Direction.ASCENDING)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (DocumentSnapshot document : task.getResult()) {
+                                if(document.getId()==null){
+                                    break;
+                                }
+                                Date c=null;
+                                Object dtStart = document.getData().get("account_createdate");
+                                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                alldoc.add(new firebasedocument(document.getId().toString()));
+                                allaccount.add(new account(document.getData().get("account_name").toString(),document.getData().get("account_category").toString(),document.getData().get("account_createdate"),document.getData().get("account_balance").toString(),document.getData().get("account_balance_current").toString(),document.getData().get("username").toString(),Integer.parseInt(document.getData().get("account_status").toString()),document.getData().get("account_currency").toString(),document.getData().get("account_fullcurency").toString()));
+                                Log.d("Get data account", document.getId() + " => " + document.getData());
+                            }
+                            if(adapter!= null){
+                                adapter.notifyDataSetChanged();
+                            }
+                            if(generator.adapter!=null){
+                                generator.adapter.notifyDataSetChanged();
+                            }
+                        } else {
+                            Log.w("Get account error", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
     }
 }

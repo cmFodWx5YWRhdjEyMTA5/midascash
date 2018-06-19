@@ -56,6 +56,8 @@ public class fragment_expense extends Fragment {
     LinearLayout contain;
     calculatordialog calculatorchoice;
 
+    long datesys;
+
     List<MyListObject> valuemyobjectlist;
     List<accountobject> valuemyaccountobject;
 
@@ -129,9 +131,14 @@ public class fragment_expense extends Fragment {
     TextInputLayout editformcat;
 
     public void check(Context con){
+
+    }
+
+    public fragment_expense(){
         amountdata="";
         accountdata="";
         categorydata="";
+        datesys=0L;
         typedata="";
         datedata="";
         todata="";
@@ -277,6 +284,8 @@ public class fragment_expense extends Fragment {
 
         datedata= generator.expdate;
 
+        datesys=generator.expdatesys;
+
         notesdata=generator.expnote.getText().toString();
 
         todata=generator.expto.getText().toString();
@@ -287,14 +296,16 @@ public class fragment_expense extends Fragment {
 
 
 
-        mapdata.put("expense_createdate",formattedDate);
+        mapdata.put("expense_createdate",c);
         mapdata.put("expense_amount",amountdata);
         mapdata.put("expense_account",accountdata);
         mapdata.put("expense_type",typedata);
         mapdata.put("expense_category",categorydata);
         mapdata.put("expense_notes",notesdata);
         mapdata.put("expense_date",datedata);
+        mapdata.put("expense_datesys",datesys);
         mapdata.put("expense_to",todata);
+        mapdata.put("expense_isdated","0");
         mapdata.put("expense_repeat_time",repeattimedata);
         mapdata.put("expense_repeat_period",repeatperioddata);
         mapdata.put("expense_repeat_count",repeatcountdata);
@@ -314,6 +325,8 @@ public class fragment_expense extends Fragment {
         final String date = df.format(Calendar.getInstance().getTime());
 
         generator.expdate= date;
+
+        generator.expdatesys = Calendar.getInstance().getTimeInMillis();
 
         datetext.setText(date);
 
@@ -352,7 +365,6 @@ public class fragment_expense extends Fragment {
 
                 ListView list = a.findViewById(R.id.lvsnf);
 
-
                 list.setDivider(null);
                 list.setDividerHeight(0);
 
@@ -375,7 +387,7 @@ public class fragment_expense extends Fragment {
                                         b.setCategoryname(document.getData().get("category_name").toString());
                                         b.setImage(Integer.parseInt(document.getData().get("category_image").toString()));
                                         b.setHiddendata(document.getId());
-                                        b.setCreatedate(document.getData().get("category_createdate").toString());
+                                        b.setCreatedate(document.getData().get("category_createdate"));
                                         valuemyobjectlist.add(b);
                                     }
 
@@ -439,14 +451,8 @@ public class fragment_expense extends Fragment {
                                             break;
                                         }
                                         Date c=null;
-                                        String dtStart = document.getData().get("account_createdate").toString();
+                                        Object dtStart = document.getData().get("account_createdate");
                                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                        try {
-                                            c = format.parse(dtStart);
-                                            System.out.println(c);
-                                        } catch (ParseException e) {
-                                            e.printStackTrace();
-                                        }
                                         if(document.getData().get("account_status").toString().equals("1")) {
                                             accountobject object = new accountobject();
                                             object.setAccountfullcurrency(document.getData().get("account_fullcurency").toString());
@@ -489,7 +495,7 @@ public class fragment_expense extends Fragment {
             CircleImageView imageView;
             TextView textView;
             TextView hiddentextView;
-            String categorycreatedate;
+            Object categorycreatedate;
         }
 
         @Override
@@ -547,7 +553,7 @@ public class fragment_expense extends Fragment {
         private int image;
         private String country;
         private String hiddendata;
-        private String createdate;
+        private Object createdate;
 
         public int getImage() {
             return image;
@@ -581,11 +587,11 @@ public class fragment_expense extends Fragment {
             this.hiddendata = hiddendata;
         }
 
-        public String getCreatedate() {
+        public Object getCreatedate() {
             return createdate;
         }
 
-        public void setCreatedate(String createdate) {
+        public void setCreatedate(Object createdate) {
             this.createdate = createdate;
         }
     }
@@ -736,6 +742,7 @@ public class fragment_expense extends Fragment {
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
         datetext.setText(sdf.format(myCalendar.getTime()));
         generator.expdate=sdf.format(myCalendar.getTime());
+        generator.expdatesys=myCalendar.getTimeInMillis();
     }
     public void clearvalues(){
         try {
@@ -751,6 +758,8 @@ public class fragment_expense extends Fragment {
                 generator.expategory = "";
             if (generator.expdate != null)
                 generator.expdate = "";
+            if (generator.expdatesys != 0L)
+                generator.expdatesys = 0L;
             if (generator.expdocument != null)
                 generator.expdocument = "";
             if (generator.expbalanceleft != null)

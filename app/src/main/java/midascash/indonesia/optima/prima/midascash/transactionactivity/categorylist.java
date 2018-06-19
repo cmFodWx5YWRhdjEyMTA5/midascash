@@ -1,27 +1,23 @@
 package midascash.indonesia.optima.prima.midascash.transactionactivity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,27 +26,25 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.lang.reflect.AccessibleObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import midascash.indonesia.optima.prima.midascash.MainActivity;
 import midascash.indonesia.optima.prima.midascash.R;
 import midascash.indonesia.optima.prima.midascash.SQLiteHelper;
 import midascash.indonesia.optima.prima.midascash.generator;
 import midascash.indonesia.optima.prima.midascash.recycleview.adapterviewcategory;
-import midascash.indonesia.optima.prima.midascash.sqlite.category;
 
 /**
  * Created by rwina on 4/23/2018.
@@ -140,8 +134,126 @@ public class categorylist extends AppCompatActivity {
 
 
         if (id == android.R.id.home) {
-            db.closeDB();
+
             this.finish();
+        }
+        if (id == R.id.action_addcat) {
+
+            android.support.v7.app.AlertDialog.Builder dialogBuilder = new android.support.v7.app.AlertDialog.Builder(categorylist.this, R.style.AppCompatAlertDialogStyle);
+// ...Irrelevant code for customizing the buttons and title
+            LayoutInflater inflater = getLayoutInflater();
+            dialogBuilder.setTitle("New Category");
+            View dialogView = inflater.inflate(R.layout.layout_input_kategori, null);
+
+            final CircleImageView selected = dialogView.findViewById(R.id.imgselected);
+            adapterviewcategory adapter = new adapterviewcategory(categorylist.this, selected, 20);
+
+            RecyclerView recyclerView = dialogView.findViewById(R.id.recyclercategoryitem);
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(new GridLayoutManager(categorylist.this, 5));
+
+            recyclerView.setAdapter(adapter);
+
+            final EditText categoryname = dialogView.findViewById(R.id.categoryname);
+
+            Button buttonshowall = dialogView.findViewById(R.id.categoryedit);
+
+            buttonshowall.setVisibility(View.GONE);
+
+            dialogBuilder.setPositiveButton("Save", null);
+
+            dialogBuilder.setNegativeButton("Cancel", null);
+
+            dialogBuilder.setView(dialogView);
+
+            final android.support.v7.app.AlertDialog dialog1 = dialogBuilder.create();
+            dialog1.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
+                    Log.e("selected", "0");
+                    Button button = ((android.support.v7.app.AlertDialog) dialog1).getButton(android.support.v7.app.AlertDialog.BUTTON_POSITIVE);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Log.e("selected", "1");
+                            if (categoryname.getText().toString().equals("")) {
+                                Toast.makeText(categorylist.this,"Category name is Missing",Toast.LENGTH_SHORT).show();
+                            } else {
+                                if (Integer.parseInt(selected.getTag().toString()) == 0) {
+                                    Toast.makeText(categorylist.this,"Please Select Picture",Toast.LENGTH_SHORT).show();
+                                } else {
+                                    final int[] statuscode = {0};
+                                    Log.e("selected", "2");
+                                    Toast.makeText(categorylist.this,"Please Wait",Toast.LENGTH_SHORT).show();
+                                    fdb.collection("category")
+                                            .orderBy("category_name", Query.Direction.ASCENDING)
+                                            .get()
+                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Log.e("selected", "2,5");
+                                                        int isdouble=0;
+                                                        for (DocumentSnapshot document : task.getResult()) {
+                                                            statuscode[0] =1;
+                                                            Log.e("selected", "3");
+                                                            if(document.getId()==null){
+                                                                break;
+                                                            }
+                                                            else if (document.getData().get("category_name").toString().equals(categoryname.getText().toString()) && document.getData().get("category_name")!=null) {
+                                                                Toast.makeText(categorylist.this, categoryname.getText().toString() + " is Already Registered", Toast.LENGTH_SHORT).show();
+                                                                isdouble = 1;
+                                                            }
+                                                        }
+                                                        if(statuscode[0]==0 || isdouble!=1){
+                                                            Date c = Calendar.getInstance().getTime();
+                                                            Map<String, Object> categorymap = new HashMap<>();
+                                                            categorymap.put("category_name", categoryname.getText().toString());
+                                                            categorymap.put("category_image", selected.getTag());
+
+                                                            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                                            String formattedDate = df.format(c);
+
+                                                            categorymap.put("category_createdate", c);
+                                                            categorymap.put("category_status",1);
+                                                            categorymap.put("username",generator.userlogin);
+
+// Add a new document with a generated ID
+                                                            fdb.collection("category")
+                                                                    .add(categorymap)
+                                                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                        @Override
+                                                                        public void onSuccess(DocumentReference documentReference) {
+                                                                            dialog1.dismiss();
+                                                                            Toast.makeText(categorylist.this, "New Category Saved", Toast.LENGTH_SHORT).show();
+                                                                            reloaddata();
+                                                                            Log.e("added category", "DocumentSnapshot added with ID: " + documentReference.getId());
+                                                                        }
+                                                                    })
+                                                                    .addOnFailureListener(new OnFailureListener() {
+                                                                        @Override
+                                                                        public void onFailure(@NonNull Exception e) {
+                                                                            Toast.makeText(categorylist.this, "Error Occured : "+ e.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                                                                            Log.e("error add", "Error adding document", e);
+                                                                        }
+                                                                    });
+
+                                                        }
+                                                    } else {
+                                                        Log.e("category error add", "Error getting documents.", task.getException());
+                                                    }
+                                                }
+                                            });
+
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+
+            dialog1.show();
+
         }
         return  true;
     }
@@ -203,6 +315,7 @@ public class categorylist extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int position) {
                             if(position==0) {
+                                String temp="";
                                 final String tempword=finalHolder.textView.getText().toString();
                                 android.support.v7.app.AlertDialog.Builder dialogBuilder = new android.support.v7.app.AlertDialog.Builder(categorylist.this,R.style.AppCompatAlertDialogStyle);
 // ...Irrelevant code for customizing the buttons and title
@@ -221,6 +334,8 @@ public class categorylist extends AppCompatActivity {
                                 final EditText categoryname = dialogView.findViewById(R.id.categoryname);
                                 categoryname.setText(finalHolder.textView.getText().toString());
 
+                                temp=finalHolder.textView.getText().toString();
+
                                 adapterviewcategory adapter = new adapterviewcategory(categorylist.this, selected, 20);
 
                                 RecyclerView recyclerView = dialogView.findViewById(R.id.recyclercategoryitem);
@@ -236,6 +351,7 @@ public class categorylist extends AppCompatActivity {
                                 dialogBuilder.setView(dialogView);
 
                                 final android.support.v7.app.AlertDialog dialog1 = dialogBuilder.create();
+                                String finalTemp = temp;
                                 dialog1.setOnShowListener(new DialogInterface.OnShowListener() {
 
                                     @Override
@@ -275,6 +391,7 @@ public class categorylist extends AppCompatActivity {
                                                                         @Override
                                                                         public void onSuccess(Void aVoid) {
                                                                             Log.d("status write", "DocumentSnapshot successfully written!");
+                                                                            Toast.makeText(categorylist.this, finalTemp +" Changed into "+categoryname.getText().toString(), Toast.LENGTH_SHORT).show();
                                                                             reloaddata();
                                                                         }
                                                                     })
@@ -520,6 +637,7 @@ public class categorylist extends AppCompatActivity {
     }
     private void loaddata(){
         fdb.collection("category")
+                .orderBy("category_name", Query.Direction.ASCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -548,12 +666,16 @@ public class categorylist extends AppCompatActivity {
                         if (categorylist.getAdapter()==null){
                             categorylist.setAdapter(adapter);
                         }
+                        if(generator.adapter!=null){
+                            generator.adapter.notifyDataSetChanged();
+                        }
                     }
                 });
 
     }
     private void reloaddata(){
         fdb.collection("category")
+                .orderBy("category_name", Query.Direction.ASCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -578,8 +700,17 @@ public class categorylist extends AppCompatActivity {
                             Log.e("", "Error getting documents.", task.getException());
                         }
                         adapter.notifyDataSetChanged();
+                        if(generator.adapter!=null){
+                            generator.adapter.notifyDataSetChanged();
+                        }
                     }
                 });
 
+    }
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+
+        getMenuInflater().inflate(R.menu.menucategory, menu);
+        return true;
     }
 }

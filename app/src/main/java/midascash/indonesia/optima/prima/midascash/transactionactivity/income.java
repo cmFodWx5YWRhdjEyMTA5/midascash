@@ -170,6 +170,9 @@ public class income extends AppCompatActivity {
                                         db.collection("account").document(generator.incdocument)
                                                 .set(data, SetOptions.merge());
                                         generator.isdone="0";
+                                        if(generator.adapter!=null){
+                                            generator.adapter.notifyDataSetChanged();
+                                        }
                                         finish();
                                         Toast.makeText(income.this, "New Income Added", Toast.LENGTH_SHORT).show();
                                         Log.e("Add data", "DocumentSnapshot added with ID: " + documentReference.getId());
@@ -199,6 +202,9 @@ public class income extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(DocumentReference documentReference) {
                                         finish();
+                                        if(generator.adapter!=null){
+                                            generator.adapter.notifyDataSetChanged();
+                                        }
                                         generator.isdone="0";
                                         Toast.makeText(income.this, "New Scheduled Income Added", Toast.LENGTH_SHORT).show();
                                         Log.e("Add data", "DocumentSnapshot added with ID: " + documentReference.getId());

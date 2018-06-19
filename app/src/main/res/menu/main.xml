@@ -2,6 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_logout"
+        app:showAsAction="always"
+        android:icon="@drawable/logoutresized"
+        android:orderInCategory="100"
+        android:title="Log Out" />
+    <item
         android:id="@+id/action_help"
         app:showAsAction="never"
         android:orderInCategory="100"

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.support.v4.app.NavUtils;
 import android.util.Log;
 
 import java.text.DateFormat;
@@ -16,9 +15,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import midascash.indonesia.optima.prima.midascash.sqlite.account;
-import midascash.indonesia.optima.prima.midascash.sqlite.category;
-import midascash.indonesia.optima.prima.midascash.sqlite.income;
+import midascash.indonesia.optima.prima.midascash.objects.account;
+import midascash.indonesia.optima.prima.midascash.objects.category;
+import midascash.indonesia.optima.prima.midascash.objects.income;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
 
@@ -548,12 +547,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         DateFormat dated = new SimpleDateFormat("dd/MM/yyyy");
 
 // Get the date today using Calendar object.
-        Date today = accs.getIncome_date();
 // Using DateFormat format method we can create a string
 // representation of a date with the defined format.
-        String reportDate = dated.format(today);
 
-        values.put(KEY_INCOME_DATE,reportDate);
         values.put(KEY_INCOME_IMAGE,accs.getIncome_image());
         values.put(KEY_INCOME_ID,this.getincomeCount()+1);
         values.put(KEY_USERNAME,user);
@@ -591,8 +587,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
 
-        td.setIncome_createdate(date);
-
         Date date1=null;
         String dtStart1 = c.getString(c.getColumnIndex(KEY_INCOME_CREATEDATE));
         SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
@@ -603,7 +597,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             e.printStackTrace();
         }
 
-        td.setIncome_date(date1);
         td.setIncome_from(c.getString(c.getColumnIndex(KEY_INCOME_FROM)));
         td.setIncome_id(c.getString(c.getColumnIndex(KEY_INCOME_ID)));
 
@@ -640,8 +633,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                     e.printStackTrace();
                 }
 
-                td.setIncome_createdate(date);
-
                 Date date1=null;
                 String dtStart1 = c.getString(c.getColumnIndex(KEY_INCOME_CREATEDATE));
                 SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
@@ -652,7 +643,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                     e.printStackTrace();
                 }
 
-                td.setIncome_date(date1);
                 td.setIncome_from(c.getString(c.getColumnIndex(KEY_INCOME_FROM)));
                 td.setIncome_id(c.getString(c.getColumnIndex(KEY_INCOME_ID)));
 
@@ -703,12 +693,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         DateFormat dated = new SimpleDateFormat("dd/MM/yyyy");
 
 // Get the date today using Calendar object.
-        Date today = accs.getIncome_date();
 // Using DateFormat format method we can create a string
 // representation of a date with the defined format.
-        String reportDate = dated.format(today);
 
-        values.put(KEY_INCOME_DATE,reportDate);
         values.put(KEY_INCOME_IMAGE,accs.getIncome_image());
         values.put(KEY_INCOME_ID,this.getincomeCount()+1);
         values.put(KEY_USERNAME,user);

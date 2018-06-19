@@ -2,7 +2,6 @@ package midascash.indonesia.optima.prima.midascash.fragment_transaction;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
@@ -11,10 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -35,11 +31,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.mynameismidori.currencypicker.ExtendedCurrency;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -51,11 +45,8 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import midascash.indonesia.optima.prima.midascash.R;
-import midascash.indonesia.optima.prima.midascash.adaptercustomclass;
-import midascash.indonesia.optima.prima.midascash.formula.Selectdate;
 import midascash.indonesia.optima.prima.midascash.formula.calculatordialog;
 import midascash.indonesia.optima.prima.midascash.generator;
-import midascash.indonesia.optima.prima.midascash.transactionactivity.income;
 
 public class fragment_income extends Fragment {
 
@@ -67,6 +58,8 @@ public class fragment_income extends Fragment {
     EditText fromtxt,notestxt;
 
     Calendar myCalendar = Calendar.getInstance();
+
+    long datesys;
 
     String amountdata="",accountdata="",categorydata="",typedata="",datedata="",fromdata="",notesdata="",repeattime="",repeatperiod="",repeatcount="";
 
@@ -147,6 +140,7 @@ public class fragment_income extends Fragment {
         categorydata="";
         typedata="";
         datedata="";
+        datesys=0L;
         fromdata="";
         notesdata="";
     }
@@ -293,6 +287,8 @@ public class fragment_income extends Fragment {
 
         datedata=generator.incdate;
 
+        datesys=generator.incdatesys;
+
         notesdata=generator.incnote.getText().toString();
 
         fromdata=generator.incfrom.getText().toString();
@@ -300,13 +296,15 @@ public class fragment_income extends Fragment {
         accountdata=generator.incaccount;
         categorydata=generator.incategory;
 
-        mapdata.put("income_createdate",formattedDate);
+        mapdata.put("income_createdate",c);
         mapdata.put("income_amount",amountdata);
         mapdata.put("income_account",accountdata);
         mapdata.put("income_type",typedata);
         mapdata.put("income_category",categorydata);
         mapdata.put("income_notes",notesdata);
         mapdata.put("income_date",datedata);
+        mapdata.put("income_isdated","0");
+        mapdata.put("income_datesys",datesys);
         mapdata.put("income_from",fromdata);
         mapdata.put("income_repeat_time",repeattime);
         mapdata.put("income_repeat_period",repeatperiod);
@@ -327,6 +325,7 @@ public class fragment_income extends Fragment {
         final String date = df.format(Calendar.getInstance().getTime());
 
         generator.incdate= date;
+        generator.incdatesys= Calendar.getInstance().getTimeInMillis();
 
         datetext.setText(date);
 
@@ -388,7 +387,7 @@ public class fragment_income extends Fragment {
                                         b.setCategoryname(document.getData().get("category_name").toString());
                                         b.setImage(Integer.parseInt(document.getData().get("category_image").toString()));
                                         b.setHiddendata(document.getId());
-                                        b.setCreatedate(document.getData().get("category_createdate").toString());
+                                        b.setCreatedate(document.getData().get("category_createdate"));
                                         valuemyobjectlist.add(b);
                                     }
 
@@ -452,14 +451,8 @@ public class fragment_income extends Fragment {
                                             break;
                                         }
                                         Date c=null;
-                                        String dtStart = document.getData().get("account_createdate").toString();
+                                        Object dtStart = document.getData().get("account_createdate");
                                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                        try {
-                                            c = format.parse(dtStart);
-                                            System.out.println(c);
-                                        } catch (ParseException e) {
-                                            e.printStackTrace();
-                                        }
                                         if(document.getData().get("account_status").toString().equals("1")) {
                                             accountobject object = new accountobject();
                                             object.setAccountdocument(document.getId());
@@ -502,7 +495,7 @@ public class fragment_income extends Fragment {
             CircleImageView imageView;
             TextView textView;
             TextView hiddentextView;
-            String categorycreatedate;
+            Object categorycreatedate;
         }
 
         @Override
@@ -560,7 +553,7 @@ public class fragment_income extends Fragment {
         private int image;
         private String country;
         private String hiddendata;
-        private String createdate;
+        private Object createdate;
 
         public int getImage() {
             return image;
@@ -594,11 +587,11 @@ public class fragment_income extends Fragment {
             this.hiddendata = hiddendata;
         }
 
-        public String getCreatedate() {
+        public Object getCreatedate() {
             return createdate;
         }
 
-        public void setCreatedate(String createdate) {
+        public void setCreatedate(Object createdate) {
             this.createdate = createdate;
         }
     }
@@ -744,6 +737,7 @@ public class fragment_income extends Fragment {
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
         datetext.setText(sdf.format(myCalendar.getTime()));
         generator.incdate=sdf.format(myCalendar.getTime());
+        generator.incdatesys=myCalendar.getTimeInMillis();
     }
 
     public void clearvalues(){
@@ -760,6 +754,8 @@ public class fragment_income extends Fragment {
                 generator.incategory = "";
             if (generator.incdate != null)
                 generator.incdate = "";
+            if (generator.incdatesys != 0L)
+                generator.incdatesys = 0L;
             if (generator.incbalanceleft != null)
                 generator.incbalanceleft = "";
         }catch (Exception e){

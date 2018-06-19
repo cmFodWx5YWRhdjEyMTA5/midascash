@@ -140,7 +140,6 @@ public class expense extends AppCompatActivity {
             public void onClick(View v) {
                 if(positiondata==0){
                     expensepg1 = new fragment_expense();
-                    expensepg1.check(expense.this);
                     expensepg1.writeobjects();
                     if(expensepg1.issaveable(expense.this)==false){
                         Toast.makeText(expense.this, "Please Check Some Fields", Toast.LENGTH_SHORT).show();
@@ -172,6 +171,9 @@ public class expense extends AppCompatActivity {
                                                 .set(data, SetOptions.merge());
                                         generator.isdone="0";
                                         finish();
+                                        if(generator.adapter!=null){
+                                            generator.adapter.notifyDataSetChanged();
+                                        }
                                         Toast.makeText(expense.this, "New expense Added", Toast.LENGTH_SHORT).show();
                                         Log.e("Add data", "DocumentSnapshot added with ID: " + documentReference.getId());
                                     }
@@ -186,7 +188,6 @@ public class expense extends AppCompatActivity {
                 }
                 else if (positiondata==1) {
                     expensepg2 = new fragment_expenselist();
-                    expensepg2.check(expense.this);
                     expensepg2.writeobjects();
                     if(expensepg2.issaveable(expense.this)==false){
                         Toast.makeText(expense.this, "Please Check Some Fields", Toast.LENGTH_SHORT).show();
@@ -199,6 +200,9 @@ public class expense extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(DocumentReference documentReference) {
                                         finish();
+                                        if(generator.adapter!=null){
+                                            generator.adapter.notifyDataSetChanged();
+                                        }
                                         Toast.makeText(expense.this, "New Scheduled expense Added", Toast.LENGTH_SHORT).show();
                                         Log.e("Add data", "DocumentSnapshot added with ID: " + documentReference.getId());
                                     }

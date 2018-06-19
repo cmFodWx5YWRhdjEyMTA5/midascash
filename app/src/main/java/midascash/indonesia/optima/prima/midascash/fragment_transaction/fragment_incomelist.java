@@ -65,6 +65,8 @@ public class fragment_incomelist extends Fragment {
 
     Calendar myCalendar = Calendar.getInstance();
 
+    long datesys;
+
     String amountdata="",accountdata="",categorydata="",typedata="",datedata="",fromdata="",notesdata="",repeattimedata="",repeatperioddata="",repeatcountdata="";
 
     MySimpleArrayAdapter adapter;
@@ -141,6 +143,7 @@ public class fragment_incomelist extends Fragment {
         categorydata="";
         typedata="";
         datedata="";
+        datesys= 0L;
         fromdata="";
         notesdata="";
 
@@ -232,15 +235,19 @@ public class fragment_incomelist extends Fragment {
         subcontain = child.findViewById(R.id.allscheduled);
 
         //find more items here
-        String[] weeks = new String[]{
-                "daily","weekly","Monthly","Yearly"
-        };
 
 
 
         View child1 = inflater.inflate(R.layout.layout_allscheduled, null);
 
+
+
         generator.period = child1.findViewById(R.id.allrepeatrepriod);
+
+        String[] weeks = new String[]{
+                "daily","weekly","Monthly","Yearly"
+        };
+
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_spinner_item, weeks);
@@ -315,9 +322,11 @@ public class fragment_incomelist extends Fragment {
             typedata = "D";
         }
 
-        datedata= generator.incdate;
+        datedata= generator.incdate1;
 
-        notesdata=generator.incnote.getText().toString();
+        datesys = generator.incdatesys1;
+
+        notesdata=generator.incnote1.getText().toString();
 
         fromdata=generator.incfrom1.getText().toString();
         amountdata = generator.incamount1.getText().toString().replace(",","");
@@ -328,14 +337,16 @@ public class fragment_incomelist extends Fragment {
         repeatperioddata=generator.period.getSelectedItem().toString();
         repeattimedata=generator.repeatevery.getText().toString();
 
-        mapdata.put("income_createdate",formattedDate);
+        mapdata.put("income_createdate",c);
         mapdata.put("income_amount",amountdata);
         mapdata.put("income_account",accountdata);
         mapdata.put("income_type",typedata);
         mapdata.put("income_category",categorydata);
         mapdata.put("income_notes",notesdata);
         mapdata.put("income_date",datedata);
+        mapdata.put("income_datesys",datesys);
         mapdata.put("income_from",fromdata);
+        mapdata.put("income_isdated","1");
         mapdata.put("income_repeat_time",repeattimedata);
         mapdata.put("income_repeat_period",repeatperioddata);
         mapdata.put("income_repeat_count",repeatcountdata);
@@ -355,6 +366,8 @@ public class fragment_incomelist extends Fragment {
         final String date = df.format(Calendar.getInstance().getTime());
 
         generator.incdate1= date;
+
+        generator.incdatesys1 = Calendar.getInstance().getTimeInMillis();
 
         datetext.setText(date);
 
@@ -416,7 +429,7 @@ public class fragment_incomelist extends Fragment {
                                         b.setCategoryname(document.getData().get("category_name").toString());
                                         b.setImage(Integer.parseInt(document.getData().get("category_image").toString()));
                                         b.setHiddendata(document.getId());
-                                        b.setCreatedate(document.getData().get("category_createdate").toString());
+                                        b.setCreatedate(document.getData().get("category_createdate"));
                                         valuemyobjectlist.add(b);
                                     }
 
@@ -480,14 +493,7 @@ public class fragment_incomelist extends Fragment {
                                             break;
                                         }
                                         Date c=null;
-                                        String dtStart = document.getData().get("account_createdate").toString();
-                                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                        try {
-                                            c = format.parse(dtStart);
-                                            System.out.println(c);
-                                        } catch (ParseException e) {
-                                            e.printStackTrace();
-                                        }
+
                                         if(document.getData().get("account_status").toString().equals("1")) {
                                             accountobject object = new accountobject();
                                             object.setAccountfullcurrency(document.getData().get("account_fullcurency").toString());
@@ -529,7 +535,7 @@ public class fragment_incomelist extends Fragment {
             CircleImageView imageView;
             TextView textView;
             TextView hiddentextView;
-            String categorycreatedate;
+            Object categorycreatedate;
         }
 
         @Override
@@ -587,7 +593,7 @@ public class fragment_incomelist extends Fragment {
         private int image;
         private String country;
         private String hiddendata;
-        private String createdate;
+        private Object createdate;
 
         public int getImage() {
             return image;
@@ -621,11 +627,11 @@ public class fragment_incomelist extends Fragment {
             this.hiddendata = hiddendata;
         }
 
-        public String getCreatedate() {
+        public Object getCreatedate() {
             return createdate;
         }
 
-        public void setCreatedate(String createdate) {
+        public void setCreatedate(Object createdate) {
             this.createdate = createdate;
         }
     }
@@ -768,6 +774,7 @@ public class fragment_incomelist extends Fragment {
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
         datetext.setText(sdf.format(myCalendar.getTime()));
         generator.incdate1=sdf.format(myCalendar.getTime());
+        generator.incdatesys1=myCalendar.getTimeInMillis();
     }
     public void clearvalues(){
         try {
@@ -783,6 +790,8 @@ public class fragment_incomelist extends Fragment {
                 generator.incategory1 = "";
             if (generator.incdate1 != null)
                 generator.incdate1 = "";
+            if (generator.incdatesys1 != 0L)
+                generator.incdatesys1 = 0L;
             if (generator.repeattime.getText().toString() != null)
                 generator.repeattime.setText("");
             if (generator.repeatevery.getText().toString() != null)
