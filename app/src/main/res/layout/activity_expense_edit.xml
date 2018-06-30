@@ -34,7 +34,7 @@
             android:textSize="8pt"
             android:textColor="@color/colorAccent"
             android:text="Save"
-            android:id="@+id/btnsaveexpense"
+            android:id="@+id/btnsaveexpenseedit"
             android:layout_width="0sp"
             android:layout_height="match_parent"
             android:layout_weight="1" />
@@ -44,7 +44,7 @@
             android:textSize="8pt"
             android:textColor="@color/colorAccent"
             android:text="Cancel"
-            android:id="@+id/btncancelexpense"
+            android:id="@+id/btncancelexpenseedit"
             android:layout_width="0sp"
             android:layout_height="match_parent"
             android:layout_weight="1" />

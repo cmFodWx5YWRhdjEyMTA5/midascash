@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#0000dd</color>
+    <color name="colorPrimary">#b4b4b4</color>
+    <color name="colorPrimarybanner">#ffffff</color>
     <color name="colorPrimaryRed">#dd0000</color>
     <color name="colorPrimaryGreen">#00dd00</color>
     <color name="colorPrimaryOrange">#FF4500</color>
-    <color name="colorPrimaryDark">#0000cc</color>
+    <color name="colorPrimaryDark">#b4b4b4</color>
     <color name="colorPrimaryDarkRed">#990000</color>
     <color name="colorPrimaryDarkGreen">#009900</color>
     <color name="colorPrimaryDarkOrange">#dd4500</color>
     <color name="colorRipple">#00ff00</color>
     <color name="colorAccent">#ffffff</color>
     <color name="colorAccentBlack">#000000</color>
+    <color name="colorAccentWhite">#ffffff</color>
     <color name="colorgrey">#D3D3D3</color>
 </resources>

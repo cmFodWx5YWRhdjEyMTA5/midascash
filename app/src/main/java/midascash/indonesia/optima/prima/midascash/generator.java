@@ -52,9 +52,12 @@ import java.util.List;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_expense_show;
+import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_expense_show_scheduled;
 import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_income;
 import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_income_show;
 import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_income_show_scheduled;
+import midascash.indonesia.optima.prima.midascash.objects.expense;
 import midascash.indonesia.optima.prima.midascash.objects.income;
 import midascash.indonesia.optima.prima.midascash.recycleview.mainactivityviews;
 import midascash.indonesia.optima.prima.midascash.transactionactivity.listexpense;
@@ -146,6 +149,12 @@ public class generator {
 
     public static fragment_income_show_scheduled.listitemincomescheduled showadapterincomesch;
     public static List<income> showdataincomesch;
+
+    public static fragment_expense_show.listitemexpense showadapterexpense;
+    public static List<expense> showdataexpense;
+
+    public static fragment_expense_show_scheduled.listitemexpensescheduled showadapterexpensesch;
+    public static List<expense> showdataexpensesch;
 
     /*public static fragment_income_show.listitemincome showadapterincome;
     public static List<income> showdataincome;

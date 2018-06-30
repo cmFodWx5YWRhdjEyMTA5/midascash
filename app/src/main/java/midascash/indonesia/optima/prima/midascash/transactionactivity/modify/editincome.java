@@ -82,7 +82,7 @@ public class editincome extends AppCompatActivity {
         dateselect = layoutitems.findViewById(R.id.incdatetap);
 
         chosenimage = layoutitems.findViewById(R.id.inccatpic);
-        
+
         selectedcategory = layoutitems.findViewById(R.id.inccatname);
         selectedate = layoutitems.findViewById(R.id.incdateselect);
         selectedaccount = layoutitems.findViewById(R.id.incacctxt);
@@ -160,7 +160,8 @@ public class editincome extends AppCompatActivity {
                                                 if(generator.makedouble(inputvalue.getText().toString().replace(",",""))>comparer){
                                                     Map<String, Object> data = new HashMap<>();
                                                     result=generator.makedouble(inputvalue.getText().toString().replace(",",""))-comparer;
-                                                    data.put("account_balance_current", String.valueOf(calculate+result) );
+                                                    Log.e("balance current", String.valueOf(calculate+result) );
+                                                    data.put("account_balance_current",String.valueOf(calculate+result)  );
 
                                                     fdb.collection("account").document(accdoc[0])
                                                             .set(data, SetOptions.merge());
@@ -185,6 +186,7 @@ public class editincome extends AppCompatActivity {
                                             if(generator.adapter!=null){
                                                 generator.adapter.notifyDataSetChanged();
                                             }
+                                            generator.incdatesys=0;
                                             finish();
                                         }
                                     } else {

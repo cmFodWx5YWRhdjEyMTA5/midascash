@@ -16,6 +16,7 @@ public class expense implements Comparable<expense> {
     int expense_image;
     String expense_date,expense_createdate;
     double expense_amount;
+    String expensedoc;
 
     public expense(){}
 
@@ -38,6 +39,7 @@ public class expense implements Comparable<expense> {
     public void setexpense_category(String expense_category) {
         this.expense_category = expense_category;
     }
+
 
     public void setexpense_account(String iacc){
         expense_account=iacc;
@@ -92,7 +94,9 @@ public class expense implements Comparable<expense> {
         return expense_image;
     }
 
-
+    public void setexpensedoc(String expensedoc) {
+        this.expensedoc = expensedoc;
+    }
 
     public String getexpense_account(){
         return expense_account;
@@ -117,6 +121,10 @@ public class expense implements Comparable<expense> {
     }
     public String getexpense_createdate(){
         return expense_createdate;
+    }
+
+    public String getexpensedoc() {
+        return expensedoc;
     }
 
     @Override

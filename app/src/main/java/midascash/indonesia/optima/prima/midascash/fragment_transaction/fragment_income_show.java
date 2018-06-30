@@ -36,11 +36,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -267,26 +269,88 @@ public class fragment_income_show extends Fragment {
                                     builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
-                                            fdb.collection("income").document(holder.documenref)
-                                                    .delete()
-                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void aVoid) {
-                                                            reloaddata();
-                                                            datainc.clear();
-                                                            incadapter.notifyDataSetChanged();
-                                                            if(generator.adapter!=null){
-                                                                generator.adapter.notifyDataSetChanged();
+
+                                            DocumentReference docRef = fdb.collection("income").document(holder.documenref);
+                                            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        DocumentSnapshot document = task.getResult();
+                                                        if (document.exists()) {
+                                                            Log.d("Documentdata", "DocumentSnapshot data: " + document.getData());
+                                                            if(document.getData().get("income_isdone").toString().equals("1")){
+                                                                fdb.collection("account")
+                                                                        .whereEqualTo("account_name", document.getData().get("income_account"))
+                                                                        .get()
+                                                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                if (task.isSuccessful()) {
+                                                                                    for (QueryDocumentSnapshot document1 : task.getResult()) {
+                                                                                        if(document.getData().get("income_isdone").toString().equals("1")){
+                                                                                            Map<String, Object> data = new HashMap<>();
+                                                                                            Double result=generator.makedouble(document1.getData().get("account_balance_current").toString())-generator.makedouble(document.getData().get("income_amount").toString());
+                                                                                            data.put("account_balance_current", String.valueOf(result));
+
+                                                                                            fdb.collection("account").document(document1.getId())
+                                                                                                    .set(data, SetOptions.merge());
+
+                                                                                            fdb.collection("income").document(holder.documenref)
+                                                                                                    .delete()
+                                                                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                        @Override
+                                                                                                        public void onSuccess(Void aVoid) {
+                                                                                                            reloaddata();
+                                                                                                            datainc.clear();
+                                                                                                            incadapter.notifyDataSetChanged();
+                                                                                                            if(generator.adapter!=null){
+                                                                                                                generator.adapter.notifyDataSetChanged();
+                                                                                                            }
+                                                                                                            Toast.makeText(context, "Deleted selected Income", Toast.LENGTH_SHORT).show();
+                                                                                                        }
+                                                                                                    })
+                                                                                                    .addOnFailureListener(new OnFailureListener() {
+                                                                                                        @Override
+                                                                                                        public void onFailure(@NonNull Exception e) {
+                                                                                                            Toast.makeText(context, "Fail Delete selected Income", Toast.LENGTH_SHORT).show();
+                                                                                                        }
+                                                                                                    });
+                                                                                        }
+                                                                                        else {
+                                                                                            fdb.collection("income").document(holder.documenref)
+                                                                                                    .delete()
+                                                                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                        @Override
+                                                                                                        public void onSuccess(Void aVoid) {
+                                                                                                            reloaddata();
+                                                                                                            datainc.clear();
+                                                                                                            incadapter.notifyDataSetChanged();
+                                                                                                            if(generator.adapter!=null){
+                                                                                                                generator.adapter.notifyDataSetChanged();
+                                                                                                            }
+                                                                                                            Toast.makeText(context, "Deleted selected Income", Toast.LENGTH_SHORT).show();
+                                                                                                        }
+                                                                                                    })
+                                                                                                    .addOnFailureListener(new OnFailureListener() {
+                                                                                                        @Override
+                                                                                                        public void onFailure(@NonNull Exception e) {
+                                                                                                            Toast.makeText(context, "Fail Delete selected Income", Toast.LENGTH_SHORT).show();
+                                                                                                        }
+                                                                                                    });
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        });
                                                             }
-                                                            Toast.makeText(context, "Deleted selected Income", Toast.LENGTH_SHORT).show();
+                                                        } else {
+                                                            Log.d("Documentdata", "No such document");
                                                         }
-                                                    })
-                                                    .addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception e) {
-                                                            Toast.makeText(context, "Fail Delete selected Income", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    });
+                                                    } else {
+                                                        Log.d("Documentdata", "get failed with ", task.getException());
+                                                    }
+                                                }
+                                            });
                                         }
                                     });
 

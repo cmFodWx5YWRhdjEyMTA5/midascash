@@ -33,6 +33,8 @@ import android.widget.Toast;
 
 import com.fake.shopee.shopeefake.formula.commaedittext;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -153,11 +155,12 @@ public class fragment_expense_show_scheduled extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.e("selectedd", "onTabSelected: 4" );
                                 expense values = new expense();
+                                values.setexpensedoc(document.getId());
                                 values.setexpense_account(document.getData().get("expense_account").toString());
                                 values.setexpense_amount(Double.parseDouble(document.getData().get("expense_amount").toString()));
                                 values.setexpense_category(document.getData().get("expense_category").toString());
                                 values.setexpense_date(document.getData().get("expense_date").toString());
-                                values.setexpense_type("D");
+                                values.setexpense_type("K");
                                 values.setexpense_notes(document.getData().get("expense_notes").toString());
                                 values.setexpense_to(document.getData().get("expense_to").toString());
                                 fdb.collection("category")
@@ -207,11 +210,12 @@ public class fragment_expense_show_scheduled extends Fragment {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 expense values = new expense();
+                                values.setexpensedoc(document.getId());
                                 values.setexpense_account(document.getData().get("expense_account").toString());
                                 values.setexpense_amount(Double.parseDouble(document.getData().get("expense_amount").toString()));
                                 values.setexpense_category(document.getData().get("expense_category").toString());
                                 values.setexpense_date(document.getData().get("expense_date").toString());
-                                values.setexpense_type("D");
+                                values.setexpense_type("K");
                                 values.setexpense_notes(document.getData().get("expense_notes").toString());
                                 values.setexpense_to(document.getData().get("expense_to").toString());
                                 fdb.collection("category")
@@ -245,7 +249,7 @@ public class fragment_expense_show_scheduled extends Fragment {
 
     }
 
-    private class listitemexpensescheduled extends RecyclerView.Adapter<listitemexpensescheduled.MyViewHolder>{
+    public class listitemexpensescheduled extends RecyclerView.Adapter<listitemexpensescheduled.MyViewHolder>{
 
         List<expense> expenselist = new ArrayList<>();
         DecimalFormat formatter = new DecimalFormat("###,###,###.00");
@@ -272,6 +276,8 @@ public class fragment_expense_show_scheduled extends Fragment {
         public void onBindViewHolder(MyViewHolder holder, int position) {
             expense expenses = expenselist.get(position);
             Drawable resImg = context.getResources().getDrawable(images[expenses.getexpense_image()-1]);
+
+            holder.documenref = expenses.getexpensedoc();
             holder.image.setImageDrawable(resImg);
             holder.image.setTag(expenses.getexpense_image());
             holder.expensevalue.setText(formatter.format(expenses.getexpense_amount()));
@@ -296,16 +302,40 @@ public class fragment_expense_show_scheduled extends Fragment {
                             switch (item.getItemId()) {
                                 case R.id.incedititem:
                                     Intent editincomes = new Intent(context,editexpensesch.class);
+                                    editincomes.putExtra("document",holder.documenref);
+                                    generator.showadapterexpense=null;
+                                    generator.showdataexpensesch=null;
+                                    generator.showadapterexpensesch=expadapter;
+                                    generator.showdataexpensesch=dataexp;
                                     startActivity(editincomes);
                                     return true;
                                 case R.id.incdeleteitem:
-                                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
+                                    android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context,R.style.AppCompatAlertDialogStyle);
                                     builder.setTitle("Confirm");
                                     builder.setMessage("Are you sure to delete Income on "+expenses.getexpense_date()+" with "+formatter.format(expenses.getexpense_amount())+" amount and uses "+expenses.getexpense_account()+" and categorized as "+expenses.getexpense_category()+" ?");
                                     builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
-
+                                            fdb.collection("expense").document(holder.documenref)
+                                                    .delete()
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            reloaddatasch();
+                                                            dataexp.clear();
+                                                            expadapter.notifyDataSetChanged();
+                                                            if(generator.adapter!=null){
+                                                                generator.adapter.notifyDataSetChanged();
+                                                            }
+                                                            Toast.makeText(context, "Deleted selected Income", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Toast.makeText(context, "Fail Delete selected Income", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
                                         }
                                     });
 

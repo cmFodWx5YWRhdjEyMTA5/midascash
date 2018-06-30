@@ -185,6 +185,7 @@ public class editincomesch extends AppCompatActivity{
                         generator.adapter.notifyDataSetChanged();
                     }
                     finish();
+                    generator.incdatesys=0;
                 }
             }
         });

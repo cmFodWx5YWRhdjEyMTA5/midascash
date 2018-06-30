@@ -64,6 +64,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -77,6 +78,7 @@ import midascash.indonesia.optima.prima.midascash.objects.account;
 import midascash.indonesia.optima.prima.midascash.objects.dataexpset;
 import midascash.indonesia.optima.prima.midascash.objects.dataincset;
 import midascash.indonesia.optima.prima.midascash.objects.income;
+import midascash.indonesia.optima.prima.midascash.objects.incomeexpense;
 import midascash.indonesia.optima.prima.midascash.transactionactivity.listexpense;
 import midascash.indonesia.optima.prima.midascash.transactionactivity.listincome;
 
@@ -760,7 +762,179 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
         }
         else if(position==4){
             holder.layoutextra.removeAllViews();
-            View transactions = inflater.inflate(R.layout.recycler_layout_accounts_mainmenu,null);
+            View transactions = inflater.inflate(R.layout.recycler_layout_transactions_mainmenu,null);
+
+
+
+            RecyclerView transactionlist = transactions.findViewById(R.id.mainmenutransactionrecycler);
+
+            List<incomeexpense> alltransaction = new ArrayList<>() ;
+
+            adapterviewtransactionmenu adapter = new adapterviewtransactionmenu(contexts,alltransaction);
+
+            fdb.collection("income")
+                    .whereEqualTo("income_isdated","0")
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (DocumentSnapshot document : task.getResult()) {
+                                    if(document.getId()==null){
+                                        break;
+                                    }
+                                    incomeexpense data =new incomeexpense();
+                                    data.setIncome_account(document.getData().get("income_account").toString());
+                                    data.setIncome_amount(generator.makedouble(document.getData().get("income_amount").toString()));
+                                    data.setIncome_category(document.getData().get("income_category").toString());
+                                    data.setIncome_createdate(document.getData().get("income_createdate").toString());
+                                    data.setDatedata(document.getData().get("income_date").toString());
+                                    data.setIncome_date(document.getData().get("income_date").toString());
+
+
+                                    fdb.collection("category")
+                                            .whereEqualTo("category_name", document.getData().get("income_category").toString())
+                                            .get()
+                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task1) {
+                                                    if (task.isSuccessful()) {
+                                                        for (QueryDocumentSnapshot document2 : task1.getResult()) {
+                                                            Log.e("category datas", document.getId() + " => " + document.getData());
+                                                            data.setIncome_image(Integer.parseInt(document2.getData().get("category_image").toString()));
+
+
+
+                                                            data.setIncomedoc(document.getId());
+                                                            data.setIncome_from(document.getData().get("income_from").toString());
+                                                            data.setIncome_type(document.getData().get("income_type").toString());
+                                                            data.setIncome_notes(document.getData().get("income_notes").toString());
+
+                                                            alltransaction.add(data);
+
+
+
+                                                        }
+                                                        adapter.notifyDataSetChanged();
+                                                    } else {
+                                                        Log.d("data", "Error getting documents: ", task.getException());
+                                                    }
+                                                }
+                                            });
+
+
+
+
+
+
+
+                                    Log.d("Get data account", document.getId() + " => " + document.getData());
+                                }
+                                fdb.collection("expense")
+                                        .whereEqualTo("expense_isdated","0")
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    for (DocumentSnapshot document1 : task.getResult()) {
+                                                        if(document1.getId()==null){
+                                                            break;
+                                                        }
+                                                        incomeexpense data1 =new incomeexpense();
+                                                        data1.setExpense_account(document1.getData().get("expense_account").toString());
+                                                        data1.setExpense_amount(generator.makedouble(document1.getData().get("expense_amount").toString()));
+                                                        data1.setExpense_category(document1.getData().get("expense_category").toString());
+                                                        data1.setExpense_createdate(document1.getData().get("expense_createdate").toString());
+                                                        data1.setDatedata(document1.getData().get("expense_date").toString());
+                                                        data1.setExpense_date(document1.getData().get("expense_date").toString());
+
+
+                                                        fdb.collection("category")
+                                                                .whereEqualTo("category_name", document1.getData().get("expense_category").toString())
+                                                                .get()
+                                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<QuerySnapshot> task1) {
+                                                                        if (task.isSuccessful()) {
+                                                                            for (QueryDocumentSnapshot document2 : task1.getResult()) {
+                                                                                Log.e("category datas", document1.getId() + " => " + document1.getData());
+                                                                                data1.setExpense_image(Integer.parseInt(document2.getData().get("category_image").toString()));
+
+
+                                                                                data1.setExpensedoc(document1.getId());
+                                                                                data1.setExpense_to(document1.getData().get("expense_to").toString());
+                                                                                data1.setExpense_type(document1.getData().get("expense_type").toString());
+                                                                                data1.setExpense_notes(document1.getData().get("expense_notes").toString());
+
+                                                                                alltransaction.add(data1);
+
+                                                                            }
+                                                                            Collections.sort(alltransaction);
+                                                                            Collections.reverse(alltransaction);
+                                                                            adapter.notifyDataSetChanged();
+                                                                        } else {
+                                                                            Log.d("data", "Error getting documents: ", task.getException());
+                                                                        }
+                                                                    }
+                                                                });
+
+
+
+                                                        Log.d("Get data account", document1.getId() + " => " + document1.getData());
+                                                    }
+
+
+                                                    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(contexts.getApplicationContext());
+                                                    transactionlist.setLayoutManager(mLayoutManager);
+                                                    transactionlist.setItemAnimator(new DefaultItemAnimator());
+                                                    transactionlist.addItemDecoration(new MyDividerItemDecoration(contexts, LinearLayoutManager.VERTICAL, 16));
+                                                    transactionlist.setAdapter(adapter);
+
+                                                } else {
+                                                    Log.w("Get account error", "Error getting documents.", task.getException());
+                                                }
+                                            }
+                                        });
+
+                            } else {
+                                Log.w("Get account error", "Error getting documents.", task.getException());
+                            }
+                        }
+                    });
+
+
+            holder.buttonviewoption.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    //creating a popup menu
+                    PopupMenu popup = new PopupMenu(contexts, holder.buttonviewoption);
+                    //inflating menu from xml resource
+                    popup.inflate(R.menu.mainmenu_menuall);
+                    //adding click listener
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.mainmenuedit:
+                                    //handle menu1 click
+                                    return true;
+                                case R.id.mainmenureorder:
+                                    //handle menu2 click
+                                    return true;
+                                default:
+                                    return false;
+                            }
+                        }
+                    });
+                    //displaying the popup
+                    popup.show();
+
+                }
+            });
+
+
 
             holder.layoutextra.addView(transactions);
         }

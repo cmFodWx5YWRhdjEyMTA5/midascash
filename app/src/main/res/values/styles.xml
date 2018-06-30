@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -105,9 +105,10 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="AppCompatAlertDialogStyle" parent="Base.Theme.AppCompat.Light.Dialog.Alert">
-        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorAccentBlack</item>
         <item name="android:textColorPrimary">@color/colorAccentBlack</item>
-        <item name="android:background">@color/colorAccent</item>
+        <item name="android:textColorSecondary">@color/colorAccentBlack</item>
+        <item name="android:background">@color/colorAccentWhite</item>
     </style>
 
 </resources>

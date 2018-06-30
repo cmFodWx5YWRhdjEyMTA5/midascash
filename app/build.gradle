@@ -57,6 +57,14 @@ dependencies {
     implementation 'io.realm:realm-annotations-processor:4.0.0'
 
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
+
+    implementation 'com.balysv:material-ripple:1.0.2'                  // ripple effect
+    implementation 'com.github.bumptech.glide:glide:3.7.0'             // image loader
+    implementation 'com.wdullaer:materialdatetimepicker:3.2.0'         // date & time picker
+    implementation 'com.mikhaellopez:circularimageview:3.0.2'          // circle image view
+    implementation 'com.github.pchmn:MaterialChipsInput:1.0.5'         // material chip
+    implementation 'com.hootsuite.android:nachos:1.1.1'                // material chips
+    implementation 'com.google.android:flexbox:0.3.2'                  // google flexible box
 }
 
 

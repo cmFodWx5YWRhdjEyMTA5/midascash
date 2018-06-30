@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_marginTop="4sp"
+    android:id="@+id/Linearitemsdata"
+    android:layout_marginLeft="4sp"
+    android:layout_marginRight="4sp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="60sp"
+        android:layout_gravity="center"
+        android:elevation="3dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="match_parent">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="50sp"
+                android:src="@drawable/add"
+                android:layout_gravity="center"
+                android:layout_height="50dp"
+                android:id="@+id/dataimagelistdata"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true" />
+            <LinearLayout
+                android:layout_width="0sp"
+                android:layout_marginLeft="5sp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_height="match_parent">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/datacatdata"
+                    android:textSize="7pt"
+                    android:layout_width="match_parent"
+                    android:textAlignment="textStart"
+                    android:text="category"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/dataaccdata"
+                    android:layout_width="match_parent"
+                    android:textAlignment="textStart"
+                    android:text="account"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/datafromdata"
+                    android:textAlignment="textStart"
+                    android:text="From"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0sp"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:layout_height="match_parent">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:id="@+id/dataamountdata"
+                        android:layout_width="match_parent"
+                        android:textStyle="bold"
+                        android:textAlignment="textEnd"
+                        android:textSize="7pt"
+                        android:text="Value"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:id="@+id/datadatedata"
+                        android:layout_width="match_parent"
+                        android:textAlignment="textEnd"
+                        android:text="Date"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:id="@+id/datanotedata"
+                        android:textAlignment="textEnd"
+                        android:text="Note"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </LinearLayout>
+            <View
+                android:layout_width="6sp"
+                android:id="@+id/colortype"
+                android:background="@color/colorPrimaryGreen"
+                android:layout_height="match_parent"
+                android:layout_margin="5sp"/>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+</LinearLayout>

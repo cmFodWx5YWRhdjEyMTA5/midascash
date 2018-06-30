@@ -8,7 +8,7 @@ android:layout_height="match_parent">
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/colorPrimary">
+    android:background="@color/colorAccent">
 
 <LinearLayout
     android:layout_width="match_parent"
@@ -17,20 +17,29 @@ android:layout_height="match_parent">
     android:textStyle="bold"
     android:gravity="center"
     android:orientation="vertical"
-    android:textColor="@color/colorAccent"
+    android:textColor="@color/colorPrimary"
     android:background="@color/colorPrimary">
     <ImageView
-        android:layout_width="550px"
-        android:layout_height="600px"
+        android:layout_width="180sp"
+        android:layout_height="200sp"
         android:background="@drawable/logo"/>
 
 </LinearLayout>
-    <ProgressBar
-        android:background="@color/colorPrimary"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:id="@+id/barbanner"
         android:layout_height="0sp"
-        android:layout_weight="0.2"/>
+        android:id="@+id/barbanner"
+        android:gravity="center"
+        android:background="@color/colorPrimary"
+        android:layout_weight="0.1">
+
+        <midascash.indonesia.optima.prima.midascash.components.widget.ViewLoadingDotsGrow
+            android:layout_width="50dp"
+            android:layout_height="40dp"
+            android:background="@color/colorAccent" />
+
+    </LinearLayout>
+
 
 </LinearLayout>
 </RelativeLayout>

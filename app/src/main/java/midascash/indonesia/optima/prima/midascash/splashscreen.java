@@ -16,6 +16,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +34,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class splashscreen extends Activity {
-    ProgressBar barbanner;
+    LinearLayout barbanner;
     FirebaseFirestore db;
     SharedPreferences prefs;
     SharedPreferences.Editor editor;
@@ -49,7 +50,7 @@ public class splashscreen extends Activity {
         prefs = getSharedPreferences("midascash", MODE_PRIVATE);
         editor = getSharedPreferences("midascash", MODE_PRIVATE).edit();
 
-        barbanner = (ProgressBar) findViewById(R.id.barbanner);
+        barbanner = (LinearLayout) findViewById(R.id.barbanner);
         barbanner.setVisibility(View.GONE);
 
 
@@ -66,9 +67,9 @@ public class splashscreen extends Activity {
                             startActivity(i);
                             finish();
                     }
-                }, 2000);
+                }, 3000);
             }
-        }, 2000);
+        }, 1000);
 
         /**/
         // Example of a call to a native method
