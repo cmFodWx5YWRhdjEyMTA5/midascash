@@ -7,13 +7,21 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="0sp"
+            android:layout_weight="1"
+            android:text="Transfer : "
+            android:textColor="@color/colorAccentBlack"
+            android:textSize="8pt"
+            android:gravity="center"
+            android:layout_height="match_parent" />
     <android.support.design.widget.TextInputLayout
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:backgroundTint="@color/colorAccentBlack"
         android:id="@+id/input_valuecatch"
         android:layout_width="0sp"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:layout_height="wrap_content">
 
         <EditText
@@ -48,115 +56,123 @@
                 android:src="@drawable/calcresized"
                 />
         </LinearLayout>
+
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
+        android:orientation="horizontal"
         android:layout_height="wrap_content">
-        <de.hdodenhof.circleimageview.CircleImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:layout_width="34dp"
-            android:layout_margin="10sp"
-            android:layout_height="34dp"
-            android:src="@drawable/add"
-            app:civ_border_width="2dp"
-            app:civ_border_color="#FF000000"/>
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="  Account chosen"
-            android:gravity="center"
-            android:textAlignment="textStart"
-            android:textSize="10pt"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ImageView
+            android:layout_width="0sp"
+            android:textSize="8pt"
+            android:text="From"
+            android:textAlignment="textEnd"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+
+        <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="10sp"
-            android:background="@drawable/ic_account_balance_black_24dp"/>
+            android:textSize="8pt"
+            android:padding="4sp"
+            android:id="@+id/chosenacc"
+            android:text="Account"
+            android:layout_height="wrap_content" />
+
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="  Wallet"
-            android:gravity="center"
-            android:textAlignment="textStart"
-            android:textSize="10pt"/>
+            android:textSize="8pt"
+            android:layout_width="0sp"
+            android:layout_weight="1"
+            android:text="to : "
+            android:layout_height="wrap_content" />
     </LinearLayout>
+
+    <Spinner
+        android:layout_marginBottom="0sp"
+        android:layout_width="300sp"
+        android:layout_gravity="center"
+        style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+        android:layout_height="60sp">
+    </Spinner>
+
+    <TextView
+        android:layout_marginTop="20sp"
+        android:layout_width="350sp"
+        android:layout_gravity="center"
+        android:textColor="@color/colorAccentBlack"
+        android:textSize="8pt"
+        android:text="Exchange Rate :"
+        android:layout_height="wrap_content" />
     <LinearLayout
+
         android:layout_width="match_parent"
+        android:orientation="horizontal"
         android:layout_height="wrap_content">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="10sp"
-            android:background="@drawable/ic_event_black_24dp"/>
+
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="  25/04/2018"
+            android:layout_marginLeft="30sp"
+            android:textColor="@color/colorAccentBlack"
+            android:layout_width="wrap_content"
+            android:textSize="8pt"
+            android:text=" 1 "
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:textColor="@color/colorAccentBlack"
+            android:textSize="8pt"
+            android:text="GBP "
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:textColor="@color/colorAccentBlack"
+            android:textSize="8pt"
+            android:text=" = "
+            android:layout_height="wrap_content" />
+        <EditText
+            android:layout_width="0sp"
+            android:textColor="@color/colorAccentBlack"
+            android:textSize="8pt"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:textColor="@color/colorAccentBlack"
+            android:layout_marginRight="30sp"
+            android:textSize="8pt"
+            android:layout_gravity="start"
             android:gravity="center"
             android:textAlignment="textStart"
+            android:text="GBP "
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/incdatetap"
+        android:layout_width="match_parent"
+        android:padding="8sp"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_marginLeft="10sp"
+            android:layout_width="0sp"
+            android:layout_weight="1"
+            android:textSize="9pt"
+            android:text="Date : "
+            android:textColor="@color/colorAccentBlack"
+            android:layout_height="match_parent" />
+        <TextView
+            android:paddingLeft="10sp"
+            android:background="@drawable/bordersbg"
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="25/04/2018"
+            android:gravity="center"
+            android:id="@+id/incdateselect"
+            android:textAlignment="center"
             android:textSize="10pt"/>
     </LinearLayout>
-    <LinearLayout
+    <EditText
         android:layout_width="match_parent"
-        android:id="@+id/allscheduled"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="10sp"
-            android:background="@drawable/ic_person_black_24dp"/>
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/allinput"
-            android:backgroundTint="@color/colorAccentBlack"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:backgroundTint="@color/colorAccentBlack"
-                android:id="@+id/allfrom"
-                android:hint="Transfer (Optional)"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-
-        </android.support.design.widget.TextInputLayout>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="10sp"
-            android:background="@drawable/ic_mode_edit_black_24dp"/>
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/allnotes"
-            android:backgroundTint="@color/colorAccentBlack"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:backgroundTint="@color/colorAccentBlack"
-                android:id="@+id/allnotesdata"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Notes (Optional)" />
-
-
-        </android.support.design.widget.TextInputLayout>
-    </LinearLayout>
+        android:hint="Notes (Optional)"
+        android:layout_margin="10sp"/>
 </LinearLayout>
