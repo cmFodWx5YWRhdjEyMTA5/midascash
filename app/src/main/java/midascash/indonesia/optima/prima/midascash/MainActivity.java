@@ -28,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -47,6 +48,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.mynameismidori.currencypicker.CurrencyPicker;
 import com.mynameismidori.currencypicker.CurrencyPickerListener;
+import com.mynameismidori.currencypicker.ExtendedCurrency;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -203,8 +205,55 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 animateFAB();
-                Intent a = new Intent(MainActivity.this, transfer.class);
-                startActivity(a);
+
+                TextView chosenacc,currchosen,currdef,chosendate,allcurrencyselected;
+                Spinner choseacc;
+                EditText inputrate,trfvalue;
+
+                List<ExtendedCurrency> currencies = ExtendedCurrency.getAllCurrencies(); //List of all currencies
+
+
+                ExtendedCurrency[] currencieses = ExtendedCurrency.CURRENCIES; //Array of all currencies
+
+                for (int i=0;i<currencieses.length;i++){
+                    Log.e("Currency List", "Nama" + currencieses[i].getName() );
+                    Log.e("Currency List", "Symbol" + currencieses[i].getSymbol() );
+                    Log.e("Currency List", "Code" + currencieses[i].getCode() );
+                }
+
+
+
+                LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
+
+                LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.layout_transactionstransfer,null);
+
+                chosenacc = layout.findViewById(R.id.chosenacc);
+                choseacc = layout.findViewById(R.id.choseacc);
+                currchosen = layout.findViewById(R.id.chosencurr);
+                currdef = layout.findViewById(R.id.currdef);
+
+                chosendate = layout.findViewById(R.id.trfdateselect);
+
+                inputrate = layout.findViewById(R.id.inputrate);
+                trfvalue = layout.findViewById(R.id.input_value);
+                allcurrencyselected = layout.findViewById(R.id.allcurrency);
+
+                generator.choseaccount(MainActivity.this,chosenacc,allcurrencyselected);
+
+                AlertDialog.Builder build = new AlertDialog.Builder(MainActivity.this,R.style.AppCompatAlertDialogStyle);
+                build.setTitle("Transfer");
+
+                build.setCancelable(false);
+
+                build.setNegativeButton("Cancel", null);
+
+                List<accountobject> allaccount=new ArrayList<accountobject>();
+
+                build.setView(layout);
+
+
+                build.show();
+
             }
         });
         mainview.setOnClickListener(new View.OnClickListener() {
@@ -1540,4 +1589,56 @@ public class MainActivity extends AppCompatActivity
                 recycler.setAdapter(generator.adapter);
             }
 
+    private static class accountobject {
+        private String accountname;
+        private String accountcategory;
+        private String accountbalance;
+        private String accountfullcurrency;
+        private String accountdocument;
+
+        private accountobject(){
         }
+
+        public String getAccountdocument() {
+            return accountdocument;
+        }
+
+        public String getAccountbalance() {
+            return accountbalance;
+        }
+
+        public String getAccountcategory() {
+            return accountcategory;
+        }
+
+        public String getAccountfullcurrency() {
+            return accountfullcurrency;
+        }
+
+        public String getAccountname() {
+            return accountname;
+        }
+
+        public void setAccountname(String accountname) {
+            this.accountname = accountname;
+        }
+
+        public void setAccountcategory(String accountcategory) {
+            this.accountcategory = accountcategory;
+        }
+
+        public void setAccountbalance(String accountbalance) {
+            this.accountbalance = accountbalance;
+        }
+
+        public void setAccountdocument(String accountdocument) {
+            this.accountdocument = accountdocument;
+        }
+
+        public void setAccountfullcurrency(String accountfullcurrency) {
+            this.accountfullcurrency = accountfullcurrency;
+        }
+
+
+    }
+}

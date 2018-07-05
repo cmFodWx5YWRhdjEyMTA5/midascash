@@ -131,7 +131,7 @@ public class generator {
     public static int scheduledchoice=0;
     public static int acountschoice=0;
 
-    public static String usedcurrency="";
+    public static String defaultcurrency="$";
     public static TextView fragmentpassdate;
 
     public static List<String> listcategory = new ArrayList<String>();
@@ -332,6 +332,8 @@ public class generator {
                 });
 
     }
+
+
     
     public static void chosecategory(Context context,TextView passedtextview,CircleImageView image){
 
