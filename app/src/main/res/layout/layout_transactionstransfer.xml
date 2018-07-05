@@ -13,15 +13,18 @@
         android:focusableInTouchMode="true"
         android:id="@+id/input_valuecatch"
         android:layout_width="0sp"
+        android:theme="@style/AppThemeactionbarblack"
         android:layout_weight="1"
         android:layout_height="wrap_content">
 
         <EditText
             android:inputType="numberDecimal"
+            android:theme="@style/AppThemeactionbarblack"
             android:nextFocusUp="@id/input_value"
             android:nextFocusLeft="@id/input_value"
             android:textColor="@color/colorAccentBlack"
             android:id="@+id/input_value"
+            android:backgroundTint="@color/colorAccentBlack"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Value" />
@@ -129,7 +132,11 @@
             android:layout_width="0sp"
             android:textColor="@color/colorAccentBlack"
             android:textSize="8pt"
+            android:theme="@style/AppThemeactionbarblack"
             android:id="@+id/inputrate"
+            android:textAlignment="center"
+            android:inputType="numberDecimal"
+            android:text="1.00"
             android:layout_weight="1"
             android:layout_height="wrap_content" />
         <TextView
@@ -170,9 +177,23 @@
             android:textAlignment="center"
             android:textSize="10pt"/>
     </LinearLayout>
-    <EditText
+
+    <android.support.design.widget.TextInputLayout
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:id="@+id/input_note"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Notes (Optional)"
-        android:layout_margin="10sp"/>
+        android:theme="@style/AppThemeactionbarblack"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Notes (Optional)"
+            android:theme="@style/AppThemeactionbarblack"
+            android:layout_margin="10sp"/>
+
+
+    </android.support.design.widget.TextInputLayout>
+
 </LinearLayout>

@@ -333,6 +333,69 @@ public class generator {
 
     }
 
+    public static void choseaccount1(Context context, TextView selectedacc, TextView changecurrency,TextView changecurrency1){
+        Toast.makeText(context, "Loading Accounts..", Toast.LENGTH_SHORT).show();
+
+        AlertDialog.Builder build = new AlertDialog.Builder(context,R.style.AppCompatAlertDialogStyle);
+        build.setTitle("Select Account");
+
+        build.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        List<accountobject> allaccount=new ArrayList<accountobject>();
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View back = inflater.inflate(R.layout.dialog_search_data,null);
+
+        ListView accountlist = back.findViewById(R.id.lvsnf);
+
+        EditText search = back.findViewById(R.id.searchbox);
+
+        build.setView(back);
+
+        FirebaseFirestore fdb = FirebaseFirestore.getInstance();
+
+        fdb.collection("account")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+
+                            allaccount.clear();
+                            for (DocumentSnapshot document : task.getResult()) {
+                                if(document.getId()==null){
+                                    break;
+                                }
+                                Date c=null;
+                                Object dtStart = document.getData().get("account_createdate");
+                                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                if(document.getData().get("account_status").toString().equals("1")) {
+                                    accountobject object = new accountobject();
+                                    object.setAccountdocument(document.getId());
+                                    object.setAccountfullcurrency(document.getData().get("account_fullcurency").toString());
+                                    object.setAccountname(document.getData().get("account_name").toString());
+                                    object.setAccountcategory(document.getData().get("account_category").toString());
+                                    object.setAccountbalance(document.getData().get("account_balance_current").toString());
+                                    allaccount.add(object);
+                                }
+                                else {
+
+                                }
+                                Log.d("Get data account", document.getId() + " => " + document.getData());
+                            }
+                            myaccountlisadapter adapteraccount = new myaccountlisadapter(context,R.layout.row_layout_account,allaccount,changecurrency,selectedacc,changecurrency1);
+                            accountlist.setAdapter(adapteraccount);
+                            dialogaccount=build.show();
+                        } else {
+                            Log.w("Get account error", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
+
+    }
 
     
     public static void chosecategory(Context context,TextView passedtextview,CircleImageView image){
@@ -522,7 +585,7 @@ public class generator {
     private static class myaccountlisadapter extends ArrayAdapter<accountobject> {
         private final Context context;
         private AlertDialog alert=null;
-        private TextView currencies,chosentext;
+        private TextView currencies,chosentext,chosentext1;
         private final List<accountobject> values;
         DecimalFormat formatter = new DecimalFormat("###,###,###.00");
 
@@ -532,6 +595,14 @@ public class generator {
             currencies = currencychange;
             this.values = value;
             this.chosentext=chosentext;
+        }
+        public myaccountlisadapter(Context context, int resourceID, List<accountobject> value,TextView currencychange,TextView chosentext,TextView chose) {
+            super(context, resourceID, value);
+            this.context = context;
+            currencies = currencychange;
+            this.values = value;
+            this.chosentext=chosentext;
+            chosentext1=chose;
         }
 
         private class ViewHolder {
@@ -583,6 +654,9 @@ public class generator {
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if(chosentext1!=null){
+                        chosentext1.setText(part2);
+                    }
                     currencies.setText(part2);
                     chosentext.setText(finalHolder2.accountname.getText().toString());
                     generator.incaccount=chosentext.getText().toString();

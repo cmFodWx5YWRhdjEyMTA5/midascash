@@ -24,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -63,6 +64,7 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.realm.Realm;
+import io.realm.internal.async.RealmThreadPoolExecutor;
 import midascash.indonesia.optima.prima.midascash.administrator.Mainadministrator;
 import midascash.indonesia.optima.prima.midascash.recycleview.adapterviewcategory;
 import midascash.indonesia.optima.prima.midascash.recycleview.mainactivityviews;
@@ -210,6 +212,10 @@ public class MainActivity extends AppCompatActivity
                 Spinner choseacc;
                 EditText inputrate,trfvalue;
 
+
+                ArrayList<String> account = new ArrayList<>();
+
+
                 List<ExtendedCurrency> currencies = ExtendedCurrency.getAllCurrencies(); //List of all currencies
 
 
@@ -238,14 +244,106 @@ public class MainActivity extends AppCompatActivity
                 trfvalue = layout.findViewById(R.id.input_value);
                 allcurrencyselected = layout.findViewById(R.id.allcurrency);
 
-                generator.choseaccount(MainActivity.this,chosenacc,allcurrencyselected);
+                inputrate.addTextChangedListener(new commaedittext(inputrate));
+                trfvalue.addTextChangedListener(new commaedittext(trfvalue));
+
+                currdef.setText(generator.defaultcurrency);
+
+                choseacc.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                   @Override
+                   public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                       db.collection("account")
+                               .whereEqualTo("account_name", choseacc.getSelectedItem().toString())
+                               .get()
+                               .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                   @Override
+                                   public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                                       if (task.isSuccessful()) {
+                                           for (DocumentSnapshot document : task.getResult()) {
+
+                                               String[] parts = document.getData().get("account_fullcurency").toString().split("-");
+                                               String part1 = parts[0]; // 004
+                                               String part2 = parts[1]; // 034556
+                                               currdef.setText(part2.replace(" ", ""));
+                                           }
+                                       } else {
+                                           Log.e("", "Error getting documents.", task.getException());
+                                       }
+
+                                   }
+                               });
+                   }
+
+                   @Override
+                   public void onNothingSelected(AdapterView<?> adapterView) {
+
+                   }
+               }
+                );
+
+
+
+
+                chosendate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        generator.chosedate(MainActivity.this,chosendate);
+                    }
+                });
+
+                db.collection("account")
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                                if (task.isSuccessful()) {
+                                    for (DocumentSnapshot document : task.getResult()) {
+                                        Log.e("getting data", document.getId() + " => " + document.getData());
+                                        account.add(document.getData().get("account_name").toString());
+                                    }
+                                    ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, account);
+                                    spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                    choseacc.setAdapter(spinnerArrayAdapter);
+                                } else {
+                                    Log.e("", "Error getting documents.", task.getException());
+                                }
+
+                            }
+                        });
+
+
+                chosenacc.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        generator.choseaccount1(MainActivity.this,chosenacc,allcurrencyselected,currchosen);
+                    }
+                });
+
+                generator.choseaccount1(MainActivity.this,chosenacc,allcurrencyselected,currchosen);
 
                 AlertDialog.Builder build = new AlertDialog.Builder(MainActivity.this,R.style.AppCompatAlertDialogStyle);
                 build.setTitle("Transfer");
 
                 build.setCancelable(false);
 
-                build.setNegativeButton("Cancel", null);
+                build.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                build.setPositiveButton("Save", null);
+
+                AlertDialog a = build.create();
+
+                a.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialogInterface) {
+
+                    }
+                });
 
                 List<accountobject> allaccount=new ArrayList<accountobject>();
 
