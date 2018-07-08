@@ -25,6 +25,10 @@
             android:icon="@drawable/baseline_indeterminate_check_box_black_36dp"
             android:title="Expense" />
         <item
+            android:id="@+id/nav_transferlist"
+            android:icon="@drawable/baseline_swap_horizontal_circle_black_36dp"
+            android:title="Transfer" />
+        <item
             android:id="@+id/nav_report"
             android:icon="@drawable/reportmenuresized"
             android:title="Report" />

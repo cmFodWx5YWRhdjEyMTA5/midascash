@@ -14,134 +14,141 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
         <activity
             android:name=".splashscreen"
-            android:theme="@style/NoActionBar"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:theme="@style/NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"
-            android:windowSoftInputMode="adjustPan"
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
-        android:screenOrientation="portrait"></activity>
-        <activity android:name=".transactionactivity.categorylist"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".transactionactivity.categorylist"
             android:label="Category"
-            android:theme="@style/AppThemeactionbar"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".transactionactivity.accountlist"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeactionbar" />
+        <activity
+            android:name=".transactionactivity.accountlist"
             android:label="Accounts"
-            android:theme="@style/AppThemeactionbar"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".transactionactivity.income"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeactionbar" />
+        <activity
+            android:name=".transactionactivity.income"
             android:label="Income"
-            android:theme="@style/AppThemeactionbargreen"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".transactionactivity.expense"
-            android:theme="@style/AppThemeactionbarred"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeactionbargreen" />
+        <activity
+            android:name=".transactionactivity.expense"
             android:label="Expense"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".transactionactivity.transfer"
-            android:theme="@style/AppThemeactionbarorange"
-            android:label="Transfer"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".transactionactivity.reminderdata"
-            android:theme="@style/AppThemeactionbar"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeactionbarred" />
+        <activity
+            android:name=".transactionactivity.reminderdata"
             android:label="Reiminder"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".reports.accountsandcategory"
-            android:theme="@style/AppThemeactionbar"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeactionbar" />
+        <activity
+            android:name=".reports.accountsandcategory"
             android:label="Accounts"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".reports.cashflow"
-            android:theme="@style/AppThemeactionbar"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeactionbar" />
+        <activity
+            android:name=".reports.cashflow"
             android:label="Cash Flow"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".reports.chartofbalance"
-            android:theme="@style/AppThemeactionbar"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeactionbar" />
+        <activity
+            android:name=".reports.chartofbalance"
             android:label="Report By Chart"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".reports.schedulelist"
-            android:theme="@style/AppThemeactionbar"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeactionbar" />
+        <activity
+            android:name=".reports.schedulelist"
             android:label="Schedules"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".reports.summary"
-            android:theme="@style/AppThemeactionbar"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeactionbar" />
+        <activity
+            android:name=".reports.summary"
             android:label="Summary"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".help"
-            android:theme="@style/AppThemeactionbar"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeactionbar" />
+        <activity
+            android:name=".help"
             android:label="Summary"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".about"
-            android:theme="@style/AppThemeactionbar"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeactionbar" />
+        <activity
+            android:name=".about"
             android:label="Summary"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".firstpage"
-            android:theme="@style/NoActionBar"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".transactionactivity.listexpense"
-            android:theme="@style/AppThemeactionbarred"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeactionbar" />
+        <activity
+            android:name=".firstpage"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".transactionactivity.listexpense"
             android:label="Expense List"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".transactionactivity.listincome"
-            android:theme="@style/AppThemeactionbargreen"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeactionbarred" />
+        <activity
+            android:name=".transactionactivity.listincome"
             android:label="Income List"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".transactionactivity.listtransfer"
-            android:theme="@style/NoActionBar"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".administrator.Mainadministrator"
-            android:theme="@style/AppTheme"
-            android:label="Administrator Panel"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".transactionactivity.modify.editexpense"
-            android:theme="@style/AppThemeactionbarred"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeactionbargreen" />
+        <activity
+            android:name=".transactionactivity.modify.editexpense"
             android:label="Edit Expense"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".transactionactivity.modify.editexpensesch"
-            android:theme="@style/AppThemeactionbarred"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeactionbarred" />
+        <activity
+            android:name=".transactionactivity.modify.editexpensesch"
             android:label="Edit Scheduled Expense"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".transactionactivity.modify.editincome"
-            android:theme="@style/AppThemeactionbargreen"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeactionbarred" />
+        <activity
+            android:name=".transactionactivity.modify.editincome"
             android:label="Edit Income"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".transactionactivity.modify.editincomesch"
-            android:theme="@style/AppThemeactionbargreen"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeactionbargreen" />
+        <activity
+            android:name=".transactionactivity.modify.editincomesch"
             android:label="Edit Scheduled Income"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeactionbargreen" />
+        <activity
+            android:name=".transactionactivity.listtransfer"
+            android:label="Transfer list"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeactionbarorange" />
 
-
-        <receiver android:name=".alarmnotification.alarmreceiver"
+        <receiver
+            android:name=".alarmnotification.alarmreceiver"
             android:enabled="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".administrator.main_administrator"
+            android:label="Administrator Panel"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeactionbar" />
+        <activity
+            android:name=".settings.Settings"
+            android:theme="@style/AppThemeactionbar"
+            android:label="@string/title_activity_settings"></activity>
     </application>
 
 </manifest>

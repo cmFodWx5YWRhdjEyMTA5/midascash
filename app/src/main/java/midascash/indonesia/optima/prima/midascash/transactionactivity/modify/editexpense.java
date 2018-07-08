@@ -26,9 +26,12 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -126,21 +129,11 @@ public class editexpense extends AppCompatActivity{
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 if(inputvalue.getText().toString().equals("")){
                     Toast.makeText(editexpense.this, "Value Required", Toast.LENGTH_SHORT).show();
                 }else {
-                    Map<String, Object> mapdata = new HashMap<>();
-                    mapdata.put("expense_amount",inputvalue.getText().toString().replace(",",""));
-                    mapdata.put("expense_account",selectedaccount.getText().toString());
-                    mapdata.put("expense_category",selectedcategory.getText().toString());
-                    mapdata.put("expense_notes", expnote.getText().toString());
-                    mapdata.put("expense_date",selectedate.getText().toString());
-                    mapdata.put("expense_datesys",generator.incdatesys);
-                    mapdata.put("expense_to",expto.getText().toString());
-                    mapdata.put("expense_lastedit", Calendar.getInstance().getTimeInMillis());
 
-                    fdb.collection("expense").document(getIntent().getStringExtra("document"))
-                            .set(mapdata, SetOptions.merge());
 
                     fdb.collection("account")
                             .whereEqualTo("account_name", selectedaccount.getText().toString())
@@ -150,38 +143,141 @@ public class editexpense extends AppCompatActivity{
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful()) {
                                         for (QueryDocumentSnapshot document1 : task.getResult()) {
+                                            String temp = "1";
+
+                                            Date date = Calendar.getInstance().getTime();
+
+                                            Date today = new Date();
+                                            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+                                            Date chosendated=null;
+                                            try {
+                                                chosendated = format.parse(selectedate.getText().toString());
+                                            } catch (ParseException e) {
+                                                e.printStackTrace();
+                                            }
+
                                             Log.d("Documentdata", document1.getId() + " => " + document1.getData());
                                             accdoc[0] = document1.getId();
                                             calculate = generator.makedouble(document1.getData().get("account_balance_current").toString());
                                             if(isdone[0]==1){
-                                                if(generator.makedouble(inputvalue.getText().toString().replace(",",""))>comparer){
-                                                    Map<String, Object> data = new HashMap<>();
-                                                    result=generator.makedouble(inputvalue.getText().toString().replace(",",""))-comparer;
-                                                    data.put("account_balance_current", String.valueOf(calculate-result) );
 
-                                                    fdb.collection("account").document(accdoc[0])
-                                                            .set(data, SetOptions.merge());
-                                                }
-                                                else if(generator.makedouble(inputvalue.getText().toString().replace(",",""))<comparer){
-                                                    Map<String, Object> data = new HashMap<>();
-                                                    result=comparer-generator.makedouble(inputvalue.getText().toString().replace(",",""));
-                                                    data.put("account_balance_current", String.valueOf(calculate+result) );
+                                                if(chosendated.after(date)) {
+                                                    temp = "0";
+                                                    if(generator.makedouble(inputvalue.getText().toString().replace(",",""))>comparer){
+                                                        Map<String, Object> data = new HashMap<>();
+                                                        result=generator.makedouble(inputvalue.getText().toString().replace(",",""))-comparer;
+                                                        data.put("account_balance_current", String.valueOf(calculate+result+comparer) );
 
-                                                    fdb.collection("account").document(accdoc[0])
-                                                            .set(data, SetOptions.merge());
+                                                        fdb.collection("account").document(accdoc[0])
+                                                                .set(data, SetOptions.merge());
+
+
+
+                                                    }
+                                                    else if(generator.makedouble(inputvalue.getText().toString().replace(",",""))<comparer){
+                                                        Map<String, Object> data = new HashMap<>();
+                                                        result=comparer-generator.makedouble(inputvalue.getText().toString().replace(",",""));
+                                                        data.put("account_balance_current", String.valueOf(calculate-result+generator.makedouble(inputvalue.getText().toString().replace(",",""))) );
+
+                                                        fdb.collection("account").document(accdoc[0])
+                                                                .set(data, SetOptions.merge());
+
+
+                                                    }
+                                                    else {
+                                                        Map<String, Object> data = new HashMap<>();
+                                                        data.put("account_balance_current", String.valueOf(calculate+generator.makedouble(inputvalue.getText().toString().replace(",",""))));
+                                                        fdb.collection("account").document(accdoc[0])
+                                                                .set(data, SetOptions.merge());
+                                                    }
                                                 }
                                                 else {
+                                                    temp="1";
+                                                    if(generator.makedouble(inputvalue.getText().toString().replace(",",""))>comparer){
+                                                        Map<String, Object> data = new HashMap<>();
+                                                        result=generator.makedouble(inputvalue.getText().toString().replace(",",""))-comparer;
+                                                        data.put("account_balance_current", String.valueOf(calculate-result) );
 
+                                                        fdb.collection("account").document(accdoc[0])
+                                                                .set(data, SetOptions.merge());
+                                                    }
+                                                    else if(generator.makedouble(inputvalue.getText().toString().replace(",",""))<comparer){
+                                                        Map<String, Object> data = new HashMap<>();
+                                                        result=comparer-generator.makedouble(inputvalue.getText().toString().replace(",",""));
+                                                        data.put("account_balance_current", String.valueOf(calculate+result) );
+
+                                                        fdb.collection("account").document(accdoc[0])
+                                                                .set(data, SetOptions.merge());
+                                                    }
+                                                    else {
+
+                                                    }
                                                 }
                                                 isdone[0]=4;
+                                            }
+                                            else {
+                                                temp = "0";
+
+                                                if(chosendated.after(date)) {
+
+                                                }else {
+                                                    temp = "1";
+                                                    if(generator.makedouble(inputvalue.getText().toString().replace(",",""))>comparer){
+                                                        Map<String, Object> data = new HashMap<>();
+                                                        result=generator.makedouble(inputvalue.getText().toString().replace(",",""))-comparer;
+                                                        data.put("account_balance_current", String.valueOf(calculate-result+comparer) );
+
+                                                        fdb.collection("account").document(accdoc[0])
+                                                                .set(data, SetOptions.merge());
+
+
+
+                                                    }
+                                                    else if(generator.makedouble(inputvalue.getText().toString().replace(",",""))<comparer){
+                                                        Map<String, Object> data = new HashMap<>();
+                                                        result=comparer-generator.makedouble(inputvalue.getText().toString().replace(",",""));
+                                                        data.put("account_balance_current", String.valueOf(calculate+result-comparer));
+
+                                                        fdb.collection("account").document(accdoc[0])
+                                                                .set(data, SetOptions.merge());
+
+
+                                                    }
+                                                    else {
+                                                        Map<String, Object> data = new HashMap<>();
+                                                        data.put("account_balance_current", String.valueOf(calculate-comparer));
+                                                        fdb.collection("account").document(accdoc[0])
+                                                                .set(data, SetOptions.merge());
+                                                    }
+                                                }
                                             }
                                             Toast.makeText(editexpense.this, "Income Edited", Toast.LENGTH_SHORT).show();
                                             reloaddata();
                                             if(generator.adapter!=null){
                                                 generator.adapter.notifyDataSetChanged();
                                             }
+
+
+                                            Map<String, Object> mapdata = new HashMap<>();
+                                            mapdata.put("expense_amount",inputvalue.getText().toString().replace(",",""));
+                                            mapdata.put("expense_account",selectedaccount.getText().toString());
+                                            mapdata.put("expense_category",selectedcategory.getText().toString());
+                                            mapdata.put("expense_notes", expnote.getText().toString());
+                                            mapdata.put("expense_date",selectedate.getText().toString());
+                                            mapdata.put("expense_isdone",temp);
+                                            mapdata.put("expense_datesys",generator.incdatesys);
+                                            mapdata.put("expense_to",expto.getText().toString());
+                                            mapdata.put("expense_lastedit", Calendar.getInstance().getTimeInMillis());
+
+                                            fdb.collection("expense").document(getIntent().getStringExtra("document"))
+                                                    .set(mapdata, SetOptions.merge());
+
+
                                             finish();
                                             generator.incdatesys=0;
+
+
+
                                         }
                                     } else {
                                         Log.d("Documentdata", "Error getting documents: ", task.getException());

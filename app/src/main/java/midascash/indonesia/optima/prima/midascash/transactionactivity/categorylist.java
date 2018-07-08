@@ -62,50 +62,6 @@ public class categorylist extends AppCompatActivity {
 
     MySimpleArrayAdapter adapter;
     List<MyListObject> values;
-    int[] images = new int[]{R.drawable.cashicon, R.drawable.bank, R.drawable.lendresized, R.drawable.cheque, R.drawable.creditcardresized,R.drawable.food,R.drawable.electric,R.drawable.truck,R.drawable.health,R.drawable.ball
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add};
 
 
     @Override
@@ -297,7 +253,7 @@ public class categorylist extends AppCompatActivity {
 
             holder.textView.setText(rowItem.getCategoryitem());
             Log.e("image id",String.valueOf(rowItem.getImage()));
-            Drawable resImg = context.getResources().getDrawable(images[rowItem.getImage()-1]);
+            Drawable resImg = context.getResources().getDrawable(generator.images[rowItem.getImage()-1]);
             holder.imageView.setImageDrawable(resImg);
             holder.imageView.setTag(rowItem.getImage());
             holder.hiddentextView.setText(rowItem.getHiddendata());

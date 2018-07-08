@@ -72,50 +72,6 @@ public class fragment_expense extends Fragment {
     MySimpleArrayAdapter adapter;
     myaccountlisadapter adapteraccount;
 
-    int[] images = new int[]{R.drawable.cashicon, R.drawable.bank, R.drawable.lendresized, R.drawable.cheque, R.drawable.creditcardresized,R.drawable.food,R.drawable.electric,R.drawable.truck,R.drawable.health,R.drawable.ball
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add};
 
 
     AlertDialog dialog;//category
@@ -520,7 +476,7 @@ public class fragment_expense extends Fragment {
 
             holder.textView.setText(rowItem.getCategoryitem());
             Log.e("image id",String.valueOf(rowItem.getImage()));
-            Drawable resImg = context.getResources().getDrawable(images[rowItem.getImage()-1]);
+            Drawable resImg = context.getResources().getDrawable(generator.images[rowItem.getImage()-1]);
             holder.imageView.setImageDrawable(resImg);
             holder.imageView.setTag(rowItem.getImage());
             holder.hiddentextView.setText(rowItem.getHiddendata());

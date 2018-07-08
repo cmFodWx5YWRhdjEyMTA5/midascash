@@ -78,52 +78,6 @@ public class fragment_expense_show extends Fragment {
 
     List<expense> dataexp;
 
-    int[] images = new int[]{R.drawable.cashicon, R.drawable.bank, R.drawable.lendresized, R.drawable.cheque, R.drawable.creditcardresized,R.drawable.food,R.drawable.electric,R.drawable.truck,R.drawable.health,R.drawable.ball
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add};
-
-
     AlertDialog dialog;//category
     AlertDialog dialogaccount;
 
@@ -282,7 +236,7 @@ public class fragment_expense_show extends Fragment {
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
             expense expenses = expenselist.get(position);
-            Drawable resImg = context.getResources().getDrawable(images[expenses.getexpense_image()-1]);
+            Drawable resImg = context.getResources().getDrawable(generator.images[expenses.getexpense_image()-1]);
 
             holder.documenref = expenses.getexpensedoc();
             holder.image.setImageDrawable(resImg);

@@ -451,7 +451,6 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
                 Realm finalMRealm1 = mRealm;
                 String finalPerios = perios;
 
-                Log.e(TAG, "onComplete: "+datesdata.get(finalI).toString() );
 
                 fdb.collection("income")
                         .whereEqualTo("income_isdone", "1")
@@ -483,9 +482,7 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
 
 
 
-                                        Log.d("Get data income", datesdata.get(finalI) + document.getId() + " => " + document.getData());
-                                        Log.e(TAG, "onComplete: "+document.getData().get("income_date").toString()+" "+datesdata.get(finalI).toString() );
-                                    }
+                                }
                                     finalMRealm1.beginTransaction();
                                     dataincset score1 = new dataincset(value.floatValue(), (float) finalI, datesdata.get(finalI));
                                     Log.e("replace", "/" + String.valueOf(thisYear) + " " + datesdata.get(finalI));
@@ -636,7 +633,6 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
                 Realm finalMRealm1 = mRealm;
                 String finalPerios = perios;
 
-                Log.e(TAG, "onComplete: "+datesdata.get(finalI).toString() );
 
                 fdb.collection("expense")
                         .whereEqualTo("expense_isdone", "1")
@@ -669,7 +665,6 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
 
 
                                         Log.d("Get data expense", datesdata.get(finalI) + document.getId() + " => " + document.getData());
-                                        Log.e(TAG, "onComplete: "+document.getData().get("expense_date").toString()+" "+datesdata.get(finalI).toString() );
                                     }
                                     finalMRealm1.beginTransaction();
                                     dataexpset score1 = new dataexpset(value.floatValue(), (float) finalI, datesdata.get(finalI));

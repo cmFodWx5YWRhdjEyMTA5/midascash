@@ -75,53 +75,6 @@ public class fragment_income_show extends Fragment {
 
     RecyclerView recycler;
 
-
-
-    int[] images = new int[]{R.drawable.cashicon, R.drawable.bank, R.drawable.lendresized, R.drawable.cheque, R.drawable.creditcardresized,R.drawable.food,R.drawable.electric,R.drawable.truck,R.drawable.health,R.drawable.ball
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add};
-
     public fragment_income_show(){
 
     }
@@ -172,7 +125,7 @@ public class fragment_income_show extends Fragment {
                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                             @Override
                                             public void onComplete(@NonNull Task<QuerySnapshot> task1) {
-                                                if (task.isSuccessful()) {
+                                                if (task1.isSuccessful()) {
                                                     for (QueryDocumentSnapshot document1 : task1.getResult()) {
                                                         Log.e("category datas", document1.getId() + " => " + document1.getData());
                                                         values.setIncome_image(Integer.parseInt(document1.getData().get("category_image").toString()));
@@ -230,7 +183,7 @@ public class fragment_income_show extends Fragment {
         public void onBindViewHolder(MyViewHolder holder, int position) {
             income incomes = incomelist.get(position);
             holder.documenref = incomes.getIncomedoc();
-            Drawable resImg = context.getResources().getDrawable(images[incomes.getIncome_image()-1]);
+            Drawable resImg = context.getResources().getDrawable(generator.images[incomes.getIncome_image()-1]);
             holder.image.setImageDrawable(resImg);
             holder.image.setTag(incomes.getIncome_image());
             holder.incomevalue.setText(formatter.format(incomes.getIncome_amount()));

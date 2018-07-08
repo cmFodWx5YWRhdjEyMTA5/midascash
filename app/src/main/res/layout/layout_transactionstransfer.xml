@@ -190,6 +190,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Notes (Optional)"
+            android:id="@+id/trfnotes"
             android:theme="@style/AppThemeactionbarblack"
             android:layout_margin="10sp"/>
 
