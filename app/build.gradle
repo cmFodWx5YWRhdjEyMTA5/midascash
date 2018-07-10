@@ -56,6 +56,7 @@ dependencies {
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.github.PhilJay:MPAndroidChart-Realm:v2.0.2@aar'
     implementation 'io.realm:realm-annotations-processor:4.0.0'
+    implementation "com.github.nisrulz:recyclerviewhelper:27.1.1"
 
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
 

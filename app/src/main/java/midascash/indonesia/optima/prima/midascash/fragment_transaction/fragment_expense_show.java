@@ -303,7 +303,26 @@ public class fragment_expense_show extends Fragment {
                                                                                                 fdb.collection("account").document(document1.getId())
                                                                                                         .set(data, SetOptions.merge());
 
-
+                                                                                            fdb.collection("expense").document(holder.documenref)
+                                                                                                    .delete()
+                                                                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                        @Override
+                                                                                                        public void onSuccess(Void aVoid) {
+                                                                                                            reloaddata();
+                                                                                                            dataexp.clear();
+                                                                                                            expadapter.notifyDataSetChanged();
+                                                                                                            if(generator.adapter!=null){
+                                                                                                                generator.adapter.notifyDataSetChanged();
+                                                                                                            }
+                                                                                                            Toast.makeText(context, "Deleted selected Income", Toast.LENGTH_SHORT).show();
+                                                                                                        }
+                                                                                                    })
+                                                                                                    .addOnFailureListener(new OnFailureListener() {
+                                                                                                        @Override
+                                                                                                        public void onFailure(@NonNull Exception e) {
+                                                                                                            Toast.makeText(context, "Fail Delete selected Income", Toast.LENGTH_SHORT).show();
+                                                                                                        }
+                                                                                                    });
                                                                                         }
                                                                                         else {
                                                                                             fdb.collection("expense").document(holder.documenref)

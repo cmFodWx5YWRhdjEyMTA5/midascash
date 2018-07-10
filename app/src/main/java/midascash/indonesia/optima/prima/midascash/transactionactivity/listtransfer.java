@@ -44,6 +44,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.mynameismidori.currencypicker.ExtendedCurrency;
 
+import org.w3c.dom.Document;
+
 import java.text.CollationElementIterator;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -70,6 +72,8 @@ public class listtransfer extends AppCompatActivity{
 
     adapterviewtransferlist adaptertransfer;
 
+    View nothing;
+
     List<transfer> datatransfer;
 
     FirebaseFirestore db;
@@ -87,6 +91,8 @@ public class listtransfer extends AppCompatActivity{
         recycler = findViewById(R.id.recyclertransfer);
         datatransfer = new ArrayList<>();
 
+        nothing = findViewById(R.id.layoutnothing);
+
         db.collection("transfer")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -102,6 +108,7 @@ public class listtransfer extends AppCompatActivity{
                                 data.setTransfer_notes(document1.getData().get("transfer_notes").toString());
                                 data.setTransfer_src(document1.getData().get("transfer_src").toString());
                                 data.setTransfer_dest(document1.getData().get("transfer_dest").toString());
+                                data.setTransfer_isdone(document1.getData().get("transfer_isdone").toString());
 
 
                                 datatransfer.add(data);
@@ -110,6 +117,14 @@ public class listtransfer extends AppCompatActivity{
                             }
 
                             adaptertransfer = new adapterviewtransferlist(listtransfer.this,datatransfer);
+
+                            if(adaptertransfer.getItemCount()==0){
+                                recycler.setVisibility(View.GONE);
+
+                            }
+                            else {
+                                recycler.setVisibility(View.VISIBLE);
+                            }
 
                             RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(listtransfer.this, 1);
                             recycler.setLayoutManager(mLayoutManager);
@@ -150,13 +165,13 @@ public class listtransfer extends AppCompatActivity{
         public class MyViewHolder extends RecyclerView.ViewHolder {
             public TextView trfsrc,trfdest,trfdate,trfvalue,trfrate,trfnotes;
             public LinearLayout linear;
+            String trfisdone="";
 
             public MyViewHolder(View view) {
                 super(view);
                 trfsrc = view.findViewById(R.id.trfsrc);
                 trfdest = view.findViewById(R.id.trfdest);
                 trfdate= view.findViewById(R.id.trfdate);
-                trfdate = view.findViewById(R.id.trfdate);
                 trfnotes = view.findViewById(R.id.trfnotes);
                 trfvalue = view.findViewById(R.id.trfvalue);
                 trfrate = view.findViewById(R.id.trfrate);
@@ -186,6 +201,7 @@ public class listtransfer extends AppCompatActivity{
             holder.trfnotes.setText(transferlis.get(position).getTransfer_notes());
             holder.trfsrc.setText(transferlis.get(position).getTransfer_src());
             holder.trfdest.setText(transferlis.get(position).getTransfer_dest());
+            holder.trfisdone=holder.trfisdone;
 
             holder.linear.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -246,15 +262,18 @@ public class listtransfer extends AppCompatActivity{
 
                                     notesdata.setText(holder.trfnotes.getText().toString());
 
+                                    chosendate.setText(holder.trfdate.getText().toString());
 
-
+                                    String tempchosenacc=holder.trfsrc.getText().toString();
+                                    String tempchoseacc=holder.trfdest.getText().toString();
+                                    String tempdate = holder.trfdate.getText().toString();
+                                    Double temprate= generator.makedouble(holder.trfrate.getText().toString().replace(",",""));
+                                    Double temptrf = generator.makedouble(holder.trfvalue.getText().toString().replace(",",""));
 
                                     inputrate.addTextChangedListener(new com.fake.shopee.shopeefake.formula.commaedittext(inputrate));
                                     trfvalue.addTextChangedListener(new com.fake.shopee.shopeefake.formula.commaedittext(trfvalue));
 
                                     ImageView calc = layout.findViewById(R.id.transcalc);
-
-                                    chosendate.setText(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
 
                                     calc.setOnClickListener(new View.OnClickListener() {
                                         @Override
@@ -441,7 +460,6 @@ public class listtransfer extends AppCompatActivity{
                                                 @Override
                                                 public void onClick(View view) {
                                                     // TODO Do something
-
                                                     if(currdef.getText().toString().equals(currchosen.getText().toString().replace(" ",""))){
                                                         inputrate.setText("1.00");
                                                         inputrate.setEnabled(false);
@@ -450,204 +468,473 @@ public class listtransfer extends AppCompatActivity{
                                                         inputrate.setEnabled(true);
                                                     }
 
-                                                    //verify data transfer
-
                                                     if(trfvalue.getText().toString().equals("")){
                                                         Toast.makeText(listtransfer.this, "Input Transfer Amount", Toast.LENGTH_SHORT).show();
                                                     }
                                                     else {
-                                                        if(chosenacc.getText().toString().equals("Account")){
+                                                        if (chosenacc.getText().toString().equals("Account")) {
                                                             Toast.makeText(listtransfer.this, "Select Source Account by tapping Account Text", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                        else {
-                                                            //Dismiss once everything is OK.
-                                                            Toast.makeText(listtransfer.this, "Saving Transfer", Toast.LENGTH_SHORT).show();
+                                                        } else {
+                                                            if (choseacc.getSelectedItem().toString().equals(chosenacc.getText().toString())) {
+                                                                Toast.makeText(listtransfer.this, "Transfer source and destination can't be same", Toast.LENGTH_SHORT).show();
+                                                            } else {
+                                                                //marker
 
-                                                            Map<String,Object> mapdata = new HashMap<>();
-
-                                                            Date date22 = Calendar.getInstance().getTime();
-
-                                                            Date today22 = new Date();
-                                                            SimpleDateFormat format22 = new SimpleDateFormat("dd/MM/yyyy");
-                                                            Date chosendated=null;
-                                                            try {
-                                                                chosendated = format22.parse(chosendate.getText().toString());
-                                                            } catch (ParseException e) {
-                                                                e.printStackTrace();
-                                                            }
-                                                            String temp ="1";
-
-                                                            if(chosendated.after(date22)) {
-                                                                temp = "0";
-                                                            }
-
-                                                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-                                                            mapdata.put("transfer_createdate",date22);
-                                                            mapdata.put("transfer_amount",trfvalue.getText().toString().replace(",",""));
-                                                            mapdata.put("transfer_rate",inputrate.getText().toString().replace(",",""));
-                                                            mapdata.put("transfer_dest",choseacc.getSelectedItem().toString());
-                                                            mapdata.put("transfer_src",chosenacc.getText().toString());
-                                                            mapdata.put("transfer_notes",notesdata.getText().toString());
-                                                            mapdata.put("transfer_date",chosendate.getText().toString());
-                                                            mapdata.put("transfer_isdated","0");
-                                                            mapdata.put("transfer_isdone",temp);
-                                                            // mapdata.put("transfer_repeat_time",repeattimedata);
-                                                            // mapdata.put("transfer_repeat_period",repeatperioddata);
-                                                            //  mapdata.put("transfer_repeat_count",repeatcountdata);
-                                                            mapdata.put("username", generator.userlogin);
-
-
-                                                       /*     db.collection("account")
-                                                                    .whereEqualTo("account_name", selectedaccount.getText().toString())
-                                                                    .get()
-                                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                        @Override
-                                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                            if (task.isSuccessful()) {
-                                                                                for (QueryDocumentSnapshot document1 : task.getResult()) {
-                                                                                    String temp = "1";
-
-                                                                                    Date date = Calendar.getInstance().getTime();
-
-                                                                                    Date today = new Date();
-                                                                                    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-                                                                                    Date chosendated=null;
-                                                                                    try {
-                                                                                        chosendated = format.parse(selectedate.getText().toString());
-                                                                                    } catch (ParseException e) {
-                                                                                        e.printStackTrace();
-                                                                                    }
-
-                                                                                    Log.d("Documentdata", document1.getId() + " => " + document1.getData());
-                                                                                    accdoc[0] = document1.getId();
-                                                                                    calculate = generator.makedouble(document1.getData().get("account_balance_current").toString());
-                                                                                    if(isdone[0]==1){
-
-                                                                                        if(chosendated.after(date)) {
-                                                                                            temp = "0";
-                                                                                            if(generator.makedouble(inputvalue.getText().toString().replace(",",""))>comparer){
-                                                                                                Map<String, Object> data = new HashMap<>();
-                                                                                                result=generator.makedouble(inputvalue.getText().toString().replace(",",""))-comparer;
-                                                                                                data.put("account_balance_current", String.valueOf(calculate+result+comparer) );
-
-                                                                                                db.collection("account").document(accdoc[0])
-                                                                                                        .set(data, SetOptions.merge());
-
-
-
-                                                                                            }
-                                                                                            else if(generator.makedouble(inputvalue.getText().toString().replace(",",""))<comparer){
-                                                                                                Map<String, Object> data = new HashMap<>();
-                                                                                                result=comparer-generator.makedouble(inputvalue.getText().toString().replace(",",""));
-                                                                                                data.put("account_balance_current", String.valueOf(calculate-result+generator.makedouble(inputvalue.getText().toString().replace(",",""))) );
-
-                                                                                                db.collection("account").document(accdoc[0])
-                                                                                                        .set(data, SetOptions.merge());
-
-
-                                                                                            }
-                                                                                            else {
-                                                                                                Map<String, Object> data = new HashMap<>();
-                                                                                                data.put("account_balance_current", String.valueOf(calculate+generator.makedouble(inputvalue.getText().toString().replace(",",""))));
-                                                                                                db.collection("account").document(accdoc[0])
-                                                                                                        .set(data, SetOptions.merge());
-                                                                                            }
+                                                                db.collection("account")
+                                                                        .whereEqualTo("account_name", chosenacc.getText().toString())
+                                                                        .get()
+                                                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                if (task.isSuccessful()) {
+                                                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                        Double check = generator.makedouble(document.getData().get("account_balance_current").toString());
+                                                                                        if((generator.makedouble(inputrate.getText().toString())*generator.makedouble(trfvalue.getText().toString().replace(",","")))>check){
+                                                                                            Toast.makeText(listtransfer.this, "Your Account Have insufficient Balance", Toast.LENGTH_SHORT).show();
                                                                                         }
                                                                                         else {
-                                                                                            temp="1";
-                                                                                            if(generator.makedouble(inputvalue.getText().toString().replace(",",""))>comparer){
-                                                                                                Map<String, Object> data = new HashMap<>();
-                                                                                                result=generator.makedouble(inputvalue.getText().toString().replace(",",""))-comparer;
-                                                                                                data.put("account_balance_current", String.valueOf(calculate-result) );
 
-                                                                                                db.collection("account").document(accdoc[0])
-                                                                                                        .set(data, SetOptions.merge());
+
+                                                                                            //verify data transfer
+
+
+                                                                                            //Dismiss once everything is OK.
+                                                                                            Toast.makeText(listtransfer.this, "Saving Transfer", Toast.LENGTH_SHORT).show();
+
+                                                                                            Map<String,Object> mapdata = new HashMap<>();
+
+                                                                                            Date date22 = Calendar.getInstance().getTime();
+
+                                                                                            Date today22 = new Date();
+                                                                                            SimpleDateFormat format22 = new SimpleDateFormat("dd/MM/yyyy");
+                                                                                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                                                                            Date chosendated=null;
+                                                                                            try {
+                                                                                                chosendated = format22.parse(chosendate.getText().toString());
+                                                                                            } catch (ParseException e) {
+                                                                                                e.printStackTrace();
                                                                                             }
-                                                                                            else if(generator.makedouble(inputvalue.getText().toString().replace(",",""))<comparer){
-                                                                                                Map<String, Object> data = new HashMap<>();
-                                                                                                result=comparer-generator.makedouble(inputvalue.getText().toString().replace(",",""));
-                                                                                                data.put("account_balance_current", String.valueOf(calculate+result) );
+                                                                                            String temp ="1";
 
-                                                                                                db.collection("account").document(accdoc[0])
-                                                                                                        .set(data, SetOptions.merge());
+                                                                                            if(chosendated.after(date22)) {
+                                                                                                temp ="0";
+                                                                                            }
+
+
+
+                                                                                            if(holder.trfisdone.equals("0")){
+                                                                                                if(temp.equals("0")){
+                                                                                                    Log.e("code transfer","0 0 " );
+                                                                                                    mapdata.put("transfer_amount",trfvalue.getText().toString().replace(",",""));
+                                                                                                    mapdata.put("transfer_rate",inputrate.getText().toString().replace(",",""));
+                                                                                                    mapdata.put("transfer_dest",choseacc.getSelectedItem().toString());
+                                                                                                    mapdata.put("transfer_src",chosenacc.getText().toString());
+                                                                                                    mapdata.put("transfer_notes",notesdata.getText().toString());
+                                                                                                    mapdata.put("transfer_date",chosendate.getText().toString());
+                                                                                                    mapdata.put("transfer_isdated","0");
+                                                                                                    mapdata.put("transfer_isdone",temp);
+                                                                                                    // mapdata.put("transfer_repeat_time",repeattimedata);
+                                                                                                    // mapdata.put("transfer_repeat_period",repeatperioddata);
+                                                                                                    //  mapdata.put("transfer_repeat_count",repeatcountdata);
+                                                                                                    mapdata.put("username", generator.userlogin);
+
+                                                                                                    db.collection("transfer").document(transferlis.get(position).getTransferdoc())
+                                                                                                            .set(mapdata, SetOptions.merge());
+                                                                                                }
+                                                                                                else {
+                                                                                                    Log.e("code transfer","0 1 " );
+                                                                                                    // transfer not processed and edited to be processes
+
+                                                                                                    mapdata.put("transfer_amount",trfvalue.getText().toString().replace(",",""));
+                                                                                                    mapdata.put("transfer_rate",inputrate.getText().toString().replace(",",""));
+                                                                                                    mapdata.put("transfer_dest",choseacc.getSelectedItem().toString());
+                                                                                                    mapdata.put("transfer_src",chosenacc.getText().toString());
+                                                                                                    mapdata.put("transfer_notes",notesdata.getText().toString());
+                                                                                                    mapdata.put("transfer_date",chosendate.getText().toString());
+                                                                                                    mapdata.put("transfer_isdated","0");
+                                                                                                    mapdata.put("transfer_isdone",temp);
+                                                                                                    // mapdata.put("transfer_repeat_time",repeattimedata);
+                                                                                                    // mapdata.put("transfer_repeat_period",repeatperioddata);
+                                                                                                    // mapdata.put("transfer_repeat_count",repeatcountdata);
+                                                                                                    mapdata.put("username", generator.userlogin);
+
+                                                                                                    db.collection("transfer").document(transferlis.get(position).getTransferdoc())
+                                                                                                            .set(mapdata, SetOptions.merge());
+
+                                                                                                    db.collection("account")
+                                                                                                            .whereEqualTo("account_name", chosenacc.getText().toString())
+                                                                                                            .get()
+                                                                                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                                                @Override
+                                                                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                                                    if (task.isSuccessful()) {
+                                                                                                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                                                            Log.d("data", "Cached document data: " + document.getData());
+                                                                                                                            Double source =  Double.parseDouble(document.getData().get("account_balance_current").toString());
+
+                                                                                                                            Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                                            datasrc1.put("account_balance_current", String.valueOf(source-Double.parseDouble(trfvalue.getText().toString().replace(",",""))));
+
+                                                                                                                            db.collection("account").document(document.getId())
+                                                                                                                                    .set(datasrc1, SetOptions.merge());
+                                                                                                                        }
+                                                                                                                    } else {
+                                                                                                                        Log.d("Documentdata", "Error getting documents: ", task.getException());
+                                                                                                                    }
+                                                                                                                }
+                                                                                                            });
+
+                                                                                                    db.collection("account")
+                                                                                                            .whereEqualTo("account_name", choseacc.getSelectedItem().toString())
+                                                                                                            .get()
+                                                                                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                                                @Override
+                                                                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                                                    if (task.isSuccessful()) {
+                                                                                                                        for (QueryDocumentSnapshot document1 : task.getResult()) {
+                                                                                                                            Log.d("data", "Cached document data: " + document1.getData());
+
+                                                                                                                            Double destination =  Double.parseDouble(document1.getData().get("account_balance_current").toString());
+
+                                                                                                                            Double rate = Double.parseDouble(inputrate.getText().toString().replace(",",""))*Double.parseDouble(trfvalue.getText().toString().replace(",",""));
+
+
+                                                                                                                            Map<String, Object> datadest1 = new HashMap<>();
+                                                                                                                            datadest1.put("account_balance_current", String.valueOf(destination+rate) );
+
+                                                                                                                            db.collection("account").document(document1.getId())
+                                                                                                                                    .set(datadest1, SetOptions.merge());
+
+                                                                                                                            if(generator.adapter!=null){
+                                                                                                                                generator.adapter.notifyDataSetChanged();
+                                                                                                                            }
+                                                                                                                            build.dismiss();
+                                                                                                                            Toast.makeText(listtransfer.this, "Transfer Data Edited", Toast.LENGTH_SHORT).show();
+                                                                                                                            Log.e("Add data", "DocumentSnapshot added with ID: " + document1.getId());
+                                                                                                                        }
+                                                                                                                    } else {
+                                                                                                                        Log.d("Documentdata", "Error getting documents: ", task.getException());
+                                                                                                                    }
+                                                                                                                }
+                                                                                                            });
+
+                                                                                                }
                                                                                             }
                                                                                             else {
 
+                                                                                                List<accountdata> dataaccount=new ArrayList<>();
+                                                                                                dataaccount.clear();
+                                                                                                String finalTemp = temp;
+                                                                                                db.collection("account")
+                                                                                                        .get()
+                                                                                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                                            @Override
+                                                                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                                                if (task.isSuccessful()) {
+                                                                                                                    for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                                                        accountdata data = new accountdata();
+                                                                                                                        data.setAccountdocument(document.getId());
+                                                                                                                        data.setAccountname(document.getData().get("account_name").toString());
+                                                                                                                        data.setAccountvalue(document.getData().get("account_balance_current").toString());
+                                                                                                                        dataaccount.add(data);
+                                                                                                                    }
+
+                                                                                                                    if(finalTemp.equals("0")){
+                                                                                                                        Log.e("code transfer","1 0 " );
+
+                                                                                                                        //transfer is processed and edited to be not processed
+
+                                                                                                                        Double srcvalue=0.0d,destvalue=0.0d,oldsrcvalue=0.0d,olddestvalue=0.0d;
+
+                                                                                                                        for(int i=0;i<dataaccount.size();i++){
+                                                                                                                            if(dataaccount.get(i).getAccountname().equals(tempchoseacc)) {
+                                                                                                                                olddestvalue = generator.makedouble(dataaccount.get(i).getAccountvalue().replace(",",""));
+                                                                                                                                Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                                                datasrc1.put("account_balance_current", String.valueOf(olddestvalue-(temptrf*temprate)));
+
+                                                                                                                                db.collection("account").document(dataaccount.get(i).getAccountdocument())
+                                                                                                                                        .set(datasrc1, SetOptions.merge());
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                        for(int i=0;i<dataaccount.size();i++){
+                                                                                                                            if(dataaccount.get(i).getAccountname().equals(tempchosenacc)) {
+                                                                                                                                oldsrcvalue = generator.makedouble(dataaccount.get(i).getAccountvalue().replace(",",""));
+                                                                                                                                Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                                                datasrc1.put("account_balance_current", String.valueOf(oldsrcvalue+temptrf));
+
+                                                                                                                                db.collection("account").document(dataaccount.get(i).getAccountdocument())
+                                                                                                                                        .set(datasrc1, SetOptions.merge());
+
+                                                                                                                            }
+                                                                                                                        }
+
+
+
+
+                                                                                                                    }
+                                                                                                                    else {
+                                                                                                                        Log.e("code transfer","1 1 " );
+                                                                                                                        //transfer is processed and edited to be reprocessed
+                                                                                                                        Double srcvalue=0.0d,destvalue=0.0d,oldsrcvalue=0.0d,olddestvalue=0.0d;
+
+                                                                                                                        for(int i=0;i<dataaccount.size();i++){
+                                                                                                                            if(dataaccount.get(i).getAccountname().equals(tempchoseacc)) {
+                                                                                                                                olddestvalue = generator.makedouble(dataaccount.get(i).getAccountvalue().replace(",",""));
+                                                                                                                                Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                                                datasrc1.put("account_balance_current", String.valueOf(olddestvalue-(temptrf*temprate)));
+
+                                                                                                                                db.collection("account").document(dataaccount.get(i).getAccountdocument())
+                                                                                                                                        .set(datasrc1, SetOptions.merge());
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                        for(int i=0;i<dataaccount.size();i++){
+                                                                                                                            if(dataaccount.get(i).getAccountname().equals(tempchosenacc)) {
+                                                                                                                                oldsrcvalue = generator.makedouble(dataaccount.get(i).getAccountvalue().replace(",",""));
+                                                                                                                                Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                                                datasrc1.put("account_balance_current", String.valueOf(oldsrcvalue+temptrf));
+
+                                                                                                                                db.collection("account").document(dataaccount.get(i).getAccountdocument())
+                                                                                                                                        .set(datasrc1, SetOptions.merge());
+
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                        for(int i=0;i<dataaccount.size();i++){
+                                                                                                                            if(dataaccount.get(i).getAccountname().equals(choseacc.getSelectedItem().toString())) {
+                                                                                                                                destvalue = generator.makedouble(dataaccount.get(i).getAccountvalue().replace(",",""));
+                                                                                                                                Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                                                datasrc1.put("account_balance_current", String.valueOf(destvalue+(generator.makedouble(trfvalue.getText().toString().replace(",",""))*generator.makedouble(inputrate.getText().toString().replace(",","")))));
+
+                                                                                                                                db.collection("account").document(dataaccount.get(i).getAccountdocument())
+                                                                                                                                        .set(datasrc1, SetOptions.merge());
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                        for(int i=0;i<dataaccount.size();i++){
+                                                                                                                            if(dataaccount.get(i).getAccountname().equals(chosenacc.getText().toString())) {
+                                                                                                                                srcvalue = generator.makedouble(dataaccount.get(i).getAccountvalue().replace(",",""));
+                                                                                                                                Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                                                datasrc1.put("account_balance_current", String.valueOf(srcvalue-generator.makedouble(trfvalue.getText().toString().replace(",",""))));
+
+                                                                                                                                db.collection("account").document(dataaccount.get(i).getAccountdocument())
+                                                                                                                                        .set(datasrc1, SetOptions.merge());
+                                                                                                                            }
+                                                                                                                        }
+
+                                                                                        /*if(!tempchoseacc.equals(choseacc.getSelectedItem().toString()) && !tempchosenacc.equals(chosenacc.getText().toString()))
+                                                                                        {
+
+
+                                                                                            for(int i=0;i<dataaccount.size();i++){
+                                                                                                if(dataaccount.get(i).getAccountname().equals(tempchoseacc)) {
+                                                                                                    olddestvalue = generator.makedouble(dataaccount.get(i).getAccountvalue().replace(",",""));
+                                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                    datasrc1.put("account_balance_current", String.valueOf(olddestvalue-(temptrf*temprate)));
+
+                                                                                                    db.collection("account").document(dataaccount.get(position).getAccountdocument())
+                                                                                                            .set(datasrc1, SetOptions.merge());
+                                                                                                }
+                                                                                            }
+                                                                                            for(int i=0;i<dataaccount.size();i++){
+                                                                                                if(dataaccount.get(i).getAccountname().equals(tempchosenacc)) {
+                                                                                                    oldsrcvalue = generator.makedouble(dataaccount.get(i).getAccountvalue().replace(",",""));
+                                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                    datasrc1.put("account_balance_current", String.valueOf(oldsrcvalue+temptrf));
+
+                                                                                                    db.collection("account").document(dataaccount.get(position).getAccountdocument())
+                                                                                                            .set(datasrc1, SetOptions.merge());
+
+                                                                                                }
+                                                                                            }
+                                                                                            for(int i=0;i<dataaccount.size();i++){
+                                                                                                if(dataaccount.get(i).getAccountname().equals(choseacc.getSelectedItem().toString())) {
+                                                                                                    destvalue = generator.makedouble(dataaccount.get(i).getAccountvalue().replace(",",""));
+                                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                    datasrc1.put("account_balance_current", String.valueOf(destvalue+(generator.makedouble(trfvalue.getText().toString().replace(",",""))*generator.makedouble(inputrate.getText().toString().replace(",","")))));
+
+                                                                                                    db.collection("account").document(dataaccount.get(position).getAccountdocument())
+                                                                                                            .set(datasrc1, SetOptions.merge());
+                                                                                                }
+                                                                                            }
+                                                                                            for(int i=0;i<dataaccount.size();i++){
+                                                                                                if(dataaccount.get(i).getAccountname().equals(chosenacc.getText().toString())) {
+                                                                                                    srcvalue = generator.makedouble(dataaccount.get(i).getAccountvalue().replace(",",""));
+                                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                    datasrc1.put("account_balance_current", String.valueOf(srcvalue-generator.makedouble(trfvalue.getText().toString().replace(",",""))));
+
+                                                                                                    db.collection("account").document(dataaccount.get(position).getAccountdocument())
+                                                                                                            .set(datasrc1, SetOptions.merge());
+                                                                                                }
                                                                                             }
                                                                                         }
-                                                                                        isdone[0]=4;
-                                                                                    }
-                                                                                    else {
-                                                                                        temp = "0";
+                                                                                        // second
+                                                                                        else if(tempchoseacc.equals(choseacc.getSelectedItem().toString()) && !tempchosenacc.equals(chosenacc.getText().toString()))
+                                                                                        {
+                                                                                            for(int i=0;i<dataaccount.size();i++){
+                                                                                                if(dataaccount.get(i).getAccountname().equals(tempchoseacc)) {
+                                                                                                    olddestvalue = generator.makedouble(dataaccount.get(i).getAccountvalue().replace(",",""));
+                                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                    datasrc1.put("account_balance_current", String.valueOf(olddestvalue-(temptrf*temprate)));
 
-                                                                                        if(chosendated.after(date)) {
-
-                                                                                        }else {
-                                                                                            temp = "1";
-                                                                                            if(generator.makedouble(inputvalue.getText().toString().replace(",",""))>comparer){
-                                                                                                Map<String, Object> data = new HashMap<>();
-                                                                                                result=generator.makedouble(inputvalue.getText().toString().replace(",",""))-comparer;
-                                                                                                data.put("account_balance_current", String.valueOf(calculate-result+comparer) );
-
-                                                                                                db.collection("account").document(accdoc[0])
-                                                                                                        .set(data, SetOptions.merge());
-
-
-
+                                                                                                    db.collection("account").document(dataaccount.get(position).getAccountdocument())
+                                                                                                            .set(datasrc1, SetOptions.merge());
+                                                                                                }
                                                                                             }
-                                                                                            else if(generator.makedouble(inputvalue.getText().toString().replace(",",""))<comparer){
-                                                                                                Map<String, Object> data = new HashMap<>();
-                                                                                                result=comparer-generator.makedouble(inputvalue.getText().toString().replace(",",""));
-                                                                                                data.put("account_balance_current", String.valueOf(calculate+result-comparer));
+                                                                                            for(int i=0;i<dataaccount.size();i++){
+                                                                                                if(dataaccount.get(i).getAccountname().equals(tempchosenacc)) {
+                                                                                                    oldsrcvalue = generator.makedouble(dataaccount.get(i).getAccountvalue().replace(",",""));
+                                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                    datasrc1.put("account_balance_current", String.valueOf(oldsrcvalue+temptrf));
 
-                                                                                                db.collection("account").document(accdoc[0])
-                                                                                                        .set(data, SetOptions.merge());
+                                                                                                    db.collection("account").document(dataaccount.get(position).getAccountdocument())
+                                                                                                            .set(datasrc1, SetOptions.merge());
 
-
+                                                                                                }
                                                                                             }
-                                                                                            else {
-                                                                                                Map<String, Object> data = new HashMap<>();
-                                                                                                data.put("account_balance_current", String.valueOf(calculate-comparer));
-                                                                                                db.collection("account").document(accdoc[0])
-                                                                                                        .set(data, SetOptions.merge());
+                                                                                            for(int i=0;i<dataaccount.size();i++){
+                                                                                                if(dataaccount.get(i).getAccountname().equals(choseacc.getSelectedItem().toString())) {
+                                                                                                    destvalue = generator.makedouble(dataaccount.get(i).getAccountvalue().replace(",",""));
+                                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                    datasrc1.put("account_balance_current", String.valueOf(destvalue+(generator.makedouble(trfvalue.getText().toString().replace(",",""))*generator.makedouble(inputrate.getText().toString().replace(",","")))));
+
+                                                                                                    db.collection("account").document(dataaccount.get(position).getAccountdocument())
+                                                                                                            .set(datasrc1, SetOptions.merge());
+                                                                                                }
+                                                                                            }
+                                                                                            for(int i=0;i<dataaccount.size();i++){
+                                                                                                if(dataaccount.get(i).getAccountname().equals(chosenacc.getText().toString())) {
+                                                                                                    srcvalue = generator.makedouble(dataaccount.get(i).getAccountvalue().replace(",",""));
+                                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                    datasrc1.put("account_balance_current", String.valueOf(srcvalue-generator.makedouble(trfvalue.getText().toString().replace(",",""))));
+
+                                                                                                    db.collection("account").document(dataaccount.get(position).getAccountdocument())
+                                                                                                            .set(datasrc1, SetOptions.merge());
+                                                                                                }
                                                                                             }
                                                                                         }
+                                                                                        else if(!tempchoseacc.equals(choseacc.getSelectedItem().toString()) && tempchosenacc.equals(chosenacc.getText().toString()))
+                                                                                        {
+                                                                                            for(int i=0;i<dataaccount.size();i++){
+                                                                                                if(dataaccount.get(i).getAccountname().equals(tempchoseacc)) {
+                                                                                                    olddestvalue = generator.makedouble(dataaccount.get(i).getAccountvalue().replace(",",""));
+                                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                    datasrc1.put("account_balance_current", String.valueOf(olddestvalue-(temptrf*temprate)));
+
+                                                                                                    db.collection("account").document(dataaccount.get(position).getAccountdocument())
+                                                                                                            .set(datasrc1, SetOptions.merge());
+                                                                                                }
+                                                                                            }
+                                                                                            for(int i=0;i<dataaccount.size();i++){
+                                                                                                if(dataaccount.get(i).getAccountname().equals(tempchosenacc)) {
+                                                                                                    oldsrcvalue = generator.makedouble(dataaccount.get(i).getAccountvalue().replace(",",""));
+                                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                    datasrc1.put("account_balance_current", String.valueOf(oldsrcvalue+temptrf));
+
+                                                                                                    db.collection("account").document(dataaccount.get(position).getAccountdocument())
+                                                                                                            .set(datasrc1, SetOptions.merge());
+
+                                                                                                }
+                                                                                            }
+                                                                                            for(int i=0;i<dataaccount.size();i++){
+                                                                                                if(dataaccount.get(i).getAccountname().equals(choseacc.getSelectedItem().toString())) {
+                                                                                                    destvalue = generator.makedouble(dataaccount.get(i).getAccountvalue().replace(",",""));
+                                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                    datasrc1.put("account_balance_current", String.valueOf(destvalue+(generator.makedouble(trfvalue.getText().toString().replace(",",""))*generator.makedouble(inputrate.getText().toString().replace(",","")))));
+
+                                                                                                    db.collection("account").document(dataaccount.get(position).getAccountdocument())
+                                                                                                            .set(datasrc1, SetOptions.merge());
+                                                                                                }
+                                                                                            }
+                                                                                            for(int i=0;i<dataaccount.size();i++){
+                                                                                                if(dataaccount.get(i).getAccountname().equals(chosenacc.getText().toString())) {
+                                                                                                    srcvalue = generator.makedouble(dataaccount.get(i).getAccountvalue().replace(",",""));
+                                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                    datasrc1.put("account_balance_current", String.valueOf(srcvalue-generator.makedouble(trfvalue.getText().toString().replace(",",""))));
+
+                                                                                                    db.collection("account").document(dataaccount.get(position).getAccountdocument())
+                                                                                                            .set(datasrc1, SetOptions.merge());
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            for(int i=0;i<dataaccount.size();i++){
+                                                                                                if(dataaccount.get(i).getAccountname().equals(choseacc.getSelectedItem().toString())) {
+                                                                                                    destvalue = generator.makedouble(dataaccount.get(i).getAccountvalue().replace(",",""));
+                                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                    datasrc1.put("account_balance_current", String.valueOf(destvalue+(generator.makedouble(trfvalue.getText().toString().replace(",",""))*generator.makedouble(inputrate.getText().toString().replace(",","")))));
+
+                                                                                                    db.collection("account").document(dataaccount.get(position).getAccountdocument())
+                                                                                                            .set(datasrc1, SetOptions.merge());
+                                                                                                }
+                                                                                            }
+                                                                                            for(int i=0;i<dataaccount.size();i++){
+                                                                                                if(dataaccount.get(i).getAccountname().equals(chosenacc.getText().toString())) {
+                                                                                                    srcvalue = generator.makedouble(dataaccount.get(i).getAccountvalue().replace(",",""));
+                                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                    datasrc1.put("account_balance_current", String.valueOf(srcvalue-generator.makedouble(trfvalue.getText().toString().replace(",",""))));
+
+                                                                                                    db.collection("account").document(dataaccount.get(position).getAccountdocument())
+                                                                                                            .set(datasrc1, SetOptions.merge());
+                                                                                                }
+                                                                                            }
+                                                                                        }*/
+                                                                                                                    }
+
+                                                                                                                    mapdata.put("transfer_amount",trfvalue.getText().toString().replace(",",""));
+                                                                                                                    mapdata.put("transfer_rate",inputrate.getText().toString().replace(",",""));
+                                                                                                                    mapdata.put("transfer_dest",choseacc.getSelectedItem().toString());
+                                                                                                                    mapdata.put("transfer_src",chosenacc.getText().toString());
+                                                                                                                    mapdata.put("transfer_notes",notesdata.getText().toString());
+                                                                                                                    mapdata.put("transfer_date",chosendate.getText().toString());
+                                                                                                                    mapdata.put("transfer_isdated","0");
+                                                                                                                    mapdata.put("transfer_isdone", finalTemp);
+                                                                                                                    // mapdata.put("transfer_repeat_time",repeattimedata);
+                                                                                                                    // mapdata.put("transfer_repeat_period",repeatperioddata);
+                                                                                                                    // mapdata.put("transfer_repeat_count",repeatcountdata);
+                                                                                                                    mapdata.put("username", generator.userlogin);
+
+                                                                                                                    db.collection("transfer").document(transferlis.get(position).getTransferdoc())
+                                                                                                                            .set(mapdata, SetOptions.merge());
+
+                                                                                                                    dialogInterface.dismiss();
+
+                                                                                                                    datatransfer.clear();
+                                                                                                                    adaptertransfer.notifyDataSetChanged();
+                                                                                                                    reloaddata();
+
+                                                                                                                    if(generator.adapter!=null){
+                                                                                                                        generator.adapter.notifyDataSetChanged();
+                                                                                                                    }
+                                                                                                                    Toast.makeText(contexts, "Edited selected Transfer Data", Toast.LENGTH_SHORT).show();
+
+
+                                                                                                                } else {
+                                                                                                                    Log.d("Documentdata", "Error getting documents: ", task.getException());
+                                                                                                                }
+                                                                                                            }
+                                                                                                        });
+                                                                                                //transfer is processed and edited to not processed
+                                                                                            }
+                                                                                        }
+
                                                                                     }
-                                                                                    Toast.makeText(editexpense.this, "Income Edited", Toast.LENGTH_SHORT).show();
-                                                                                    reloaddata();
-                                                                                    if(generator.adapter!=null){
-                                                                                        generator.adapter.notifyDataSetChanged();
-                                                                                    }
-
-
-                                                                                    Map<String, Object> mapdata = new HashMap<>();
-                                                                                    mapdata.put("expense_amount",inputvalue.getText().toString().replace(",",""));
-                                                                                    mapdata.put("expense_account",selectedaccount.getText().toString());
-                                                                                    mapdata.put("expense_category",selectedcategory.getText().toString());
-                                                                                    mapdata.put("expense_notes", expnote.getText().toString());
-                                                                                    mapdata.put("expense_date",selectedate.getText().toString());
-                                                                                    mapdata.put("expense_isdone",temp);
-                                                                                    mapdata.put("expense_datesys",generator.incdatesys);
-                                                                                    mapdata.put("expense_to",expto.getText().toString());
-                                                                                    mapdata.put("expense_lastedit", Calendar.getInstance().getTimeInMillis());
-
-                                                                                    db.collection("expense").document(getIntent().getStringExtra("document"))
-                                                                                            .set(mapdata, SetOptions.merge());
-
-
-                                                                                    finish();
-                                                                                    generator.incdatesys=0;
 
 
 
+
+                                                                                    //marker
+
+
+
+                                                                                    //marker
+                                                                                } else {
+                                                                                    Log.d("Documentdata", "Error getting documents: ", task.getException());
                                                                                 }
-                                                                            } else {
-                                                                                Log.d("Documentdata", "Error getting documents: ", task.getException());
                                                                             }
-                                                                        }
-                                                                    });
-                                                                                                    */
+                                                                        });
+
+
+                                                                //marker
+                                                            }
                                                         }
                                                     }
 
@@ -678,49 +965,47 @@ public class listtransfer extends AppCompatActivity{
                                                         @Override
                                                         public void onSuccess(Void aVoid) {
 
-                                                            db.collection("account")
-                                                                    .whereEqualTo("account_name", holder.trfsrc.getText().toString())
-                                                                    .get()
-                                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                        @Override
-                                                                        public void onComplete(@NonNull Task<QuerySnapshot> task1) {
-                                                                            if (task1.isSuccessful()) {
-                                                                                for (QueryDocumentSnapshot document : task1.getResult()) {
+                                                            if(holder.trfisdone.equals("0")){
 
-                                                                                    Map<String, Object> data = new HashMap<>();
-                                                                                    Double result=generator.makedouble(holder.trfvalue.getText().toString().replace(",",""))*generator.makedouble(holder.trfrate.getText().toString().replace(",",""));
-                                                                                    data.put("account_balance_current", String.valueOf(document.getData().get("account_balance_current").toString()+generator.makedouble(holder.trfvalue.getText().toString().replace(",",""))));
+                                                            }
+                                                            else {
+                                                                db.collection("account")
+                                                                        .get()
+                                                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task<QuerySnapshot> task1) {
+                                                                                if (task1.isSuccessful()) {
+                                                                                    for (QueryDocumentSnapshot document : task1.getResult()) {
 
-                                                                                    db.collection("account").document(document.getId())
-                                                                                            .set(data, SetOptions.merge());
+                                                                                        Map<String, Object> data = new HashMap<>();
 
-                                                                                    db.collection("account")
-                                                                                            .whereEqualTo("account_name", holder.trfdest.getText().toString())
-                                                                                            .get()
-                                                                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                                                @Override
-                                                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                                                    if (task.isSuccessful()) {
-                                                                                                        for (QueryDocumentSnapshot document1 : task.getResult()) {
 
-                                                                                                            Map<String, Object> data = new HashMap<>();
-                                                                                                            Double result=generator.makedouble(holder.trfvalue.getText().toString().replace(",",""))*generator.makedouble(holder.trfrate.getText().toString().replace(",",""));
-                                                                                                            data.put("account_balance_current", String.valueOf(generator.makedouble(document1.getData().get("account_balance_current").toString())-result));
-                                                                                                            db.collection("account").document(document1.getId())
-                                                                                                                    .set(data, SetOptions.merge());
+                                                                                        if(holder.trfsrc.getText().equals(document.getData().get("account_name"))){
+                                                                                            Double result=generator.makedouble(holder.trfvalue.getText().toString().replace(",",""))*generator.makedouble(holder.trfrate.getText().toString().replace(",",""));
+                                                                                            data.put("account_balance_current", String.valueOf(generator.makedouble(document.getData().get("account_balance_current").toString())+generator.makedouble(holder.trfvalue.getText().toString().replace(",",""))));
 
-                                                                                                        }
-                                                                                                    } else {
-                                                                                                        Log.d("Documentdata", "Error getting documents: ", task.getException());
-                                                                                                    }
-                                                                                                }
-                                                                                            });
+
+                                                                                            db.collection("account").document(document.getId())
+                                                                                                    .set(data, SetOptions.merge());
+                                                                                        }
+
+                                                                                        if(holder.trfdest.getText().equals(document.getData().get("account_name"))){
+                                                                                            Double result=generator.makedouble(holder.trfvalue.getText().toString().replace(",",""))*generator.makedouble(holder.trfrate.getText().toString().replace(",",""));
+                                                                                            data.put("account_balance_current", String.valueOf(generator.makedouble(document.getData().get("account_balance_current").toString())-(generator.makedouble(holder.trfvalue.getText().toString().replace(",","")))*generator.makedouble(holder.trfrate.getText().toString().replace(",",""))));
+
+                                                                                            db.collection("account").document(document.getId())
+                                                                                                    .set(data, SetOptions.merge());
+                                                                                        }
+
+
+                                                                                    }
+                                                                                } else {
+                                                                                    Log.d("Documentdata", "Error getting documents: ", task1.getException());
                                                                                 }
-                                                                            } else {
-                                                                                Log.d("Documentdata", "Error getting documents: ", task1.getException());
                                                                             }
-                                                                        }
-                                                                    });
+                                                                        });
+                                                            }
+
 
                                                             datatransfer.clear();
                                                             adaptertransfer.notifyDataSetChanged();
@@ -807,5 +1092,35 @@ public class listtransfer extends AppCompatActivity{
         }
     }
 
+    private class accountdata{
+        String accountdocument;
+        String accountname;
+        String accountvalue;
 
+        public accountdata(){}
+
+        public String getAccountdocument() {
+            return accountdocument;
+        }
+
+        public String getAccountname() {
+            return accountname;
+        }
+
+        public String getAccountvalue() {
+            return accountvalue;
+        }
+
+        public void setAccountdocument(String accountdocument) {
+            this.accountdocument = accountdocument;
+        }
+
+        public void setAccountname(String accountname) {
+            this.accountname = accountname;
+        }
+
+        public void setAccountvalue(String accountvalue) {
+            this.accountvalue = accountvalue;
+        }
+    }
 }

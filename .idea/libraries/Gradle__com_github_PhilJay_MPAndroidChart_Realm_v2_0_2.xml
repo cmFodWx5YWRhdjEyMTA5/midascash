@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="Gradle: com.github.PhilJay:MPAndroidChart-Realm-v2.0.2">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/MPAndroidChart-Realm-v2.0.2.aar/2127d12643b14ff6a929cc09d67740d9/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/MPAndroidChart-Realm-v2.0.2.aar/2127d12643b14ff6a929cc09d67740d9/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/MPAndroidChart-Realm-v2.0.2.aar/703916384b2252d0d304d472a550af9a/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/MPAndroidChart-Realm-v2.0.2.aar/703916384b2252d0d304d472a550af9a/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

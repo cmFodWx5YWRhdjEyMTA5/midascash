@@ -10,6 +10,7 @@ public class transfer implements Comparable<transfer> {
     String transfer_src,transfer_dest,transfer_notes,usernametrf;
     String transfer_date,transfer_createdate;
     double transfer_amount,transfer_rate;
+    String transfer_isdone;
     String transferdoc;
 
     public String getUsernametrf() {
@@ -76,12 +77,20 @@ public class transfer implements Comparable<transfer> {
         this.transfer_date = transfer_date;
     }
 
+    public void setTransfer_isdone(String transfer_isdone) {
+        this.transfer_isdone = transfer_isdone;
+    }
+
     public void setTransfer_createdate(String transfer_createdate) {
         this.transfer_createdate = transfer_createdate;
     }
 
     public void setTransfer_amount(double transfer_amount) {
         this.transfer_amount = transfer_amount;
+    }
+
+    public String getTransfer_isdone() {
+        return transfer_isdone;
     }
 
 

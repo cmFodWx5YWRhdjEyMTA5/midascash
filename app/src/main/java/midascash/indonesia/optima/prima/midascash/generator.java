@@ -7,6 +7,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -17,23 +18,34 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskExecutors;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
+import com.mynameismidori.currencypicker.ExtendedCurrency;
 
 import org.w3c.dom.Text;
 
@@ -44,14 +56,18 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import midascash.indonesia.optima.prima.midascash.formula.calculatordialog;
 import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_expense_show;
 import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_expense_show_scheduled;
 import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_income;
@@ -73,6 +89,9 @@ public class generator {
     private static AlertDialog dialog;
     private static AlertDialog dialogaccount;
     private static Calendar myCalendar;
+
+    public static String newaccountrf = "";
+    public static String newaccountrfsymbol = "";
 
     public static DecimalFormat formatter = new DecimalFormat("###,###,###.00");
 
@@ -674,6 +693,418 @@ public class generator {
         public accountobject getItem(int position) {
             return values.get(position);
         }
+
+    }
+    
+    public static void newtransfer(Context context){
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        TextView chosenacc,currchosen,currdef,chosendate,allcurrencyselected;
+        Spinner choseacc;
+        EditText inputrate,trfvalue,notesdata;
+
+
+        ArrayList<String> account = new ArrayList<>();
+
+
+        List<ExtendedCurrency> currencies = ExtendedCurrency.getAllCurrencies(); //List of all currencies
+
+
+        ExtendedCurrency[] currencieses = ExtendedCurrency.CURRENCIES; //Array of all currencies
+
+        //     for (int i=0;i<currencieses.length;i++){
+        //     Log.e("Currency List", "Nama" + currencieses[i].getName() );
+        //      Log.e("Currency List", "Symbol" + currencieses[i].getSymbol() );
+        //       Log.e("Currency List", "Code" + currencieses[i].getCode() );
+        //   }
+
+
+
+        LayoutInflater inflater = LayoutInflater.from(context);
+
+        LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.layout_transactionstransfer,null);
+
+        chosenacc = layout.findViewById(R.id.chosenacc);
+        choseacc = layout.findViewById(R.id.choseacc);
+        currchosen = layout.findViewById(R.id.chosencurr);
+        currdef = layout.findViewById(R.id.currdef);
+
+        chosendate = layout.findViewById(R.id.trfdateselect);
+
+        notesdata = layout.findViewById(R.id.trfnotes);
+
+        inputrate = layout.findViewById(R.id.inputrate);
+        trfvalue = layout.findViewById(R.id.input_value);
+        allcurrencyselected = layout.findViewById(R.id.allcurrency);
+
+        inputrate.addTextChangedListener(new com.fake.shopee.shopeefake.formula.commaedittext(inputrate));
+        trfvalue.addTextChangedListener(new com.fake.shopee.shopeefake.formula.commaedittext(trfvalue));
+
+        ImageView calc = layout.findViewById(R.id.transcalc);
+
+        chosendate.setText(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+
+        calc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                TypedValue typedValue = new TypedValue();
+                context.getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
+                int color = typedValue.data;
+
+                int[][] states = new int[][] {
+                        new int[] { android.R.attr.state_enabled}, // enabled
+                        new int[] {-android.R.attr.state_enabled}, // disabled
+                        new int[] {-android.R.attr.state_checked}, // unchecked
+                        new int[] { android.R.attr.state_pressed}  // pressed
+                };
+
+                int[] colors = new int[] {
+                        color,
+                        Color.WHITE,
+                        Color.GREEN,
+                        Color.BLUE
+                };
+
+                ColorStateList myList = new ColorStateList(states, colors);
+
+                calculatordialog calculatorchoice = new calculatordialog(context, inputrate, myList);
+                calculatorchoice.showcalculatordialog();
+            }
+        });
+
+
+        currdef.setText(generator.defaultcurrency);
+
+        choseacc.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                               @Override
+                                               public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                                                   db.collection("account")
+                                                           .whereEqualTo("account_name", choseacc.getSelectedItem().toString())
+                                                           .get()
+                                                           .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                               @Override
+                                                               public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                                                                   if (task.isSuccessful()) {
+                                                                       for (DocumentSnapshot document : task.getResult()) {
+
+                                                                           String[] parts = document.getData().get("account_fullcurency").toString().split("-");
+                                                                           String part1 = parts[0]; // 004
+                                                                           String part2 = parts[1]; // 034556
+                                                                           currdef.setText(part2.replace(" ", ""));
+
+                                                                           if(currdef.getText().toString().equals(currchosen.getText().toString().replace(" ",""))){
+                                                                               inputrate.setText("1.00");
+                                                                               inputrate.setEnabled(false);
+                                                                           }
+                                                                           else {
+                                                                               inputrate.setEnabled(true);
+                                                                           }
+                                                                       }
+                                                                   } else {
+                                                                       Log.e("", "Error getting documents.", task.getException());
+                                                                   }
+
+                                                               }
+                                                           });
+                                               }
+                                               @Override
+                                               public void onNothingSelected(AdapterView<?> adapterView) {
+
+                                               }
+                                           }
+        );
+
+
+
+
+        chosendate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                generator.chosedate(context,chosendate);
+                Log.e("data curr",currdef.getText().toString());
+                Log.e("data curr1",currchosen.getText().toString().replace(" ",""));
+                if(currdef.getText().toString().equals(currchosen.getText().toString().replace(" ",""))){
+                    inputrate.setText("1.00");
+                    inputrate.setEnabled(false);
+                }
+                else {
+                    inputrate.setEnabled(true);
+                }
+            }
+        });
+
+        db.collection("account")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                        if (task.isSuccessful()) {
+                            for (DocumentSnapshot document : task.getResult()) {
+                                Log.e("getting data", document.getId() + " => " + document.getData());
+                                account.add(document.getData().get("account_name").toString());
+                            }
+                            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, account);
+                            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            choseacc.setAdapter(spinnerArrayAdapter);
+                            if(currdef.getText().toString().equals(currchosen.getText().toString().replace(" ",""))){
+                                inputrate.setText("1.00");
+                                inputrate.setEnabled(false);
+                            }
+                            else {
+                                inputrate.setEnabled(true);
+                            }
+                        } else {
+                            Log.e("", "Error getting documents.", task.getException());
+                        }
+
+                    }
+                });
+
+
+        chosenacc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                generator.choseaccount1(context,chosenacc,allcurrencyselected,currchosen);
+                if(currdef.getText().toString().equals(currchosen.getText().toString().replace(" ",""))){
+                    inputrate.setText("1.00");
+                    inputrate.setEnabled(false);
+                }
+                else {
+                    inputrate.setEnabled(true);
+                }
+            }
+        });
+
+        if(generator.newaccountrf.equals("")){
+            generator.choseaccount1(context,chosenacc,allcurrencyselected,currchosen);
+        }
+        else {
+            chosenacc.setText(generator.newaccountrf);
+            allcurrencyselected.setText(newaccountrfsymbol);
+            currchosen.setText(newaccountrfsymbol);
+            generator.newaccountrf="";
+            generator.newaccountrfsymbol="";
+        }
+
+
+        AlertDialog build = new AlertDialog.Builder(context,R.style.AppCompatAlertDialogStyle).setNegativeButton("Cancel",null).setPositiveButton("Save", null).setTitle("Transfer").create();
+
+        build.setCancelable(false);
+
+
+
+        build.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                Button button = ((AlertDialog) build).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        // TODO Do something
+
+                        if(currdef.getText().toString().equals(currchosen.getText().toString().replace(" ",""))){
+                            inputrate.setText("1.00");
+                            inputrate.setEnabled(false);
+                        }
+                        else {
+                            inputrate.setEnabled(true);
+                        }
+
+                        //verify data transfer
+
+                        if(trfvalue.getText().toString().equals("")){
+                            Toast.makeText(context, "Input Transfer Amount", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            if (chosenacc.getText().toString().equals("Account")) {
+                                Toast.makeText(context, "Select Source Account by tapping Account Text", Toast.LENGTH_SHORT).show();
+                            } else {
+                                if (choseacc.getSelectedItem().toString().equals(chosenacc.getText().toString())) {
+                                    Toast.makeText(context, "Transfer source and destination can't be same", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    db.collection("account")
+                                            .whereEqualTo("account_name", chosenacc.getText().toString())
+                                            .get()
+                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        for (QueryDocumentSnapshot document1 : task.getResult()) {
+                                                            Double check = generator.makedouble(document1.getData().get("account_balance_current").toString());
+                                                            if((generator.makedouble(inputrate.getText().toString())*generator.makedouble(trfvalue.getText().toString().replace(",","")))>check){
+                                                                Toast.makeText(context, "Your Account Have insufficient Balance", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                            else {
+
+                                                                //Dismiss once everything is OK.
+                                                                Toast.makeText(context, "Saving Transfer", Toast.LENGTH_SHORT).show();
+
+                                                                Map<String,Object> mapdata = new HashMap<>();
+
+                                                                Date date22 = Calendar.getInstance().getTime();
+
+                                                                Date today22 = new Date();
+                                                                SimpleDateFormat format22 = new SimpleDateFormat("dd/MM/yyyy");
+                                                                Date chosendated=null;
+                                                                try {
+                                                                    chosendated = format22.parse(chosendate.getText().toString());
+                                                                } catch (ParseException e) {
+                                                                    e.printStackTrace();
+                                                                }
+                                                                String temp ="1";
+
+                                                                if(chosendated.after(date22)) {
+                                                                    temp = "0";
+                                                                }
+
+                                                                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                                                                mapdata.put("transfer_createdate",date22);
+                                                                mapdata.put("transfer_amount",trfvalue.getText().toString().replace(",",""));
+                                                                mapdata.put("transfer_rate",inputrate.getText().toString().replace(",",""));
+                                                                mapdata.put("transfer_dest",choseacc.getSelectedItem().toString());
+                                                                mapdata.put("transfer_src",chosenacc.getText().toString());
+                                                                mapdata.put("transfer_notes",notesdata.getText().toString());
+                                                                mapdata.put("transfer_date",chosendate.getText().toString());
+                                                                mapdata.put("transfer_isdated","0");
+                                                                mapdata.put("transfer_isdone",temp);
+                                                                // mapdata.put("transfer_repeat_time",repeattimedata);
+                                                                // mapdata.put("transfer_repeat_period",repeatperioddata);
+                                                                //  mapdata.put("transfer_repeat_count",repeatcountdata);
+                                                                mapdata.put("username", generator.userlogin);
+
+
+                                                                db.collection("transfer")
+                                                                        .add(mapdata)
+                                                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                            @Override
+                                                                            public void onSuccess(DocumentReference documentReference) {
+// wrong from here
+                                                                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                                                                                Date strDate = null;
+                                                                                try {
+                                                                                    strDate = sdf.parse(chosendate.getText().toString());
+                                                                                } catch (ParseException e) {
+                                                                                    e.printStackTrace();
+                                                                                }
+                                                                                Log.e("date 1", chosendate.getText().toString());
+                                                                                Log.e("date 2", sdf.format(new Date()));
+
+                                                                                if (strDate.before(new Date()) || strDate.equals(new Date())) {
+                                                                                    Log.e("date is before", "same");
+
+                                                                                    db.collection("account")
+                                                                                            .whereEqualTo("account_name", chosenacc.getText().toString())
+                                                                                            .get()
+                                                                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                                @Override
+                                                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                                    if (task.isSuccessful()) {
+                                                                                                        for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                                            db.collection("account")
+                                                                                                                    .whereEqualTo("account_name", choseacc.getSelectedItem().toString())
+                                                                                                                    .get()
+                                                                                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                                                        @Override
+                                                                                                                        public void onComplete(@NonNull Task<QuerySnapshot> task1) {
+                                                                                                                            if (task1.isSuccessful()) {
+                                                                                                                                for (QueryDocumentSnapshot document1 : task1.getResult()) {
+                                                                                                                                    Double source =  Double.parseDouble(document.getData().get("account_balance_current").toString());
+                                                                                                                                    Double destination =  Double.parseDouble(document1.getData().get("account_balance_current").toString());
+
+                                                                                                                                    Double rate = Double.parseDouble(inputrate.getText().toString().replace(",",""))*Double.parseDouble(trfvalue.getText().toString().replace(",",""));
+
+
+                                                                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                                                    datasrc1.put("account_balance_current", String.valueOf(source-Double.parseDouble(trfvalue.getText().toString().replace(",",""))));
+
+                                                                                                                                    db.collection("account").document(document.getId())
+                                                                                                                                            .set(datasrc1, SetOptions.merge());
+
+
+                                                                                                                                    Map<String, Object> datadest1 = new HashMap<>();
+                                                                                                                                    datadest1.put("account_balance_current", String.valueOf(destination+rate) );
+
+                                                                                                                                    db.collection("account").document(document1.getId())
+                                                                                                                                            .set(datadest1, SetOptions.merge());
+
+                                                                                                                                    if(generator.adapter!=null){
+                                                                                                                                        generator.adapter.notifyDataSetChanged();
+                                                                                                                                    }
+                                                                                                                                    build.dismiss();
+                                                                                                                                    Toast.makeText(context, "Transfer Data Added", Toast.LENGTH_SHORT).show();
+                                                                                                                                    Log.e("Add data", "DocumentSnapshot added with ID: " + documentReference.getId());
+                                                                                                                                }
+                                                                                                                            } else {
+                                                                                                                                Log.d("Documentdata", "Error getting documents: ", task.getException());
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    });
+                                                                                                        }
+                                                                                                    } else {
+                                                                                                        Log.d("Documentdata", "Error getting documents: ", task.getException());
+                                                                                                    }
+                                                                                                }
+                                                                                            });
+                                                                                }
+                                                                                else {
+                                                                                    Log.e("date is after", "not same");
+                                                                                    if(generator.adapter!=null){
+                                                                                        generator.adapter.notifyDataSetChanged();
+                                                                                    }
+
+                                                                                    build.dismiss();
+                                                                                    Toast.makeText(context, "Transfer Data Added", Toast.LENGTH_SHORT).show();
+                                                                                    Log.e("Add data", "DocumentSnapshot added with ID: " + documentReference.getId());
+                                                                                }
+
+
+
+
+                                                                            }
+                                                                        })
+                                                                        .addOnFailureListener(new OnFailureListener() {
+                                                                            @Override
+                                                                            public void onFailure(@NonNull Exception e) {
+                                                                                Toast.makeText(context, "Error : Please Contact Support or Retry", Toast.LENGTH_SHORT).show();
+                                                                                Log.e("error data add", "Error adding document", e);
+                                                                            }
+                                                                        });
+
+                                                            }
+
+                                                        }
+
+
+
+                                                    } else {
+                                                        Log.d("Documentdata", "Error getting documents: ", task.getException());
+                                                    }
+                                                }
+                                            });
+                                }
+                            }
+                        }
+
+
+
+
+                    }
+                });
+            }
+        });
+
+        List<MainActivity.accountobject> allaccount=new ArrayList<MainActivity.accountobject>();
+
+        build.setView(layout);
+
+
+        build.show();
 
     }
 

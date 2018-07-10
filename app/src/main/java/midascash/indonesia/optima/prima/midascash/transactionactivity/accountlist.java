@@ -237,9 +237,6 @@ public class accountlist extends AppCompatActivity{
                             if (accountname.getText().toString().equals("")) {
                                 Toast.makeText(accountlist.this, "Account Name is Empty", Toast.LENGTH_SHORT).show();
                             } else {
-                                if (accountcategory.getSelectedItem().toString().equals("Select One")) {
-                                    Toast.makeText(accountlist.this, "Please Select Account Category", Toast.LENGTH_SHORT).show();
-                                } else {
                                     if (accountbalance.getText().toString().equals("")) {
                                         Toast.makeText(accountlist.this, "Account Balance default 0", Toast.LENGTH_SHORT).show();
                                     } else {
@@ -273,7 +270,13 @@ public class accountlist extends AppCompatActivity{
 
                                                                 Map<String, Object> accountsmap = new HashMap<>();
                                                                 accountsmap.put("account_name", accountname.getText().toString());
-                                                                accountsmap.put("account_category", accountcategory.getSelectedItem().toString());
+
+                                                                if(accountcategory.getSelectedItem().toString().equals("Select One")){
+                                                                    accountsmap.put("account_category", "-");
+                                                                }
+                                                                else {
+                                                                    accountsmap.put("account_category", accountcategory.getSelectedItem().toString());
+                                                                }
 
                                                                 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                                                 String formattedDate = df.format(c);
@@ -312,7 +315,6 @@ public class accountlist extends AppCompatActivity{
                                                     }
                                                 });
                                     }
-                                }
                             }
                         }
                     });
@@ -411,381 +413,28 @@ public class accountlist extends AppCompatActivity{
             }
             holder.accountname.setText(acc.getAccount_name());
             holder.accountname.setTextColor(Color.BLACK);
-            
+
             holder.accounttrans.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
-
-                    TextView chosenacc,currchosen,currdef,chosendate,allcurrencyselected;
-                    Spinner choseacc;
-                    EditText inputrate,trfvalue,notesdata;
-
-
-                    ArrayList<String> account = new ArrayList<>();
-
-
                     List<ExtendedCurrency> currencies = ExtendedCurrency.getAllCurrencies(); //List of all currencies
 
 
                     ExtendedCurrency[] currencieses = ExtendedCurrency.CURRENCIES; //Array of all currencies
 
 
-
-
-
-                    LayoutInflater inflater = LayoutInflater.from(accountlist.this);
-
-                    LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.layout_transactionstransfer,null);
-
-                    chosenacc = layout.findViewById(R.id.chosenacc);
-                    choseacc = layout.findViewById(R.id.choseacc);
-                    currchosen = layout.findViewById(R.id.chosencurr);
-                    currdef = layout.findViewById(R.id.currdef);
-
-                    chosendate = layout.findViewById(R.id.trfdateselect);
-
-                    notesdata = layout.findViewById(R.id.trfnotes);
-
-                    inputrate = layout.findViewById(R.id.inputrate);
-                    trfvalue = layout.findViewById(R.id.input_value);
-                    allcurrencyselected = layout.findViewById(R.id.allcurrency);
-
-                    chosenacc.setText(holder.accountname.getText().toString());
+                    generator.newaccountrf=holder.accountname.getText().toString();
 
                     for (int i=0;i<currencieses.length;i++){
 
                         if (currencieses[i].getCode().equals(acc.getAccount_currency())){
-                            currchosen.setText(currencieses[i].getSymbol().toUpperCase());
-                            allcurrencyselected.setText(currencieses[i].getSymbol().toUpperCase());
+                            generator.newaccountrfsymbol = currencieses[i].getSymbol().toUpperCase();
                         }
                         // Log.e("Currency List", "Nama" + currencieses[i].getName() );
                         // Log.e("Currency List", "Symbol" + currencieses[i].getSymbol() );
                         // Log.e("Currency List", "Code" + currencieses[i].getCode() );
                     }
-
-                    inputrate.addTextChangedListener(new com.fake.shopee.shopeefake.formula.commaedittext(inputrate));
-                    trfvalue.addTextChangedListener(new com.fake.shopee.shopeefake.formula.commaedittext(trfvalue));
-
-                    ImageView calc = layout.findViewById(R.id.transcalc);
-
-                    chosendate.setText(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
-
-                    calc.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            TypedValue typedValue = new TypedValue();
-                            accountlist.this.getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
-                            int color = typedValue.data;
-
-                            int[][] states = new int[][] {
-                                    new int[] { android.R.attr.state_enabled}, // enabled
-                                    new int[] {-android.R.attr.state_enabled}, // disabled
-                                    new int[] {-android.R.attr.state_checked}, // unchecked
-                                    new int[] { android.R.attr.state_pressed}  // pressed
-                            };
-
-                            int[] colors = new int[] {
-                                    color,
-                                    Color.WHITE,
-                                    Color.GREEN,
-                                    Color.BLUE
-                            };
-
-                            ColorStateList myList = new ColorStateList(states, colors);
-
-                            calculatordialog calculatorchoice = new calculatordialog(accountlist.this, inputrate, myList);
-                            calculatorchoice.showcalculatordialog();
-                        }
-                    });
-
-
-                    currdef.setText(generator.defaultcurrency);
-
-                    choseacc.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                                           @Override
-                                                           public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                                                               fdb.collection("account")
-                                                                       .whereEqualTo("account_name", choseacc.getSelectedItem().toString())
-                                                                       .get()
-                                                                       .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                           @Override
-                                                                           public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-                                                                               if (task.isSuccessful()) {
-                                                                                   for (DocumentSnapshot document : task.getResult()) {
-
-                                                                                       String[] parts = document.getData().get("account_fullcurency").toString().split("-");
-                                                                                       String part1 = parts[0]; // 004
-                                                                                       String part2 = parts[1]; // 034556
-                                                                                       currdef.setText(part2.replace(" ", ""));
-
-                                                                                       if(currdef.getText().toString().equals(currchosen.getText().toString().replace(" ",""))){
-                                                                                           inputrate.setText("1.00");
-                                                                                           inputrate.setEnabled(false);
-                                                                                       }
-                                                                                       else {
-                                                                                           inputrate.setEnabled(true);
-                                                                                       }
-                                                                                   }
-                                                                               } else {
-                                                                                   Log.e("", "Error getting documents.", task.getException());
-                                                                               }
-
-                                                                           }
-                                                                       });
-                                                           }
-                                                           @Override
-                                                           public void onNothingSelected(AdapterView<?> adapterView) {
-
-                                                           }
-                                                       }
-                    );
-
-
-
-
-                    chosendate.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            generator.chosedate(accountlist.this,chosendate);
-                            Log.e("data curr",currdef.getText().toString());
-                            Log.e("data curr1",currchosen.getText().toString().replace(" ",""));
-                            if(currdef.getText().toString().equals(currchosen.getText().toString().replace(" ",""))){
-                                inputrate.setText("1.00");
-                                inputrate.setEnabled(false);
-                            }
-                            else {
-                                inputrate.setEnabled(true);
-                            }
-                        }
-                    });
-
-                    fdb.collection("account")
-                            .get()
-                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-                                    if (task.isSuccessful()) {
-                                        for (DocumentSnapshot document : task.getResult()) {
-                                            Log.e("getting data", document.getId() + " => " + document.getData());
-                                            account.add(document.getData().get("account_name").toString());
-                                        }
-                                        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(accountlist.this, android.R.layout.simple_spinner_item, account);
-                                        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                                        choseacc.setAdapter(spinnerArrayAdapter);
-                                        if(currdef.getText().toString().equals(currchosen.getText().toString().replace(" ",""))){
-                                            inputrate.setText("1.00");
-                                            inputrate.setEnabled(false);
-                                        }
-                                        else {
-                                            inputrate.setEnabled(true);
-                                        }
-                                    } else {
-                                        Log.e("", "Error getting documents.", task.getException());
-                                    }
-
-                                }
-                            });
-
-
-                    chosenacc.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            generator.choseaccount1(accountlist.this,chosenacc,allcurrencyselected,currchosen);
-                            if(currdef.getText().toString().equals(currchosen.getText().toString().replace(" ",""))){
-                                inputrate.setText("1.00");
-                                inputrate.setEnabled(false);
-                            }
-                            else {
-                                inputrate.setEnabled(true);
-                            }
-                        }
-                    });
-
-
-                    AlertDialog build = new AlertDialog.Builder(accountlist.this,R.style.AppCompatAlertDialogStyle).setNegativeButton("Cancel",null).setPositiveButton("Save", null).setTitle("Transfer").create();
-
-                    build.setCancelable(false);
-
-
-
-                    build.setOnShowListener(new DialogInterface.OnShowListener() {
-                        @Override
-                        public void onShow(DialogInterface dialogInterface) {
-                            Button button = ((AlertDialog) build).getButton(AlertDialog.BUTTON_POSITIVE);
-                            button.setOnClickListener(new View.OnClickListener() {
-
-                                @Override
-                                public void onClick(View view) {
-                                    // TODO Do something
-
-                                    if(currdef.getText().toString().equals(currchosen.getText().toString().replace(" ",""))){
-                                        inputrate.setText("1.00");
-                                        inputrate.setEnabled(false);
-                                    }
-                                    else {
-                                        inputrate.setEnabled(true);
-                                    }
-
-                                    if(trfvalue.getText().toString().equals("")){
-                                        Toast.makeText(accountlist.this, "Input Transfer Amount", Toast.LENGTH_SHORT).show();
-                                    }
-                                    else {
-                                        if(chosenacc.getText().toString().equals("Account")){
-                                            Toast.makeText(accountlist.this, "Select Source Account by tapping Account Text", Toast.LENGTH_SHORT).show();
-                                        }
-                                        else {
-                                            //Dismiss once everything is OK.
-                                            Toast.makeText(accountlist.this, "Saving Transfer", Toast.LENGTH_SHORT).show();
-
-                                            Map<String,Object> mapdata = new HashMap<>();
-
-                                            Date date22 = Calendar.getInstance().getTime();
-
-                                            Date today22 = new Date();
-                                            SimpleDateFormat format22 = new SimpleDateFormat("dd/MM/yyyy");
-                                            Date chosendated=null;
-                                            try {
-                                                chosendated = format22.parse(chosendate.getText().toString());
-                                            } catch (ParseException e) {
-                                                e.printStackTrace();
-                                            }
-                                            String temp ="1";
-
-                                            if(chosendated.after(date22)) {
-                                                temp = "0";
-                                            }
-
-                                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-                                            mapdata.put("transfer_createdate",date22);
-                                            mapdata.put("transfer_amount",trfvalue.getText().toString().replace(",",""));
-                                            mapdata.put("transfer_rate",inputrate.getText().toString().replace(",",""));
-                                            mapdata.put("transfer_dest",choseacc.getSelectedItem().toString());
-                                            mapdata.put("transfer_src",chosenacc.getText().toString());
-                                            mapdata.put("transfer_notes",notesdata.getText().toString());
-                                            mapdata.put("transfer_date",chosendate.getText().toString());
-                                            mapdata.put("transfer_isdated","0");
-                                            mapdata.put("transfer_isdone",temp);
-                                            // mapdata.put("transfer_repeat_time",repeattimedata);
-                                            // mapdata.put("transfer_repeat_period",repeatperioddata);
-                                            //  mapdata.put("transfer_repeat_count",repeatcountdata);
-                                            mapdata.put("username", generator.userlogin);
-
-
-                                            fdb.collection("transfer")
-                                                    .add(mapdata)
-                                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                        @Override
-                                                        public void onSuccess(DocumentReference documentReference) {
-// wrong from here
-                                                            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                                                            Date strDate = null;
-                                                            try {
-                                                                strDate = sdf.parse(chosendate.getText().toString());
-                                                            } catch (ParseException e) {
-                                                                e.printStackTrace();
-                                                            }
-                                                            Log.e("date 1", chosendate.getText().toString());
-                                                            Log.e("date 2", sdf.format(new Date()));
-
-                                                            if (strDate.before(new Date()) || strDate.equals(new Date())) {
-                                                                Log.e("date is before", "same");
-
-                                                                fdb.collection("account")
-                                                                        .whereEqualTo("account_name", chosenacc.getText().toString())
-                                                                        .get()
-                                                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                            @Override
-                                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                                if (task.isSuccessful()) {
-                                                                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                                                                        fdb.collection("account")
-                                                                                                .whereEqualTo("account_name", choseacc.getSelectedItem().toString())
-                                                                                                .get()
-                                                                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                                                    @Override
-                                                                                                    public void onComplete(@NonNull Task<QuerySnapshot> task1) {
-                                                                                                        if (task1.isSuccessful()) {
-                                                                                                            for (QueryDocumentSnapshot document1 : task1.getResult()) {
-                                                                                                                Double source =  Double.parseDouble(document.getData().get("account_balance_current").toString());
-                                                                                                                Double destination =  Double.parseDouble(document1.getData().get("account_balance_current").toString());
-
-                                                                                                                Double rate = Double.parseDouble(inputrate.getText().toString().replace(",",""))*Double.parseDouble(trfvalue.getText().toString().replace(",",""));
-
-
-                                                                                                                Map<String, Object> datasrc1 = new HashMap<>();
-                                                                                                                datasrc1.put("account_balance_current", String.valueOf(source-Double.parseDouble(trfvalue.getText().toString().replace(",",""))));
-
-                                                                                                                fdb.collection("account").document(document.getId())
-                                                                                                                        .set(datasrc1, SetOptions.merge());
-
-                                                                                                                Map<String, Object> datadest1 = new HashMap<>();
-                                                                                                                datadest1.put("account_balance_current", String.valueOf(destination+rate) );
-
-                                                                                                                fdb.collection("account").document(document1.getId())
-                                                                                                                        .set(datadest1, SetOptions.merge());
-
-                                                                                                                if(generator.adapter!=null){
-                                                                                                                    generator.adapter.notifyDataSetChanged();
-                                                                                                                }
-                                                                                                                build.dismiss();
-                                                                                                                Toast.makeText(accountlist.this, "Transfer Data Added", Toast.LENGTH_SHORT).show();
-                                                                                                                Log.e("Add data", "DocumentSnapshot added with ID: " + documentReference.getId());
-                                                                                                            }
-                                                                                                        } else {
-                                                                                                            Log.d("Documentdata", "Error getting documents: ", task.getException());
-                                                                                                        }
-                                                                                                    }
-                                                                                                });
-                                                                                    }
-                                                                                } else {
-                                                                                    Log.d("Documentdata", "Error getting documents: ", task.getException());
-                                                                                }
-                                                                            }
-                                                                        });
-                                                            }
-                                                            else {
-                                                                Log.e("date is after", "not same");
-                                                                if(generator.adapter!=null){
-                                                                    generator.adapter.notifyDataSetChanged();
-                                                                }
-
-                                                                build.dismiss();
-                                                                Toast.makeText(accountlist.this, "Transfer Data Added", Toast.LENGTH_SHORT).show();
-                                                                Log.e("Add data", "DocumentSnapshot added with ID: " + documentReference.getId());
-                                                            }
-
-
-
-
-                                                        }
-                                                    })
-                                                    .addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception e) {
-                                                            Toast.makeText(accountlist.this, "Error : Please Contact Support or Retry", Toast.LENGTH_SHORT).show();
-                                                            Log.e("error data add", "Error adding document", e);
-                                                        }
-                                                    });
-
-                                        }
-                                    }
-                                }
-                            });
-                        }
-                    });
-
-                    List<MainActivity.accountobject> allaccount=new ArrayList<MainActivity.accountobject>();
-
-                    build.setView(layout);
-
-
-                    build.show();
-
+                    generator.newtransfer(accountlist.this);
                 }
             });
 
@@ -819,6 +468,12 @@ public class accountlist extends AppCompatActivity{
                 @Override
                 public void onClick(View v) {
                     Intent transacationlist = new Intent(contexts,accounttransactions.class);
+
+                    Bundle bundle = new Bundle();
+                    //Add your data from getFactualResults method to bundle
+                    bundle.putString("account_name", holder.accountname.getText().toString());
+                    //Add the bundle to the intent
+                    transacationlist.putExtras(bundle);
                     startActivity(transacationlist);
                     finish();
                 }
@@ -977,9 +632,6 @@ public class accountlist extends AppCompatActivity{
                                                                 Toast.makeText(contexts,"Account Name is Empty",Toast.LENGTH_SHORT).show();
                                                             }
                                                             else {
-                                                                if(accountcategory.getSelectedItem().toString().equals("Select One")){
-                                                                    Toast.makeText(contexts,"Please Select Account Category",Toast.LENGTH_SHORT).show();
-                                                                }else {
                                                                     if(accountbalance.getText().toString().equals("")){
                                                                         Toast.makeText(contexts,"Account Balance default 0",Toast.LENGTH_SHORT).show();
                                                                     }else {
@@ -1004,12 +656,22 @@ public class accountlist extends AppCompatActivity{
                                                                         Date c = Calendar.getInstance().getTime();
                                                                         Map<String, Object> accountsmap = new HashMap<>();
                                                                         accountsmap.put("account_name", accountname.getText().toString());
-                                                                        accountsmap.put("account_category", accountcategory.getSelectedItem().toString());
+
+                                                                        if(accountcategory.getSelectedItem().toString().equals("Select One")){
+                                                                            accountsmap.put("account_category", "-");
+                                                                        }
+                                                                        else {
+                                                                            accountsmap.put("account_category", accountcategory.getSelectedItem().toString());
+                                                                        }
+
+
 
                                                                         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                                                        SimpleDateFormat df1 = new SimpleDateFormat("dd/MM/yyyy");
                                                                         String formattedDate = df.format(c);
 
                                                                         accountsmap.put("account_editdate", c);
+                                                                        accountsmap.put("account_lastused", df1.format(c));
                                                                         accountsmap.put("account_createdate", thisaccount[0].getAccount_createdate());
                                                                         accountsmap.put("account_balance", accountbalance.getText().toString().replace(",",""));
                                                                         accountsmap.put("account_balance_current", String.valueOf(calculateresult));
@@ -1039,7 +701,6 @@ public class accountlist extends AppCompatActivity{
                                                                         Toast.makeText(contexts, "Account Edited", Toast.LENGTH_SHORT).show();
 
                                                                     }
-                                                                }
                                                             }
                                                             db.closeDB();
                                                         }
