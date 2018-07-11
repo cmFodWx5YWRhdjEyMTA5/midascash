@@ -37,6 +37,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import io.realm.Realm;
+
 
 import com.fake.shopee.shopeefake.formula.commaedittext;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -65,13 +67,12 @@ import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.realm.Realm;
 import midascash.indonesia.optima.prima.midascash.administrator.main_administrator;
 import midascash.indonesia.optima.prima.midascash.formula.calculatordialog;
 import midascash.indonesia.optima.prima.midascash.recycleview.adapterviewcategory;
 import midascash.indonesia.optima.prima.midascash.recycleview.mainactivityviews;
 import midascash.indonesia.optima.prima.midascash.reports.chartofbalance;
-import midascash.indonesia.optima.prima.midascash.settings.Settings;
+import midascash.indonesia.optima.prima.midascash.settings.settings;
 import midascash.indonesia.optima.prima.midascash.transactionactivity.listexpense;
 import midascash.indonesia.optima.prima.midascash.transactionactivity.listincome;
 import midascash.indonesia.optima.prima.midascash.transactionactivity.listtransfer;
@@ -80,9 +81,6 @@ import midascash.indonesia.optima.prima.midascash.transactionactivity.accountlis
 import midascash.indonesia.optima.prima.midascash.transactionactivity.categorylist;
 import midascash.indonesia.optima.prima.midascash.transactionactivity.income;
 import midascash.indonesia.optima.prima.midascash.transactionactivity.expense;
-import pl.rafman.scrollcalendar.ScrollCalendar;
-import pl.rafman.scrollcalendar.contract.MonthScrollListener;
-import pl.rafman.scrollcalendar.contract.OnDateClickListener;
 
 
 public class MainActivity extends AppCompatActivity
@@ -428,7 +426,7 @@ public class MainActivity extends AppCompatActivity
             reportmethod(report);
             mainview.addView(report);
         } else if (id == R.id.nav_settings) {
-            Intent a = new Intent(MainActivity.this, Settings.class);
+            Intent a = new Intent(MainActivity.this, settings.class);
             startActivity(a);
         } else if (id == R.id.nav_transferlist) {
             Intent a = new Intent(MainActivity.this, listtransfer.class);
@@ -545,71 +543,77 @@ public class MainActivity extends AppCompatActivity
                                 if (categoryname.getText().toString().equals("")) {
                                     Toast.makeText(MainActivity.this,"Category name is Missing",Toast.LENGTH_SHORT).show();
                                 } else {
-                                    if (Integer.parseInt(selected.getTag().toString()) == 0) {
-                                        Toast.makeText(MainActivity.this,"Please Select Picture",Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        final int[] statuscode = {0};
-                                        Log.e("selected", "2");
-                                        Toast.makeText(MainActivity.this,"Please Wait",Toast.LENGTH_SHORT).show();
-                                        db.collection("category")
-                                                .get()
-                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                        if (task.isSuccessful()) {
-                                                            Log.e("selected", "2,5");
-                                                            int isdouble=0;
-                                                            for (DocumentSnapshot document : task.getResult()) {
-                                                                statuscode[0] =1;
-                                                                Log.e("selected", "3");
-                                                                if(document.getId()==null){
-                                                                    break;
-                                                                }
-                                                                else if (document.getData().get("category_name").toString().equals(categoryname.getText().toString()) && document.getData().get("category_name")!=null) {
-                                                                    Toast.makeText(MainActivity.this, categoryname.getText().toString() + " is Already Registered", Toast.LENGTH_SHORT).show();
-                                                                    isdouble = 1;
-                                                                }
-                                                                }
-                                                            if(statuscode[0]==0 || isdouble!=1){
-                                                                Date c = Calendar.getInstance().getTime();
-                                                                Map<String, Object> categorymap = new HashMap<>();
-                                                                categorymap.put("category_name", categoryname.getText().toString());
-                                                                categorymap.put("category_image", selected.getTag());
+                                    if(categoryname.getText().toString().equals("-")){
+                                        Toast.makeText(MainActivity.this,"Category Name Is Used By System",Toast.LENGTH_SHORT).show();
+                                    }else {
+                                        if (Integer.parseInt(selected.getTag().toString()) == 0) {
+                                            Toast.makeText(MainActivity.this,"Please Select Picture",Toast.LENGTH_SHORT).show();
+                                        } else {
 
-                                                                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                                                String formattedDate = df.format(c);
+                                            final int[] statuscode = {0};
+                                            Log.e("selected", "2");
+                                            Toast.makeText(MainActivity.this,"Please Wait",Toast.LENGTH_SHORT).show();
+                                            db.collection("category")
+                                                    .get()
+                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                            if (task.isSuccessful()) {
+                                                                Log.e("selected", "2,5");
+                                                                int isdouble=0;
+                                                                for (DocumentSnapshot document : task.getResult()) {
+                                                                    statuscode[0] =1;
+                                                                    Log.e("selected", "3");
+                                                                    if(document.getId()==null){
+                                                                        break;
+                                                                    }
+                                                                    else if (document.getData().get("category_name").toString().equals(categoryname.getText().toString()) && document.getData().get("category_name")!=null) {
+                                                                        Toast.makeText(MainActivity.this, categoryname.getText().toString() + " is Already Registered", Toast.LENGTH_SHORT).show();
+                                                                        isdouble = 1;
+                                                                    }
+                                                                }
+                                                                if(statuscode[0]==0 || isdouble!=1){
+                                                                    Date c = Calendar.getInstance().getTime();
+                                                                    Map<String, Object> categorymap = new HashMap<>();
+                                                                    categorymap.put("category_name", categoryname.getText().toString());
+                                                                    categorymap.put("category_image", selected.getTag());
 
-                                                                categorymap.put("category_createdate", c);
-                                                                categorymap.put("category_status",1);
-                                                                categorymap.put("username",generator.userlogin);
+                                                                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                                                    String formattedDate = df.format(c);
+
+                                                                    categorymap.put("category_createdate", c);
+                                                                    categorymap.put("category_status",1);
+                                                                    categorymap.put("username",generator.userlogin);
 
 // Add a new document with a generated ID
-                                                                db.collection("category")
-                                                                        .add(categorymap)
-                                                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                                            @Override
-                                                                            public void onSuccess(DocumentReference documentReference) {
-                                                                                dialog1.dismiss();
-                                                                                Toast.makeText(MainActivity.this, "New Category Saved", Toast.LENGTH_SHORT).show();
-                                                                                Log.e("added category", "DocumentSnapshot added with ID: " + documentReference.getId());
-                                                                            }
-                                                                        })
-                                                                        .addOnFailureListener(new OnFailureListener() {
-                                                                            @Override
-                                                                            public void onFailure(@NonNull Exception e) {
-                                                                                Toast.makeText(MainActivity.this, "Error Occured : "+ e.getMessage().toString(), Toast.LENGTH_SHORT).show();
-                                                                                Log.e("error add", "Error adding document", e);
-                                                                            }
-                                                                        });
+                                                                    db.collection("category")
+                                                                            .add(categorymap)
+                                                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                                @Override
+                                                                                public void onSuccess(DocumentReference documentReference) {
+                                                                                    dialog1.dismiss();
+                                                                                    Toast.makeText(MainActivity.this, "New Category Saved", Toast.LENGTH_SHORT).show();
+                                                                                    Log.e("added category", "DocumentSnapshot added with ID: " + documentReference.getId());
+                                                                                }
+                                                                            })
+                                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                                @Override
+                                                                                public void onFailure(@NonNull Exception e) {
+                                                                                    Toast.makeText(MainActivity.this, "Error Occured : "+ e.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                                                                                    Log.e("error add", "Error adding document", e);
+                                                                                }
+                                                                            });
 
+                                                                }
+                                                            } else {
+                                                                Log.e("category error add", "Error getting documents.", task.getException());
                                                             }
-                                                        } else {
-                                                            Log.e("category error add", "Error getting documents.", task.getException());
                                                         }
-                                                    }
-                                                });
+                                                    });
 
+                                        }
                                     }
+
                                 }
                             }
                         });
@@ -930,37 +934,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             private void calendermethod(View v) {
-                ScrollCalendar scrollCalendar = (ScrollCalendar) v.findViewById(R.id.scrollCalendar);
-                scrollCalendar.setOnDateClickListener(new OnDateClickListener() {
-                    @Override
-                    public void onCalendarDayClicked(int year, int month, int day) {
-                        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this, R.style.AppCompatAlertDialogStyle).create();
-                        alertDialog.setTitle(String.valueOf(day) + "/" + String.valueOf(month + 1) + "/" + String.valueOf(year));
-                        alertDialog.setMessage("No Events on " + String.valueOf(day) + "/" + String.valueOf(month + 1) + "/" + String.valueOf(year));
-                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        alertDialog.show();
-                    }
-                });
 
-
-                scrollCalendar.setMonthScrollListener(new MonthScrollListener() {
-                    @Override
-                    public boolean shouldAddNextMonth(int lastDisplayedYear, int lastDisplayedMonth) {
-                        // return false if you don't want to show later months
-                        return true;
-                    }
-
-                    @Override
-                    public boolean shouldAddPreviousMonth(int firstDisplayedYear, int firstDisplayedMonth) {
-                        // return false if you don't want to show previous months
-                        return true;
-                    }
-                });
             }
 
             public void reportmethod(View v) {

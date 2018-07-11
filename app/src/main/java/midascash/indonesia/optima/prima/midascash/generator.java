@@ -695,6 +695,7 @@ public class generator {
         }
 
     }
+
     
     public static void newtransfer(Context context){
 
@@ -936,7 +937,7 @@ public class generator {
                                                     if (task.isSuccessful()) {
                                                         for (QueryDocumentSnapshot document1 : task.getResult()) {
                                                             Double check = generator.makedouble(document1.getData().get("account_balance_current").toString());
-                                                            if((generator.makedouble(inputrate.getText().toString())*generator.makedouble(trfvalue.getText().toString().replace(",","")))>check){
+                                                            if((generator.makedouble(inputrate.getText().toString().replace(",",""))*generator.makedouble(trfvalue.getText().toString().replace(",","")))>check){
                                                                 Toast.makeText(context, "Your Account Have insufficient Balance", Toast.LENGTH_SHORT).show();
                                                             }
                                                             else {
@@ -1159,5 +1160,9 @@ public class generator {
         }
 
 
+    }
+
+    public static void refreshbalance(String accname){
+        // refresh balance method
     }
 }

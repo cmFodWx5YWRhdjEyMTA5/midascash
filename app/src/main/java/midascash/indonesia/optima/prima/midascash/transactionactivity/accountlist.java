@@ -475,7 +475,6 @@ public class accountlist extends AppCompatActivity{
                     //Add the bundle to the intent
                     transacationlist.putExtras(bundle);
                     startActivity(transacationlist);
-                    finish();
                 }
             });
 
@@ -620,6 +619,7 @@ public class accountlist extends AppCompatActivity{
 
                                             final String finalTempword = tempword;
                                             String finalCurrent_balance = current_balance;
+                                            String finalTempword1 = tempword;
                                             dialog1.setOnShowListener(new DialogInterface.OnShowListener() {
                                                 @Override
                                                 public void onShow(DialogInterface dialog) {
@@ -681,12 +681,96 @@ public class accountlist extends AppCompatActivity{
                                                                         accountsmap.put("username", generator.userlogin);
 
 
+
                                                                         fdb.collection("account").document(holder.documenref)
                                                                                 .set(accountsmap)
                                                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                     @Override
                                                                                     public void onSuccess(Void aVoid) {
                                                                                         Log.d("status write", "DocumentSnapshot successfully written!");
+
+                                                                                        fdb.collection("income")
+                                                                                                .whereEqualTo("income_account", finalTempword1)
+                                                                                                .get()
+                                                                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                                    @Override
+                                                                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                                        if (task.isSuccessful()) {
+                                                                                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                                                Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                                datasrc1.put("income_account",accountname.getText().toString());
+
+                                                                                                                fdb.collection("income").document(document.getId())
+                                                                                                                        .set(datasrc1, SetOptions.merge());
+                                                                                                            }
+                                                                                                        } else {
+                                                                                                            Log.d("data splash weeor", "Error getting documents: ", task.getException());
+                                                                                                        }
+                                                                                                    }
+                                                                                                });
+
+                                                                                        fdb.collection("transfer")
+                                                                                                .whereEqualTo("transfer_src", finalTempword1)
+                                                                                                .get()
+                                                                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                                    @Override
+                                                                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                                        if (task.isSuccessful()) {
+                                                                                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                                                Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                                datasrc1.put("transfer_src",accountname.getText().toString());
+
+                                                                                                                fdb.collection("transfer").document(document.getId())
+                                                                                                                        .set(datasrc1, SetOptions.merge());
+                                                                                                            }
+                                                                                                        } else {
+                                                                                                            Log.d("data tf weeor", "Error getting documents: ", task.getException());
+                                                                                                        }
+                                                                                                    }
+                                                                                                });
+                                                                                        fdb.collection("transfer")
+                                                                                                .whereEqualTo("transfer_dest", finalTempword1)
+                                                                                                .get()
+                                                                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                                    @Override
+                                                                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                                        if (task.isSuccessful()) {
+                                                                                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                                                Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                                datasrc1.put("transfer_dest",accountname.getText().toString());
+
+                                                                                                                fdb.collection("transfer").document(document.getId())
+                                                                                                                        .set(datasrc1, SetOptions.merge());
+                                                                                                            }
+                                                                                                        } else {
+                                                                                                            Log.d("data tf weeor", "Error getting documents: ", task.getException());
+                                                                                                        }
+                                                                                                    }
+                                                                                                });
+                                                                                        //  DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                                                                                        // final String date = df.format(Calendar.getInstance().getTime());
+                                                                                        // editor.putString("dateprocess",date);
+                                                                                        //  editor.apply();
+                                                                                        fdb.collection("expense")
+                                                                                                .whereEqualTo("expense_account", finalTempword1)
+                                                                                                .get()
+                                                                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                                    @Override
+                                                                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                                        if (task.isSuccessful()) {
+                                                                                                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                                                Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                                datasrc1.put("expense_account",accountname.getText().toString());
+
+                                                                                                                fdb.collection("expense").document(document.getId())
+                                                                                                                        .set(datasrc1, SetOptions.merge());
+                                                                                                            }
+                                                                                                        } else {
+                                                                                                            Log.d("data splash weeor", "Error getting documents: ", task.getException());
+                                                                                                        }
+                                                                                                    }
+                                                                                                });
+
                                                                                         reloaddata();
                                                                                         Toast.makeText(accountlist.this,thisaccount[0].getAccount_name() +" changed into " + accountname.getText().toString(),Toast.LENGTH_SHORT).show();
                                                                                     }
@@ -717,8 +801,10 @@ public class accountlist extends AppCompatActivity{
                                     return true;
                                 case R.id.accountdeleteitem:
 
+                                    final String finalTempword1=holder.accountname.getText().toString();
+
                                     AlertDialog.Builder alerts = new AlertDialog.Builder(contexts,R.style.AppCompatAlertDialogStyle)
-                                            .setTitle("Delete " + holder.accountname.getText().toString()).setMessage("Proceed Deleting "+ holder.accountname.getText().toString());
+                                            .setTitle("Delete " + holder.accountname.getText().toString()).setMessage("Proceed Deleting "+ holder.accountname.getText().toString() + " , Depending Account will be set to empty");
                                     alerts.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
@@ -727,6 +813,91 @@ public class accountlist extends AppCompatActivity{
                                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                         @Override
                                                         public void onSuccess(Void aVoid) {
+
+
+
+                                                            fdb.collection("income")
+                                                                    .whereEqualTo("income_account", finalTempword1)
+                                                                    .get()
+                                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                        @Override
+                                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                            if (task.isSuccessful()) {
+                                                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                    datasrc1.put("income_account","Empty");
+
+                                                                                    fdb.collection("income").document(document.getId())
+                                                                                            .set(datasrc1, SetOptions.merge());
+                                                                                }
+                                                                            } else {
+                                                                                Log.d("data splash weeor", "Error getting documents: ", task.getException());
+                                                                            }
+                                                                        }
+                                                                    });
+
+                                                            fdb.collection("transfer")
+                                                                    .whereEqualTo("transfer_src", finalTempword1)
+                                                                    .get()
+                                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                        @Override
+                                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                            if (task.isSuccessful()) {
+                                                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                    datasrc1.put("transfer_src","Empty");
+
+                                                                                    fdb.collection("transfer").document(document.getId())
+                                                                                            .set(datasrc1, SetOptions.merge());
+                                                                                }
+                                                                            } else {
+                                                                                Log.d("data tf weeor", "Error getting documents: ", task.getException());
+                                                                            }
+                                                                        }
+                                                                    });
+                                                            fdb.collection("transfer")
+                                                                    .whereEqualTo("transfer_dest", finalTempword1)
+                                                                    .get()
+                                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                        @Override
+                                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                            if (task.isSuccessful()) {
+                                                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                    datasrc1.put("transfer_dest","Empty");
+
+                                                                                    fdb.collection("transfer").document(document.getId())
+                                                                                            .set(datasrc1, SetOptions.merge());
+                                                                                }
+                                                                            } else {
+                                                                                Log.d("data tf weeor", "Error getting documents: ", task.getException());
+                                                                            }
+                                                                        }
+                                                                    });
+                                                            //  DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                                                            // final String date = df.format(Calendar.getInstance().getTime());
+                                                            // editor.putString("dateprocess",date);
+                                                            //  editor.apply();
+                                                            fdb.collection("expense")
+                                                                    .whereEqualTo("expense_account", finalTempword1)
+                                                                    .get()
+                                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                        @Override
+                                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                            if (task.isSuccessful()) {
+                                                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                    datasrc1.put("expense_account","Empty");
+
+                                                                                    fdb.collection("expense").document(document.getId())
+                                                                                            .set(datasrc1, SetOptions.merge());
+                                                                                }
+                                                                            } else {
+                                                                                Log.d("data splash weeor", "Error getting documents: ", task.getException());
+                                                                            }
+                                                                        }
+                                                                    });
+
                                                             reloaddata();
                                                             Toast.makeText(accountlist.this,"Deleted Account "+ holder.accountname.getText().toString(),Toast.LENGTH_SHORT).show();
                                                         }

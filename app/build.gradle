@@ -2,7 +2,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'realm-android'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
+
     defaultConfig {
         applicationId "midascash.indonesia.optima.prima.midascash"
         minSdkVersion 21
@@ -23,50 +25,61 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    lintOptions {
-
-        checkReleaseBuilds false
-
-    }
     compileOptions {
 
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
 }
 
 dependencies {
-    implementation 'com.github.midorikocak:currency-picker-android:1.1.9'
-    implementation 'com.applandeo:material-calendar-view:1.4.0'
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation 'com.google.firebase:firebase-firestore:15.0.0'
+
+    implementation 'io.realm:realm-annotations-processor:4.0.0'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    implementation 'pl.rafman.widgets:scroll-calendar:1.5.1', {
-        exclude group: 'com.android.support'
-    }
-    implementation 'de.hdodenhof:circleimageview:2.2.0'
-    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.android.support:support-compat:26.1.0'
-    implementation 'com.android.support:recyclerview-v7:26.1.0'
-    implementation 'com.android.support:cardview-v7:26.1.0'
-    implementation 'com.android.support:support-v4:26.1.0'
-    implementation 'com.android.support:design:26.1.0'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:support-vector-drawable:27.1.1'
+    implementation 'com.android.support:support-compat:27.1.1'
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
+    implementation 'com.android.support:cardview-v7:27.1.1'
+    implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
     implementation 'com.github.PhilJay:MPAndroidChart-Realm:v2.0.2@aar'
-    implementation 'io.realm:realm-annotations-processor:4.0.0'
-    implementation "com.github.nisrulz:recyclerviewhelper:27.1.1"
 
+    implementation 'com.github.nisrulz:recyclerviewhelper:27.1.1'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
 
-    implementation 'com.balysv:material-ripple:1.0.2'                  // ripple effect
-    implementation 'com.github.bumptech.glide:glide:3.7.0'             // image loader
-    implementation 'com.wdullaer:materialdatetimepicker:3.2.0'         // date & time picker
-    implementation 'com.mikhaellopez:circularimageview:3.0.2'          // circle image view
-    implementation 'com.github.pchmn:MaterialChipsInput:1.0.5'         // material chip
-    implementation 'com.hootsuite.android:nachos:1.1.1'                // material chips
-    implementation 'com.google.android:flexbox:0.3.2'                  // google flexible box
+
+    implementation 'pl.rafman.widgets:scroll-calendar:1.5.1'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+    implementation 'com.applandeo:material-calendar-view:1.4.0'
+    implementation 'com.google.firebase:firebase-core:16.0.1'
+
+    implementation 'com.google.firebase:firebase-firestore:17.0.2'
+
+    implementation 'com.balysv:material-ripple:1.0.2'
+    // ripple effect
+    implementation 'com.github.bumptech.glide:glide:3.7.0'
+    // image loader
+    implementation 'com.wdullaer:materialdatetimepicker:3.2.0'
+    // date & time picker
+    implementation 'com.mikhaellopez:circularimageview:3.0.2'
+    // circle image view
+    implementation 'com.github.pchmn:MaterialChipsInput:1.0.5'
+    implementation 'com.github.midorikocak:currency-picker-android:1.1.9'
+    // material chip
+    implementation 'com.hootsuite.android:nachos:1.1.1'
+    // material chips
+    implementation 'com.google.android:flexbox:0.3.2'
+
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
+    // google flexible box
+    implementation 'com.android.support:support-v13:27.1.1'
 }
 
 

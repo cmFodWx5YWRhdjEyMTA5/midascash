@@ -27,7 +27,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.DecimalFormat;
@@ -36,7 +35,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Formatter;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_expense_show;
 import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_expense_show_scheduled;
 import midascash.indonesia.optima.prima.midascash.objects.expense;

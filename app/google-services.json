@@ -15,14 +15,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "295323727797-bae1tgmud8o1qp3dmeujija9dn9a15ii.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "midascash.indonesia.optima.prima.midascash",
-            "certificate_hash": "622465487c1d1377da28927e9e4523c470b56865"
-          }
-        },
-        {
           "client_id": "295323727797-auhu45b7b0sb4hb8d2fb39kkgg1qqjsv.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -31,8 +23,20 @@
           }
         },
         {
-          "client_id": "295323727797-l2p1ug9empgi62cb0ams6be56hr2ghil.apps.googleusercontent.com",
-          "client_type": 3
+          "client_id": "295323727797-bae1tgmud8o1qp3dmeujija9dn9a15ii.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "midascash.indonesia.optima.prima.midascash",
+            "certificate_hash": "622465487c1d1377da28927e9e4523c470b56865"
+          }
+        },
+        {
+          "client_id": "295323727797-1ng3nstrhtebbui19p6gt9dhr799fpjv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "midascash.indonesia.optima.prima.midascash",
+            "certificate_hash": "9bd61a2856d63dc17825204216bb114a843ad765"
+          }
         },
         {
           "client_id": "295323727797-l2p1ug9empgi62cb0ams6be56hr2ghil.apps.googleusercontent.com",

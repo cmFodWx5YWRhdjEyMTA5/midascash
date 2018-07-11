@@ -34,6 +34,7 @@
             android:layout_width="0sp"
             android:text="Data"
             android:textSize="8pt"
+            android:id="@+id/balance_current"
             android:textColor="@color/colorAccentBlack"
             android:textAlignment="center"
             android:layout_weight="1"
@@ -55,6 +56,7 @@
             <TextView
                 android:layout_width="0sp"
                 android:text="Data"
+                android:id="@+id/created"
                 android:textSize="8pt"
                 android:textColor="@color/colorAccentBlack"
                 android:textAlignment="center"
@@ -77,6 +79,7 @@
             <TextView
                 android:layout_width="0sp"
                 android:text="Data"
+                android:id="@+id/lastused"
                 android:textSize="8pt"
                 android:textColor="@color/colorAccentBlack"
                 android:textAlignment="center"
@@ -100,6 +103,7 @@
                 android:layout_width="0sp"
                 android:text="Data"
                 android:textSize="8pt"
+                android:id="@+id/initial"
                 android:textColor="@color/colorAccentBlack"
                 android:textAlignment="center"
                 android:layout_weight="1"

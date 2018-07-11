@@ -35,7 +35,7 @@ import midascash.indonesia.optima.prima.midascash.R;
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
-public class Settings extends AppCompatPreferenceActivity {
+public class settings extends AppCompatPreferenceActivity {
 
     /**
      * A preference value change listener that updates the preference's summary
@@ -206,7 +206,7 @@ public class Settings extends AppCompatPreferenceActivity {
         public boolean onOptionsItemSelected(MenuItem item) {
             int id = item.getItemId();
             if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), Settings.class));
+                startActivity(new Intent(getActivity(), settings.class));
                 return true;
             }
             return super.onOptionsItemSelected(item);
@@ -236,7 +236,7 @@ public class Settings extends AppCompatPreferenceActivity {
         public boolean onOptionsItemSelected(MenuItem item) {
             int id = item.getItemId();
             if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), Settings.class));
+                startActivity(new Intent(getActivity(), settings.class));
                 return true;
             }
             return super.onOptionsItemSelected(item);
@@ -266,7 +266,7 @@ public class Settings extends AppCompatPreferenceActivity {
         public boolean onOptionsItemSelected(MenuItem item) {
             int id = item.getItemId();
             if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), Settings.class));
+                startActivity(new Intent(getActivity(), settings.class));
                 return true;
             }
             return super.onOptionsItemSelected(item);
