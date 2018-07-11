@@ -156,10 +156,6 @@ public class accounttransactions extends AppCompatActivity implements SeekBar.On
 
                             YAxis leftAxis = mChart.getAxisLeft();
                             leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
-                            leftAxis.addLimitLine(ll1);
-                            leftAxis.addLimitLine(ll2);
-                            leftAxis.setAxisMaximum(200f);
-                            leftAxis.setAxisMinimum(-50f);
                             //leftAxis.setYOffset(20f);
                             leftAxis.enableGridDashedLine(10f, 10f, 0f);
                             leftAxis.setDrawZeroLine(false);
