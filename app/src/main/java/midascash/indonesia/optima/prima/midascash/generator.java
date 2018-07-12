@@ -138,7 +138,7 @@ public class generator {
             ,R.drawable.add
             ,R.drawable.add
             ,R.drawable.add
-            ,R.drawable.add
+            ,R.drawable.no
             ,R.drawable.add
             ,R.drawable.add
             ,R.drawable.add

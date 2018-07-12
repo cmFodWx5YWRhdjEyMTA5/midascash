@@ -119,6 +119,9 @@ public class fragment_income_show extends Fragment {
                                 values.setIncome_type("D");
                                 values.setIncome_notes(document.getData().get("income_notes").toString());
                                 values.setIncome_from(document.getData().get("income_from").toString());
+
+                                final int[] count = {0};
+
                                 fdb.collection("category")
                                         .whereEqualTo("category_name", document.getData().get("income_category").toString())
                                         .get()
@@ -129,22 +132,32 @@ public class fragment_income_show extends Fragment {
                                                     for (QueryDocumentSnapshot document1 : task1.getResult()) {
                                                         Log.e("category datas", document1.getId() + " => " + document1.getData());
                                                         values.setIncome_image(Integer.parseInt(document1.getData().get("category_image").toString()));
-                                                        datainc.add(values);
-                                                        Collections.sort(datainc);
-                                                        Collections.reverse(datainc);
-                                                        incadapter = new listitemincome(getActivity(),datainc,false);
+
+
+                                                        count[0]++;
+                                                    }
+                                                    if(count[0]==0){
+                                                        values.setIncome_image(37);
+                                                    }
+                                                    datainc.add(values);
+                                                    Collections.sort(datainc);
+                                                    Collections.reverse(datainc);
+                                                    if(incadapter!=null){
                                                         incadapter.notifyDataSetChanged();
-                                                        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 1);
-                                                        recycler.setLayoutManager(mLayoutManager);
-                                                        recycler.setItemAnimator(new DefaultItemAnimator());
-                                                        recycler.setAdapter(incadapter);
                                                     }
                                                 } else {
                                                     Log.d("data", "Error getting documents: ", task.getException());
                                                 }
                                             }
                                         });
+
                             }
+                            incadapter = new listitemincome(getActivity(),datainc,false);
+                            incadapter.notifyDataSetChanged();
+                            RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 1);
+                            recycler.setLayoutManager(mLayoutManager);
+                            recycler.setItemAnimator(new DefaultItemAnimator());
+                            recycler.setAdapter(incadapter);
                         } else {
                             Log.w("data", "Error getting documents.", task.getException());
                         }
@@ -182,8 +195,16 @@ public class fragment_income_show extends Fragment {
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
             income incomes = incomelist.get(position);
+
+            Drawable resImg=null;
+            if(incomes.getIncome_category().equals("-")){
+                resImg = context.getResources().getDrawable(generator.images[36]);
+            }
+            else {
+                resImg = context.getResources().getDrawable(generator.images[incomes.getIncome_image()-1]);
+            }
+
             holder.documenref = incomes.getIncomedoc();
-            Drawable resImg = context.getResources().getDrawable(generator.images[incomes.getIncome_image()-1]);
             holder.image.setImageDrawable(resImg);
             holder.image.setTag(incomes.getIncome_image());
             holder.incomevalue.setText(formatter.format(incomes.getIncome_amount()));

@@ -717,8 +717,8 @@ public class MainActivity extends AppCompatActivity
                                 button.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        if (accountname.getText().toString().equals("")) {
-                                            Toast.makeText(MainActivity.this, "Account Name is Empty", Toast.LENGTH_SHORT).show();
+                                        if (accountname.getText().toString().equals("") || accountname.getText().toString().equals("Empty")) {
+                                            Toast.makeText(MainActivity.this, "Account Name is Invalid", Toast.LENGTH_SHORT).show();
                                         } else {
                                                 if (accountbalance.getText().toString().equals("")) {
                                                     Toast.makeText(MainActivity.this, "Account Balance default 0", Toast.LENGTH_SHORT).show();

@@ -119,6 +119,9 @@ public class fragment_expense_show_scheduled extends Fragment {
                                 values.setexpense_type("K");
                                 values.setexpense_notes(document.getData().get("expense_notes").toString());
                                 values.setexpense_to(document.getData().get("expense_to").toString());
+
+                                final int[] count = {0};
+
                                 fdb.collection("category")
                                         .whereEqualTo("category_name", document.getData().get("expense_category").toString())
                                         .get()
@@ -129,22 +132,34 @@ public class fragment_expense_show_scheduled extends Fragment {
                                                     for (QueryDocumentSnapshot document1 : task1.getResult()) {
                                                         Log.e("category datas", document1.getId() + " => " + document1.getData());
                                                         values.setexpense_image(Integer.parseInt(document1.getData().get("category_image").toString()));
-                                                        dataexp.add(values);
+
+                                                        count[0]++;
+                                                    }
+                                                    if(count[0] ==0){
+                                                        values.setexpense_image(37);
+                                                    }
+                                                    dataexp.add(values);
+                                                    Collections.sort(dataexp);
+                                                    Collections.reverse(dataexp);
+
+                                                    if(expadapter!=null){
+                                                        expadapter.notifyDataSetChanged();
                                                     }
                                                     Collections.sort(dataexp);
                                                     Collections.reverse(dataexp);
-                                                    expadapter = new listitemexpensescheduled(getActivity(),dataexp,false);
-                                                    expadapter.notifyDataSetChanged();
-                                                    RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 1);
-                                                    recycler.setLayoutManager(mLayoutManager);
-                                                    recycler.setItemAnimator(new DefaultItemAnimator());
-                                                    recycler.setAdapter(expadapter);
+
                                                 } else {
                                                     Log.d("data", "Error getting documents: ", task.getException());
                                                 }
                                             }
                                         });
                             }
+                            expadapter = new listitemexpensescheduled(getActivity(),dataexp,false);
+                            expadapter.notifyDataSetChanged();
+                            RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 1);
+                            recycler.setLayoutManager(mLayoutManager);
+                            recycler.setItemAnimator(new DefaultItemAnimator());
+                            recycler.setAdapter(expadapter);
                         } else {
                             Log.w("data", "Error getting documents.", task.getException());
                         }
@@ -231,7 +246,13 @@ public class fragment_expense_show_scheduled extends Fragment {
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
             expense expenses = expenselist.get(position);
-            Drawable resImg = context.getResources().getDrawable(generator.images[expenses.getexpense_image()-1]);
+            Drawable resImg=null;
+            if(expenses.getexpense_category().equals("Empty")){
+                resImg = context.getResources().getDrawable(generator.images[36]);
+            }
+            else {
+                resImg = context.getResources().getDrawable(generator.images[expenses.getexpense_image()-1]);
+            }
 
             holder.documenref = expenses.getexpensedoc();
             holder.image.setImageDrawable(resImg);

@@ -234,8 +234,8 @@ public class accountlist extends AppCompatActivity{
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (accountname.getText().toString().equals("")) {
-                                Toast.makeText(accountlist.this, "Account Name is Empty", Toast.LENGTH_SHORT).show();
+                            if (accountname.getText().toString().equals("") || accountname.getText().toString().equals("Empty")) {
+                                Toast.makeText(accountlist.this, "Account Name is Invalid", Toast.LENGTH_SHORT).show();
                             } else {
                                     if (accountbalance.getText().toString().equals("")) {
                                         Toast.makeText(accountlist.this, "Account Balance default 0", Toast.LENGTH_SHORT).show();
@@ -628,8 +628,8 @@ public class accountlist extends AppCompatActivity{
                                                     button.setOnClickListener(new View.OnClickListener() {
                                                         @Override
                                                         public void onClick(View v) {
-                                                            if(accountname.getText().toString().equals("")){
-                                                                Toast.makeText(contexts,"Account Name is Empty",Toast.LENGTH_SHORT).show();
+                                                            if(accountname.getText().toString().equals("") || accountname.getText().toString().equals("Empty")){
+                                                                Toast.makeText(contexts,"Invalid Account Name",Toast.LENGTH_SHORT).show();
                                                             }
                                                             else {
                                                                     if(accountbalance.getText().toString().equals("")){
