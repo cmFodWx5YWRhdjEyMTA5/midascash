@@ -12,6 +12,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import midascash.indonesia.optima.prima.midascash.R;
+import midascash.indonesia.optima.prima.midascash.generator;
 import midascash.indonesia.optima.prima.midascash.objects.account;
 
 public class adapterviewcategory extends RecyclerView.Adapter<adapterviewcategory.MyViewHolder> {
@@ -21,51 +22,6 @@ public class adapterviewcategory extends RecyclerView.Adapter<adapterviewcategor
     int times=0;
     int locationimage=0;
     int totalcircle=0;
-
-    int[] images = new int[]{R.drawable.cashicon, R.drawable.bank, R.drawable.lendresized, R.drawable.cheque, R.drawable.creditcardresized,R.drawable.food,R.drawable.electric,R.drawable.truck,R.drawable.health,R.drawable.ball
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add};
 
     CircleImageView chosen;
 
@@ -97,7 +53,7 @@ public class adapterviewcategory extends RecyclerView.Adapter<adapterviewcategor
 
     @Override
     public void onBindViewHolder(final adapterviewcategory.MyViewHolder holder, int position) {
-        Drawable resImg = contexts.getResources().getDrawable(images[times]);
+        Drawable resImg = contexts.getResources().getDrawable(generator.images[position]);
         holder.a.setImageDrawable(resImg);
         holder.a.setTag(position+1);
 
@@ -109,7 +65,6 @@ public class adapterviewcategory extends RecyclerView.Adapter<adapterviewcategor
             }
         });
 
-        times = times+1;
     }
 
     @Override

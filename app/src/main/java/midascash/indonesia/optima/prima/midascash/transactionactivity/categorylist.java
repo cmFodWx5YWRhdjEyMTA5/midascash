@@ -184,7 +184,7 @@ public class categorylist extends AppCompatActivity {
 
                                 temp=finalHolder.textView.getText().toString();
 
-                                adapterviewcategory adapter = new adapterviewcategory(categorylist.this, selected, 20);
+                                adapterviewcategory adapter = new adapterviewcategory(categorylist.this, selected, 30);
 
                                 RecyclerView recyclerView = dialogView.findViewById(R.id.recyclercategoryitem);
                                 recyclerView.setHasFixedSize(true);

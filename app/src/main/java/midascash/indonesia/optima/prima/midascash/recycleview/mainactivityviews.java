@@ -3,12 +3,9 @@ package midascash.indonesia.optima.prima.midascash.recycleview;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,7 +18,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import io.realm.Realm;
-import io.realm.RealmObject;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
@@ -33,23 +29,14 @@ import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.data.realm.base.RealmBaseDataSet;
 import com.github.mikephil.charting.data.realm.implementation.RealmBarDataSet;
-import com.github.mikephil.charting.data.realm.implementation.RealmLineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -64,7 +51,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -77,12 +63,9 @@ import midascash.indonesia.optima.prima.midascash.generator;
 import midascash.indonesia.optima.prima.midascash.objects.account;
 import midascash.indonesia.optima.prima.midascash.objects.dataexpset;
 import midascash.indonesia.optima.prima.midascash.objects.dataincset;
-import midascash.indonesia.optima.prima.midascash.objects.income;
 import midascash.indonesia.optima.prima.midascash.objects.incomeexpense;
 import midascash.indonesia.optima.prima.midascash.transactionactivity.listexpense;
 import midascash.indonesia.optima.prima.midascash.transactionactivity.listincome;
-
-import static android.content.ContentValues.TAG;
 
 public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.MyViewHolder>{
 
@@ -100,7 +83,7 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
             " Y", " Z"
     };
 
-    int[] images = new int[]{R.drawable.cashicon, R.drawable.bank, R.drawable.lendresized, R.drawable.cheque, R.drawable.creditcardresized,R.drawable.food,R.drawable.electric,R.drawable.truck,R.drawable.health,R.drawable.ball
+    int[] images = new int[]{R.drawable.cashicon, R.drawable.bank, R.drawable.lend_resized, R.drawable.cheque, R.drawable.creditcard_resized,R.drawable.food,R.drawable.electric,R.drawable.truck,R.drawable.health,R.drawable.ball
             ,R.drawable.add
             ,R.drawable.add
             ,R.drawable.add

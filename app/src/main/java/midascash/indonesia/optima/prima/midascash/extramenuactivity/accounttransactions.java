@@ -6,6 +6,7 @@ import android.graphics.DashPathEffect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -73,6 +74,51 @@ public class accounttransactions extends AppCompatActivity implements SeekBar.On
         createdate = findViewById(R.id.created);
         lastused = findViewById(R.id.lastused);
         initial = findViewById(R.id.initial);
+
+        final Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+
+            int count = 0;
+
+            @Override
+            public void run() {
+                count++;
+
+                if (count == 1)
+                {
+                    if(balance.getText().toString().equals("Loading") || balance.getText().toString().equals("Loading...")|| createdate.getText().toString().equals("Loading") || lastused.getText().toString().equals("Loading") || initial.getText().toString().equals("Loading")){
+                        balance.setText("Loading.");
+                        createdate.setText("Loading.");
+                        lastused.setText("Loading.");
+                        initial.setText("Loading.");
+                    }
+                }
+                else if (count == 2)
+                {
+                    if(balance.getText().toString().equals("Loading.") || createdate.getText().toString().equals("Loading..") || lastused.getText().toString().equals("Loading...") || initial.getText().toString().equals("Loading...")){
+                        balance.setText("Loading..");
+                        createdate.setText("Loading..");
+                        lastused.setText("Loading..");
+                        initial.setText("Loading..");
+                    }
+                }
+                else if (count == 3)
+                {
+                    if(balance.getText().toString().equals("Loading..") || createdate.getText().toString().equals("Loading..") || lastused.getText().toString().equals("Loading..") || initial.getText().toString().equals("Loading..")){
+                        balance.setText("Loading...");
+                        createdate.setText("Loading...");
+                        lastused.setText("Loading...");
+                        initial.setText("Loading...");
+                    }
+                }
+
+                if (count == 3)
+                    count = 0;
+
+                handler.postDelayed(this, 1 * 200);
+            }
+        };
+        handler.postDelayed(runnable, 1 * 200);
 
         Bundle bundle = getIntent().getExtras();
 
@@ -168,8 +214,64 @@ public class accounttransactions extends AppCompatActivity implements SeekBar.On
                             //mChart.getViewPortHandler().setMaximumScaleY(2f);
                             //mChart.getViewPortHandler().setMaximumScaleX(2f);
 
+                            int count = 20;
+                            int range = 1000000;
+
                             // add data
-                            setData(45, 100);
+                            ArrayList<Entry> values = new ArrayList<Entry>();
+
+                            for (int i = 0; i < count; i++) {
+
+                                float val = (float) (Math.random() * range) + 3;
+                                values.add(new Entry(i, val, getResources().getDrawable(R.drawable.star)));
+                            }
+
+                            LineDataSet set1;
+
+                            if (mChart.getData() != null &&
+                                    mChart.getData().getDataSetCount() > 0) {
+                                set1 = (LineDataSet)mChart.getData().getDataSetByIndex(0);
+                                set1.setValues(values);
+                                mChart.getData().notifyDataChanged();
+                                mChart.notifyDataSetChanged();
+                            } else {
+                                // create a dataset and give it a type
+                                set1 = new LineDataSet(values, "DataSet 1");
+
+                                set1.setDrawIcons(false);
+
+                                // set the line to be drawn like this "- - - - - -"
+                                set1.enableDashedLine(10f, 5f, 0f);
+                                set1.enableDashedHighlightLine(10f, 5f, 0f);
+                                set1.setColor(Color.BLACK);
+                                set1.setCircleColor(Color.BLACK);
+                                set1.setLineWidth(1f);
+                                set1.setCircleRadius(3f);
+                                set1.setDrawCircleHole(false);
+                                set1.setValueTextSize(9f);
+                                set1.setDrawFilled(true);
+                                set1.setFormLineWidth(1f);
+                                set1.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
+                                set1.setFormSize(15.f);
+
+                                if (Utils.getSDKInt() >= 18) {
+                                    // fill drawable only supported on api level 18 and above
+                                    Drawable drawable = ContextCompat.getDrawable(accounttransactions.this, R.drawable.fade_red);
+                                    set1.setFillDrawable(drawable);
+                                }
+                                else {
+                                    set1.setFillColor(Color.BLACK);
+                                }
+
+                                ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+                                dataSets.add(set1); // add the datasets
+
+                                // create a data object with the datasets
+                                LineData data = new LineData(dataSets);
+
+                                // set data
+                                mChart.setData(data);
+                            }
 
 //        mChart.setVisibleXRange(20);
 //        mChart.setVisibleYRange(20f, AxisDependency.LEFT);

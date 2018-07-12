@@ -101,27 +101,37 @@ public class generator {
     public static int red =Color.parseColor("#dd0000");
     public static int blue =Color.parseColor("#0000dd");
 
-    public static int[] images = new int[]{R.drawable.cashicon, R.drawable.bank, R.drawable.lendresized, R.drawable.cheque, R.drawable.creditcardresized,R.drawable.food,R.drawable.electric,R.drawable.truck,R.drawable.health,R.drawable.ball
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
-            ,R.drawable.add
+    public static int[] images = new int[]{
+            R.drawable.cashicon_resized
+            , R.drawable.bank_resized
+            , R.drawable.lend_resized
+            , R.drawable.cheque_resized
+            , R.drawable.creditcard_resized
+            , R.drawable.food_resized
+            , R.drawable.electric_resized
+            , R.drawable.truck_resized
+            , R.drawable.health_resized
+            , R.drawable.ball_resized
+            , R.drawable.house_resized
+            , R.drawable.water_resized
+            , R.drawable.clothes_resized
+            , R.drawable.movie_resized
+            , R.drawable.poker_resized
+            , R.drawable.car_resized
+            , R.drawable.accident_resized
+            , R.drawable.daily_resized
+            , R.drawable.tax_resized
+            , R.drawable.pet_resized
+            , R.drawable.computer_resized
+            , R.drawable.plane_resized
+            , R.drawable.gasoline_resized
+            , R.drawable.garden_resized
+            , R.drawable.bitcoin_resized
+            , R.drawable.insurance_resized
+            , R.drawable.investment_resized
+            , R.drawable.fixing_resized
+            , R.drawable.medical_resized
+            , R.drawable.drink_resized
             ,R.drawable.add
             ,R.drawable.add
             ,R.drawable.add

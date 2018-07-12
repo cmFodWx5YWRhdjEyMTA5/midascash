@@ -32,7 +32,7 @@
             android:layout_height="wrap_content" />
         <TextView
             android:layout_width="0sp"
-            android:text="Data"
+            android:text="Loading."
             android:textSize="8pt"
             android:id="@+id/balance_current"
             android:textColor="@color/colorAccentBlack"
@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content" />
             <TextView
                 android:layout_width="0sp"
-                android:text="Data"
+                android:text="Loading."
                 android:id="@+id/created"
                 android:textSize="8pt"
                 android:textColor="@color/colorAccentBlack"
@@ -78,7 +78,7 @@
                 android:layout_height="wrap_content" />
             <TextView
                 android:layout_width="0sp"
-                android:text="Data"
+                android:text="Loading."
                 android:id="@+id/lastused"
                 android:textSize="8pt"
                 android:textColor="@color/colorAccentBlack"
@@ -101,7 +101,7 @@
                 android:layout_height="wrap_content" />
             <TextView
                 android:layout_width="0sp"
-                android:text="Data"
+                android:text="Loading."
                 android:textSize="8pt"
                 android:id="@+id/initial"
                 android:textColor="@color/colorAccentBlack"
@@ -109,7 +109,41 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content" />
         </LinearLayout>
-        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:padding="6sp"
+            android:layout_height="70sp">
+            <View
+                android:layout_width="0sp"
+                android:layout_weight="1"
+                android:layout_height="2sp"></View>
+            <Button
+                android:layout_width="0sp"
+                android:id="@+id/months"
+                android:layout_weight="1"
+                android:backgroundTint="@color/colorPrimary"
+                android:textColor="@color/colorAccentWhite"
+                android:text="Months"
+                android:layout_height="match_parent" />
+            <Button
+                android:layout_width="0sp"
+                android:id="@+id/weeks"
+                android:layout_weight="1"
+                android:backgroundTint="@color/colorPrimary"
+                android:textColor="@color/colorAccentWhite"
+                android:text="Weeks"
+                android:layout_height="match_parent" />
+            <Button
+                android:layout_width="0sp"
+                android:layout_weight="1"
+                android:id="@+id/days"
+                android:backgroundTint="@color/colorPrimary"
+                android:textColor="@color/colorAccentWhite"
+                android:text="Days"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
 
     </LinearLayout>
     <LinearLayout

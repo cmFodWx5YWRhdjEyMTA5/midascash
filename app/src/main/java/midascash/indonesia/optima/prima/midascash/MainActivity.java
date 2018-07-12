@@ -504,7 +504,7 @@ public class MainActivity extends AppCompatActivity
                 View dialogView = inflater.inflate(R.layout.layout_input_kategori, null);
 
                 final CircleImageView selected = dialogView.findViewById(R.id.imgselected);
-                adapterviewcategory adapter = new adapterviewcategory(MainActivity.this, selected, 20);
+                adapterviewcategory adapter = new adapterviewcategory(MainActivity.this, selected, 30);
 
                 RecyclerView recyclerView = dialogView.findViewById(R.id.recyclercategoryitem);
                 recyclerView.setHasFixedSize(true);
