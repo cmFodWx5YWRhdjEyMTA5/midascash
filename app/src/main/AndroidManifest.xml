@@ -151,7 +151,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeactionbar" />
         <activity
-            android:name=".settings.Settings"
+            android:name=".extramenuactivity.accountsstatistic"
+            android:label="Accounts"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeactionbar" />
+        <activity
+            android:name=".settings.settings"
             android:theme="@style/AppThemeactionbar"
             android:label="@string/title_activity_settings"></activity>
     </application>

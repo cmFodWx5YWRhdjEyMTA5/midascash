@@ -65,6 +65,7 @@ import java.util.Map;
 import midascash.indonesia.optima.prima.midascash.MainActivity;
 import midascash.indonesia.optima.prima.midascash.R;
 import midascash.indonesia.optima.prima.midascash.SQLiteHelper;
+import midascash.indonesia.optima.prima.midascash.extramenuactivity.accountsstatistic;
 import midascash.indonesia.optima.prima.midascash.extramenuactivity.accounttransactions;
 import midascash.indonesia.optima.prima.midascash.formula.calculatordialog;
 import midascash.indonesia.optima.prima.midascash.generator;
@@ -413,6 +414,20 @@ public class accountlist extends AppCompatActivity{
             }
             holder.accountname.setText(acc.getAccount_name());
             holder.accountname.setTextColor(Color.BLACK);
+
+            holder.summarylist.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent transacationlist = new Intent(contexts,accountsstatistic.class);
+
+                    Bundle bundle = new Bundle();
+                    //Add your data from getFactualResults method to bundle
+                    bundle.putString("account_name", holder.accountname.getText().toString());
+                    //Add the bundle to the intent
+                    transacationlist.putExtras(bundle);
+                    startActivity(transacationlist);
+                }
+            });
 
             holder.accounttrans.setOnClickListener(new View.OnClickListener() {
                 @Override

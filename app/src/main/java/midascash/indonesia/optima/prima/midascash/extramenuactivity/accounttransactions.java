@@ -11,6 +11,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,17 +42,25 @@ import com.google.firebase.FirebaseApiNotAvailableException;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import midascash.indonesia.optima.prima.midascash.R;
 import midascash.indonesia.optima.prima.midascash.formula.MyMarkerView;
+import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_expense_show;
 import midascash.indonesia.optima.prima.midascash.generator;
+import midascash.indonesia.optima.prima.midascash.objects.expense;
+import midascash.indonesia.optima.prima.midascash.objects.incomeexpensetransfer;
+import midascash.indonesia.optima.prima.midascash.recycleview.adapterlisttransactionaccount;
 
 public class accounttransactions extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener,
         OnChartGestureListener, OnChartValueSelectedListener {
@@ -60,6 +71,10 @@ public class accounttransactions extends AppCompatActivity implements SeekBar.On
 
     FirebaseFirestore db;
     LineChart mChart;
+
+    RecyclerView recycler;
+
+    adapterlisttransactionaccount adapter;
 
     TextView balance,createdate,lastused,initial;
 
@@ -125,6 +140,8 @@ public class accounttransactions extends AppCompatActivity implements SeekBar.On
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        List<incomeexpensetransfer> dataiet = new ArrayList<>();
+
         db = FirebaseFirestore.getInstance();
 
         db.collection("income")
@@ -136,7 +153,148 @@ public class accounttransactions extends AppCompatActivity implements SeekBar.On
                         if (task.isSuccessful()) {
                             for (DocumentSnapshot document : task.getResult()) {
 
+                                incomeexpensetransfer item = new incomeexpensetransfer();
+                                item.setIncomedoc(document.getId());
+                                item.setIncome_account(document.getData().get("income_account").toString());
+                                item.setIncome_amount(Double.parseDouble(document.getData().get("income_amount").toString()));
+                                item.setIncome_category(document.getData().get("income_category").toString());
+                                item.setIncome_date(document.getData().get("income_date").toString());
+                                item.setIncome_type("D");
+                                item.setIncome_notes(document.getData().get("income_notes").toString());
+                                item.setIncome_from(document.getData().get("income_from").toString());
+
+                                final int[] count = {0};
+
+                                db.collection("category")
+                                        .whereEqualTo("category_name", document.getData().get("income_category").toString())
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task1) {
+                                                if (task1.isSuccessful()) {
+                                                    for (QueryDocumentSnapshot document1 : task1.getResult()) {
+                                                        Log.e("category datas", document1.getId() + " => " + document1.getData());
+                                                        item.setIncome_image(Integer.parseInt(document1.getData().get("category_image").toString()));
+
+
+                                                        count[0]++;
+                                                    }
+                                                    if(count[0]==0){
+                                                        item.setIncome_image(37);
+                                                    }
+                                                    dataiet.add(item);
+                                                    Collections.sort(dataiet);
+                                                    Collections.reverse(dataiet);
+                                                    if(adapter!=null){
+                                                        adapter.notifyDataSetChanged();
+                                                    }
+                                                } else {
+                                                    Log.d("data", "Error getting documents: ", task.getException());
+                                                }
+                                            }
+                                        });
+
+
                             }
+                            //expense
+
+                            db.collection("expense")
+                                    .whereEqualTo("expense_account",bundle.getString("account_name"))
+                                    .get()
+                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                for (DocumentSnapshot document : task.getResult()) {
+                                                    incomeexpensetransfer item2 = new incomeexpensetransfer();
+                                                    item2.setExpensedoc(document.getId());
+                                                    item2.setExpense_account(document.getData().get("expense_account").toString());
+                                                    item2.setExpense_amount(Double.parseDouble(document.getData().get("expense_amount").toString()));
+                                                    item2.setExpense_category(document.getData().get("expense_category").toString());
+                                                    item2.setExpense_date(document.getData().get("expense_date").toString());
+                                                    item2.setExpense_type("K");
+                                                    item2.setExpense_notes(document.getData().get("expense_notes").toString());
+                                                    item2.setExpense_to(document.getData().get("expense_to").toString());
+
+                                                    final int[] count = {0};
+
+                                                    db.collection("category")
+                                                            .whereEqualTo("category_name", document.getData().get("expense_category").toString())
+                                                            .get()
+                                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<QuerySnapshot> task1) {
+                                                                    if (task.isSuccessful()) {
+                                                                        for (QueryDocumentSnapshot document1 : task1.getResult()) {
+                                                                            Log.e("category datas", document1.getId() + " => " + document1.getData());
+                                                                            item2.setExpense_image(Integer.parseInt(document1.getData().get("category_image").toString()));
+
+                                                                            count[0]++;
+                                                                        }
+                                                                        if(count[0]==0){
+                                                                            item2.setExpense_image(37);
+                                                                        }
+                                                                        dataiet.add(item2);
+                                                                        Collections.sort(dataiet);
+                                                                        Collections.reverse(dataiet);
+
+                                                                        if(adapter!=null){
+                                                                            adapter.notifyDataSetChanged();
+                                                                        }
+                                                                    } else {
+                                                                        Log.d("data", "Error getting documents: ", task.getException());
+                                                                    }
+                                                                }
+                                                            });
+
+                                                }
+
+                                                //transfer
+
+                                                db.collection("transfer")
+                                                        .whereEqualTo("transfer_src",bundle.getString("account_name"))
+                                                        .whereEqualTo("transfer_dest",bundle.getString("account_name"))
+                                                        .get()
+                                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    for (DocumentSnapshot document : task.getResult()) {
+                                                                        incomeexpensetransfer data = new incomeexpensetransfer();
+                                                                        data.setTransferdoc(document.getId());
+                                                                        data.setTransfer_amount(Double.parseDouble(document.getData().get("transfer_amount").toString()));
+                                                                        data.setTransfer_rate(Double.parseDouble(document.getData().get("transfer_rate").toString()));
+                                                                        data.setTransfer_date(document.getData().get("transfer_date").toString());
+                                                                        data.setTransfer_notes(document.getData().get("transfer_notes").toString());
+                                                                        data.setTransfer_src(document.getData().get("transfer_src").toString());
+                                                                        data.setTransfer_dest(document.getData().get("transfer_dest").toString());
+
+                                                                        dataiet.add(data);
+                                                                        Collections.sort(dataiet);
+                                                                        Collections.reverse(dataiet);
+
+                                                                        if(adapter!=null){
+                                                                            adapter.notifyDataSetChanged();
+                                                                        }
+                                                                    }
+
+                                                                } else {
+                                                                    Log.w("Get account error", "Error getting documents.", task.getException());
+                                                                }
+                                                            }
+                                                        });
+
+                                                //transfer
+
+                                            } else {
+                                                Log.w("Get account error", "Error getting documents.", task.getException());
+                                            }
+                                        }
+                                    });
+
+                            //expense
+
+
 
                         } else {
                             Log.w("Get account error", "Error getting documents.", task.getException());
@@ -144,58 +302,11 @@ public class accounttransactions extends AppCompatActivity implements SeekBar.On
                     }
                 });
 
-        db.collection("expense")
-                .whereEqualTo("expense_account",bundle.getString("account_name"))
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (DocumentSnapshot document : task.getResult()) {
-
-                            }
-
-                        } else {
-                            Log.w("Get account error", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
-
-        db.collection("transfer")
-                .whereEqualTo("transfer_src",bundle.getString("account_name"))
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (DocumentSnapshot document : task.getResult()) {
 
 
-                            }
-
-                        } else {
-                            Log.w("Get account error", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
-
-        db.collection("transfer")
-                .whereEqualTo("transfer_dest",bundle.getString("account_name"))
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (DocumentSnapshot document : task.getResult()) {
 
 
-                            }
 
-                        } else {
-                            Log.w("Get account error", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
 
 
         mChart.setOnChartGestureListener(accounttransactions.this);

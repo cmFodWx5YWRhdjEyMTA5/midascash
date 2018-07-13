@@ -56,6 +56,8 @@ public class adapterviewtransactionmenu extends RecyclerView.Adapter<adapterview
         transactionlis=lis;
     }
 
+
+
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())

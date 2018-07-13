@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorgrey"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/lvalllist"
+        android:padding="4sp"
+        android:layout_margin="4sp"
+        android:layout_width="match_parent"
+        android:background="@drawable/bordershadow"
+        android:backgroundTint="@color/colorAccentWhite"
+        android:layout_height="match_parent">
+
+    </android.support.v7.widget.RecyclerView>
+    <!--<ListView
+        android:id="@+id/lvaccount"
+        android:smoothScrollbar="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>-->
+    <include layout="@layout/layout_nothing" android:id="@+id/layoutnothing">
+
+    </include>
+
+</LinearLayout>
