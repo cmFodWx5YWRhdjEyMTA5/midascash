@@ -73,6 +73,7 @@ public class accountsstatistic extends AppCompatActivity {
                                 item.setIncome_amount(Double.parseDouble(document.getData().get("income_amount").toString()));
                                 item.setIncome_category(document.getData().get("income_category").toString());
                                 item.setIncome_date(document.getData().get("income_date").toString());
+                                item.setDatedata(document.getData().get("income_date").toString());
                                 item.setIncome_type("D");
                                 item.setIncome_notes(document.getData().get("income_notes").toString());
                                 item.setIncome_from(document.getData().get("income_from").toString());
@@ -102,6 +103,8 @@ public class accountsstatistic extends AppCompatActivity {
                                                     if(adapter!=null){
                                                         adapter.notifyDataSetChanged();
                                                     }
+
+
                                                 } else {
                                                     Log.d("data", "Error getting documents: ", task.getException());
                                                 }
@@ -125,6 +128,7 @@ public class accountsstatistic extends AppCompatActivity {
                                                     item2.setExpense_account(document.getData().get("expense_account").toString());
                                                     item2.setExpense_amount(Double.parseDouble(document.getData().get("expense_amount").toString()));
                                                     item2.setExpense_category(document.getData().get("expense_category").toString());
+                                                    item2.setDatedata(document.getData().get("expense_date").toString());
                                                     item2.setExpense_date(document.getData().get("expense_date").toString());
                                                     item2.setExpense_type("K");
                                                     item2.setExpense_notes(document.getData().get("expense_notes").toString());
@@ -167,7 +171,6 @@ public class accountsstatistic extends AppCompatActivity {
 
                                                 db.collection("transfer")
                                                         .whereEqualTo("transfer_src",bundle.getString("account_name"))
-                                                        .whereEqualTo("transfer_dest",bundle.getString("account_name"))
                                                         .get()
                                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                             @Override
@@ -179,6 +182,7 @@ public class accountsstatistic extends AppCompatActivity {
                                                                         data.setTransfer_amount(Double.parseDouble(document.getData().get("transfer_amount").toString()));
                                                                         data.setTransfer_rate(Double.parseDouble(document.getData().get("transfer_rate").toString()));
                                                                         data.setTransfer_date(document.getData().get("transfer_date").toString());
+                                                                        data.setDatedata(document.getData().get("transfer_date").toString());
                                                                         data.setTransfer_notes(document.getData().get("transfer_notes").toString());
                                                                         data.setTransfer_src(document.getData().get("transfer_src").toString());
                                                                         data.setTransfer_dest(document.getData().get("transfer_dest").toString());
@@ -191,6 +195,38 @@ public class accountsstatistic extends AppCompatActivity {
                                                                             adapter.notifyDataSetChanged();
                                                                         }
                                                                     }
+                                                                    db.collection("transfer")
+                                                                            .whereEqualTo("transfer_dest",bundle.getString("account_name"))
+                                                                            .get()
+                                                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                @Override
+                                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                    if (task.isSuccessful()) {
+                                                                                        for (DocumentSnapshot document : task.getResult()) {
+                                                                                            incomeexpensetransfer data = new incomeexpensetransfer();
+                                                                                            data.setTransferdoc(document.getId());
+                                                                                            data.setTransfer_amount(Double.parseDouble(document.getData().get("transfer_amount").toString()));
+                                                                                            data.setTransfer_rate(Double.parseDouble(document.getData().get("transfer_rate").toString()));
+                                                                                            data.setTransfer_date(document.getData().get("transfer_date").toString());
+                                                                                            data.setDatedata(document.getData().get("transfer_date").toString());
+                                                                                            data.setTransfer_notes(document.getData().get("transfer_notes").toString());
+                                                                                            data.setTransfer_src(document.getData().get("transfer_src").toString());
+                                                                                            data.setTransfer_dest(document.getData().get("transfer_dest").toString());
+
+                                                                                            dataiet.add(data);
+                                                                                            Collections.sort(dataiet);
+                                                                                            Collections.reverse(dataiet);
+
+                                                                                            if(adapter!=null){
+                                                                                                adapter.notifyDataSetChanged();
+                                                                                            }
+                                                                                        }
+
+                                                                                    } else {
+                                                                                        Log.w("Get account error", "Error getting documents.", task.getException());
+                                                                                    }
+                                                                                }
+                                                                            });
 
                                                                 } else {
                                                                     Log.w("Get account error", "Error getting documents.", task.getException());

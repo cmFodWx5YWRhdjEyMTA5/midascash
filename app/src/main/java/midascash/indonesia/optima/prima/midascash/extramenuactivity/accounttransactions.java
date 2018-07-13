@@ -253,7 +253,7 @@ public class accounttransactions extends AppCompatActivity implements SeekBar.On
 
                                                 db.collection("transfer")
                                                         .whereEqualTo("transfer_src",bundle.getString("account_name"))
-                                                        .whereEqualTo("transfer_dest",bundle.getString("account_name"))
+
                                                         .get()
                                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                             @Override
@@ -277,6 +277,37 @@ public class accounttransactions extends AppCompatActivity implements SeekBar.On
                                                                             adapter.notifyDataSetChanged();
                                                                         }
                                                                     }
+                                                                    db.collection("transfer")
+                                                                            .whereEqualTo("transfer_dest",bundle.getString("account_name"))
+                                                                            .get()
+                                                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                @Override
+                                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                    if (task.isSuccessful()) {
+                                                                                        for (DocumentSnapshot document : task.getResult()) {
+                                                                                            incomeexpensetransfer data = new incomeexpensetransfer();
+                                                                                            data.setTransferdoc(document.getId());
+                                                                                            data.setTransfer_amount(Double.parseDouble(document.getData().get("transfer_amount").toString()));
+                                                                                            data.setTransfer_rate(Double.parseDouble(document.getData().get("transfer_rate").toString()));
+                                                                                            data.setTransfer_date(document.getData().get("transfer_date").toString());
+                                                                                            data.setTransfer_notes(document.getData().get("transfer_notes").toString());
+                                                                                            data.setTransfer_src(document.getData().get("transfer_src").toString());
+                                                                                            data.setTransfer_dest(document.getData().get("transfer_dest").toString());
+
+                                                                                            dataiet.add(data);
+                                                                                            Collections.sort(dataiet);
+                                                                                            Collections.reverse(dataiet);
+
+                                                                                            if(adapter!=null){
+                                                                                                adapter.notifyDataSetChanged();
+                                                                                            }
+                                                                                        }
+
+                                                                                    } else {
+                                                                                        Log.w("Get account error", "Error getting documents.", task.getException());
+                                                                                    }
+                                                                                }
+                                                                            });
 
                                                                 } else {
                                                                     Log.w("Get account error", "Error getting documents.", task.getException());

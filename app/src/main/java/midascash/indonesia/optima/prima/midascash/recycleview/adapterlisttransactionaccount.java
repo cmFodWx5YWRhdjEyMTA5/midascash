@@ -149,14 +149,13 @@ public class adapterlisttransactionaccount extends RecyclerView.Adapter<Recycler
             viewHolder0.dataimage.setTag(alllis.get(position).getIncome_image());
             viewHolder0.dataamount.setText(formatter.format(alllis.get(position).getIncome_amount()));
             viewHolder0.dataacc.setText(alllis.get(position).getIncome_account());
+            viewHolder0.datacat.setText(alllis.get(position).getIncome_category());
             viewHolder0.datafrom.setText(alllis.get(position).getIncome_from());
             viewHolder0.dataacc.setText(alllis.get(position).getIncome_account());
             viewHolder0.datanote.setText(alllis.get(position).getIncome_notes());
             viewHolder0.datadate.setText(alllis.get(position).getIncome_date());
 
             viewHolder0.color.setBackgroundColor(generator.green);
-
-            Collections.sort(alllis);
 
         }
         else if(holder.getItemViewType()==2){
@@ -167,14 +166,13 @@ public class adapterlisttransactionaccount extends RecyclerView.Adapter<Recycler
             viewHolder1.dataimage.setTag(alllis.get(position).getExpense_image());
             viewHolder1.dataamount.setText(formatter.format(alllis.get(position).getExpense_amount()));
             viewHolder1.dataacc.setText(alllis.get(position).getExpense_account());
+            viewHolder1.datacat.setText(alllis.get(position).getExpense_category());
             viewHolder1.datafrom.setText(alllis.get(position).getExpense_to());
             viewHolder1.dataacc.setText(alllis.get(position).getExpense_account());
             viewHolder1.datanote.setText(alllis.get(position).getExpense_notes());
             viewHolder1.datadate.setText(alllis.get(position).getExpense_date());
 
             viewHolder1.color.setBackgroundColor(generator.red);
-
-            Collections.sort(alllis);
 
         }
         else if(holder.getItemViewType()==3){
@@ -186,13 +184,9 @@ public class adapterlisttransactionaccount extends RecyclerView.Adapter<Recycler
             viewHolder2.trfnotes.setText(alllis.get(position).getTransfer_notes());
             viewHolder2.trfsrc.setText(alllis.get(position).getTransfer_src());
             viewHolder2.trfdest.setText(alllis.get(position).getTransfer_dest());
-
-            Collections.sort(alllis);
         }
         else{
             MyViewHolder viewHolder3 = (MyViewHolder) holder;
-
-            Collections.sort(alllis);
         }
     }
 

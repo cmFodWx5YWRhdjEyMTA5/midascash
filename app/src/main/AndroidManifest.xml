@@ -147,12 +147,12 @@
             android:theme="@style/AppThemeactionbar" />
         <activity
             android:name=".extramenuactivity.accounttransactions"
-            android:label="Accounts"
+            android:label="Accounts Statistics"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeactionbar" />
         <activity
             android:name=".extramenuactivity.accountsstatistic"
-            android:label="Accounts"
+            android:label="Account History"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeactionbar" />
         <activity
