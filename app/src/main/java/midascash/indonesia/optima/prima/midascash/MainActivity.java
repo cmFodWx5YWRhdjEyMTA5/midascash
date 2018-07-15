@@ -1,5 +1,6 @@
 package midascash.indonesia.optima.prima.midascash;
 
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,6 +31,9 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,6 +44,7 @@ import android.widget.Toast;
 import io.realm.Realm;
 
 
+import com.annimon.stream.iterator.LsaExtIterator;
 import com.fake.shopee.shopeefake.formula.commaedittext;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -64,6 +69,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -1022,8 +1028,168 @@ public class MainActivity extends AppCompatActivity
                 chartofbalanc.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent a = new Intent(MainActivity.this, chartofbalance.class);
-                        startActivity(a);
+
+                        AlertDialog.Builder choicechart = new AlertDialog.Builder(MainActivity.this,R.style.AppCompatAlertDialogStyle);
+
+                        choicechart.setTitle("Options");
+
+                        choicechart.setPositiveButton("Show",null);
+
+                        choicechart.setNegativeButton("Cancel",null);
+
+                        View layout = inflate.inflate(R.layout.dialog_chartofbalance,null);
+
+                        CheckBox opt1;
+                        CheckBox opt2;
+                        CheckBox optcat;
+                        final CheckBox[] optacc = new CheckBox[1];
+                        TextView date1;
+                        TextView date2;
+                        final TextView[] selected = new TextView[1];
+                        LinearLayout dynamic;
+
+                        final Button[] accbutton = new Button[1];
+                        Button catbutton;
+
+                        dynamic = layout.findViewById(R.id.chartdynamic);
+
+                        View account = inflate.inflate(R.layout.dialog_chart_opt1,null);
+
+                        accbutton[0] = account.findViewById(R.id.opt1accbutton);
+                        optacc[0] = account.findViewById(R.id.opt1selectall);
+                        selected[0] = account.findViewById(R.id.opt1acclist);
+
+                        dynamic.addView(account);
+
+
+
+                        date1 = layout.findViewById(R.id.chartdate1);
+                        date2 = layout.findViewById(R.id.chartdate2);
+                        opt1 = layout.findViewById(R.id.opt1);
+                        opt2 = layout.findViewById(R.id.opt2);
+
+                        if(generator.isadmin==1){
+                            opt2.setVisibility(View.VISIBLE);
+                        }
+                        else {
+                            opt2.setVisibility(View.GONE);
+                        }
+
+                        opt1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                if(isChecked){
+
+                                    dynamic.removeAllViews();
+
+                                    View account = inflate.inflate(R.layout.dialog_chart_opt2,null);
+
+                                    accbutton[0] = account.findViewById(R.id.opt2catbutton);
+                                    optacc[0] = account.findViewById(R.id.opt2selectall);
+                                    selected[0] = account.findViewById(R.id.opt2catlist);
+
+                                    dynamic.addView(account);
+
+                                }
+                                else {
+                                    dynamic.removeAllViews();
+
+                                    View account = inflate.inflate(R.layout.dialog_chart_opt1,null);
+
+                                    accbutton[0] = account.findViewById(R.id.opt1accbutton);
+                                    optacc[0] = account.findViewById(R.id.opt1selectall);
+                                    selected[0] = account.findViewById(R.id.opt1acclist);
+
+                                    dynamic.addView(account);
+
+                                }
+                            }
+                        });
+
+                        Calendar myCalendar = Calendar.getInstance();
+
+                        DatePickerDialog.OnDateSetListener date1obj = new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                // TODO Auto-generated method stub
+                                myCalendar.set(Calendar.YEAR, year);
+                                myCalendar.set(Calendar.MONTH, monthOfYear);
+                                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                String myFormat = "dd/MM/yyyy"; //In which you need put here
+                                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+                                date1.setText(sdf.format(myCalendar.getTime()));
+                            }
+
+                        };
+
+                        date1.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                new DatePickerDialog(MainActivity.this,R.style.datepicker, date1obj, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                            }
+                        });
+
+                        DatePickerDialog.OnDateSetListener date2obj = new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                // TODO Auto-generated method stub
+                                myCalendar.set(Calendar.YEAR, year);
+                                myCalendar.set(Calendar.MONTH, monthOfYear);
+                                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                String myFormat = "dd/MM/yyyy"; //In which you need put here
+                                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+                                date2.setText(sdf.format(myCalendar.getTime()));
+                            }
+
+                        };
+
+                        date2.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                new DatePickerDialog(MainActivity.this,R.style.datepicker, date1obj, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                            }
+                        });
+
+                        List<String> accorcat = new ArrayList<>();
+
+                        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+
+                        date1.setText(df.format(new Date()));
+                        date2.setText(df.format(new Date()));
+
+
+                        choicechart.setView(layout);
+
+                        AlertDialog dialog = choicechart.show();
+
+                        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                            @Override
+                            public void onShow(DialogInterface dialog) {
+                                Button button = ((AlertDialog) dialog).getButton(dialog.BUTTON_POSITIVE);
+                                button.setOnClickListener(new View.OnClickListener() {
+
+                                    @Override
+                                    public void onClick(View view) {
+                                        // TODO Do something
+                                        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                                        try {
+                                            if(df.parse(date1.getText().toString()).after(df.parse(date2.getText().toString()))){
+                                                Toast.makeText(MainActivity.this, "First Date Shall be before the second date ", Toast.LENGTH_SHORT).show();
+                                            }
+                                            else {
+                                                Intent a = new Intent(MainActivity.this, chartofbalance.class);
+                                                startActivity(a);
+                                            }
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                        //Dismiss once everything is OK.
+                                        dialog.dismiss();
+                                    }
+                                });
+                            }
+                        });
 
                     }
                 });
@@ -1195,9 +1361,11 @@ public class MainActivity extends AppCompatActivity
                                                                 NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
                                                                 Menu nav_Menu = navigationView.getMenu();
 
-                                                                if(generator.userlogin.equals("admin")) {
+                                                                if(document.getData().get("isadmin").toString().equals("1")) {
+                                                                    generator.isadmin=1;
                                                                     nav_Menu.findItem(R.id.nav_supervisor).setVisible(true);
                                                                 }else {
+                                                                    generator.isadmin=0;
                                                                     nav_Menu.findItem(R.id.nav_supervisor).setVisible(false);
                                                                 }
 

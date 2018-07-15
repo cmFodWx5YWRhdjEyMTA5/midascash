@@ -9,10 +9,6 @@
             android:icon="@drawable/ic_info_black_24dp"
             android:title="Dashboard" />
         <item
-            android:id="@+id/nav_Transaction"
-            android:icon="@drawable/ic_dashboard_black_24dp"
-            android:title="Transaction" />
-        <item
             android:id="@+id/nav_accountlist"
             android:icon="@drawable/baseline_account_balance_wallet_black_36dp"
             android:title="Accounts" />
@@ -28,6 +24,10 @@
             android:id="@+id/nav_transferlist"
             android:icon="@drawable/baseline_swap_horizontal_circle_black_36dp"
             android:title="Transfer" />
+        <item
+            android:id="@+id/nav_Transaction"
+            android:icon="@drawable/ic_dashboard_black_24dp"
+            android:title="Transaction" />
         <item
             android:id="@+id/nav_report"
             android:icon="@drawable/reportmenuresized"

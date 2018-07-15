@@ -15,6 +15,7 @@ public class account{
     String account_balance_current;
     String username;
     int account_status;
+    int createorlast;
 
     public account(){
 
@@ -30,6 +31,18 @@ public class account{
         this.fullaccount_currency=fullaccount_currency;
         this.account_currency=account_currency;
     }
+    public account(String accname,String acccat,Object accdate,String accbal,String accbalcur,String user,int stat,String account_currency,String fullaccount_currency,int last){
+        account_name=accname;
+        account_balance = accbal;
+        account_category=acccat;
+        account_createdate =accdate;
+        username = user;
+        account_balance_current=accbalcur;
+        account_status = stat;
+        this.fullaccount_currency=fullaccount_currency;
+        this.account_currency=account_currency;
+        createorlast = last;
+    }
 
     //setter
 
@@ -39,6 +52,10 @@ public class account{
 
     public void setFullaccount_currency(String fullaccount_currency) {
         this.fullaccount_currency = fullaccount_currency;
+    }
+
+    public void setCreateorlast(int createorlast) {
+        this.createorlast = createorlast;
     }
 
     public void setAccount_name(String accname){
@@ -68,6 +85,11 @@ public class account{
         this.account_balance_current = account_balance_current;
     }
 //getter
+
+
+    public int getCreateorlast() {
+        return createorlast;
+    }
 
     public String getAccount_name(){
         return account_name;

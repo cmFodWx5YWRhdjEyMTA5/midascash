@@ -1,0 +1,72 @@
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <View
+            android:id="@+id/lineLeft1"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="#b8b8b8" />
+
+        <TextView
+            android:id="@+id/link_to_register1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Select Category"
+            android:textColor="#525252"
+            android:textSize="20sp" />
+
+        <View
+            android:id="@+id/lineRight1"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="#b8b8b8" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:padding="5sp"
+        android:layout_marginTop="10sp"
+        android:layout_marginBottom="10sp"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+        <Button
+            android:layout_width="0sp"
+            android:id="@+id/opt2catbutton"
+            android:text="Select Category"
+            android:textColor="@color/colorAccent"
+            android:backgroundTint="@color/colorPrimary"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="&amp;"
+            android:gravity="center"
+            android:layout_height="match_parent" />
+        <android.support.v7.widget.AppCompatCheckBox
+            android:layout_width="0sp"
+            android:theme="@style/CheckboxStyle"
+            android:id="@+id/opt2selectall"
+            android:text="Select All Category"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:padding="8sp"
+        android:id="@+id/opt2catlist"
+        android:text="No Category Selected"
+        android:layout_height="wrap_content" />
+</LinearLayout>

@@ -133,4 +133,9 @@
         <item name="android:background">@color/colorAccentWhite</item>
     </style>
 
+    <style name="CheckboxStyle" parent="AppTheme">
+        <item name="colorAccent">@color/colorPrimary</item>  // for checked
+        <item name="android:textColorSecondary">@color/colorPrimary</item>  // for unchecked
+    </style>
+
 </resources>

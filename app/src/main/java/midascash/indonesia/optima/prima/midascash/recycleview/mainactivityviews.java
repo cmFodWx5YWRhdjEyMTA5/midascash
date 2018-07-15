@@ -321,11 +321,20 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
                                         break;
                                     }
                                     Date c=null;
-                                    Object dtStart = document.getData().get("account_createdate");
+                                    Object dtStart;
+
+                                    int temp = 0;
+
+                                    if(document.getData().get("account_lastused")==null){
+                                        temp = 1;
+                                        dtStart = document.getData().get("account_createdate");
+                                    }else {
+                                        dtStart = document.getData().get("account_lastused");
+                                    }
 
                                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-                                    allaccount.add(new account(document.getData().get("account_name").toString(),document.getData().get("account_category").toString(),dtStart,document.getData().get("account_balance").toString(),document.getData().get("account_balance_current").toString(),document.getData().get("username").toString(),Integer.parseInt(document.getData().get("account_status").toString()),document.getData().get("account_currency").toString(),document.getData().get("account_fullcurency").toString()));
+                                    allaccount.add(new account(document.getData().get("account_name").toString(),document.getData().get("account_category").toString(),dtStart,document.getData().get("account_balance").toString(),document.getData().get("account_balance_current").toString(),document.getData().get("username").toString(),Integer.parseInt(document.getData().get("account_status").toString()),document.getData().get("account_currency").toString(),document.getData().get("account_fullcurency").toString(),temp));
                                     Log.d("Get data account", document.getId() + " => " + document.getData());
                                 }
                                 adapterviewaccountsmenu adapter = new adapterviewaccountsmenu(contexts,allaccount);

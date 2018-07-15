@@ -487,6 +487,7 @@ public class accountlist extends AppCompatActivity{
                     Bundle bundle = new Bundle();
                     //Add your data from getFactualResults method to bundle
                     bundle.putString("account_name", holder.accountname.getText().toString());
+                    bundle.putString("account_balance", acc.getAccount_balance());
                     //Add the bundle to the intent
                     transacationlist.putExtras(bundle);
                     startActivity(transacationlist);
