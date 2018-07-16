@@ -22,6 +22,9 @@ public class chartofbalance extends AppCompatActivity {
 
         recycler = findViewById(R.id.recyclerbalance);
 
+        Bundle bundle = getIntent().getExtras();
+
+
 
     }
 

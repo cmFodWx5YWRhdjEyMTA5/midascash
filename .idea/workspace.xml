@@ -11,23 +11,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="444ca1e3-9b56-48d5-b4ed-ac18687f00a7" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/listview/accountlistview.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/listview/categorylistview.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/layout/dialog_listview.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/layout/listview_category_selection.xml" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileContent/fileContent.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/fileContent/fileContent.lock" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.bin" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.lock" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/classAnalysis.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/classAnalysis.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/jarAnalysis.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/jarAnalysis.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/javaCompile.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/javaCompile.lock" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskHistory.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskHistory.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskJars.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskJars.bin" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.bin" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" />
       <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__android_arch_core_runtime_1_1_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__android_arch_core_runtime_1_1_0.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__android_arch_lifecycle_livedata_core_1_1_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__android_arch_lifecycle_livedata_core_1_1_0.xml" />
@@ -85,19 +73,9 @@
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__de_hdodenhof_circleimageview_2_2_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__de_hdodenhof_circleimageview_2_2_0.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__io_realm_realm_android_library_5_2_0.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__io_realm_realm_android_library_5_2_0.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__pl_rafman_widgets_scroll_calendar_1_5_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__pl_rafman_widgets_scroll_calendar_1_5_1.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/app/app.iml" afterPath="$PROJECT_DIR$/app/app.iml" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/AppCompatPreferenceActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/settings/AppCompatPreferenceActivity.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/MainActivity.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/generator.java" afterPath="$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/generator.java" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/reports/chartofbalance.java" afterPath="$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/reports/chartofbalance.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/settings/settings.java" afterPath="$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/settings/SettingsActivity.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/transactionactivity/categorylist.java" afterPath="$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/transactionactivity/categorylist.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/layout_choice_category.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/listview_account_selection.xml" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -123,28 +101,29 @@
       <file leaf-file-name="accountlist.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/transactionactivity/accountlist.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="68">
+            <state relative-caret-position="0">
               <caret line="86" column="0" lean-forward="false" selection-start-line="86" selection-start-column="0" selection-end-line="86" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="MainActivity.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="161">
-              <caret line="1075" column="64" lean-forward="true" selection-start-line="1075" selection-start-column="64" selection-end-line="1075" selection-end-column="64" />
-              <folding>
-                <element signature="e#6585#6616#0" expanded="true" />
-                <element signature="e#6618#6650#0" expanded="true" />
-                <element signature="e#7804#7805#0" expanded="true" />
-                <element signature="e#7848#7849#0" expanded="true" />
-                <element signature="e#15538#15539#0" expanded="true" />
-                <element signature="e#15592#15593#0" expanded="true" />
-                <element signature="e#31615#31623#0" expanded="true" />
-                <element signature="e#34042#34050#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="266">
+              <caret line="1453" column="93" lean-forward="true" selection-start-line="1453" selection-start-column="93" selection-end-line="1453" selection-end-column="93" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="chartofbalance.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/reports/chartofbalance.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="340">
+              <caret line="26" column="0" lean-forward="false" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -152,13 +131,16 @@
       <file leaf-file-name="generator.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/generator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3715">
-              <caret line="965" column="46" lean-forward="false" selection-start-line="965" selection-start-column="46" selection-end-line="965" selection-end-column="46" />
+            <state relative-caret-position="17">
+              <caret line="971" column="46" lean-forward="false" selection-start-line="971" selection-start-column="46" selection-end-line="971" selection-end-column="46" />
               <folding>
-                <element signature="e#58620#58621#0" expanded="true" />
-                <element signature="e#58684#58685#0" expanded="true" />
-                <element signature="e#61672#61673#0" expanded="true" />
-                <element signature="e#61736#61737#0" expanded="true" />
+                <marker date="1531736608697" expanded="true" signature="62511:62517" ph="{...}" />
+                <marker date="1531736608697" expanded="true" signature="62558:63904" ph="{...}" />
+                <marker date="1531736608697" expanded="true" signature="62791:62802" ph="{}" />
+                <marker date="1531736608697" expanded="true" signature="63437:63500" ph="{...}" />
+                <marker date="1531736608697" expanded="true" signature="63689:63752" ph="{...}" />
+                <marker date="1531736608697" expanded="true" signature="63825:63896" ph="{...}" />
+                <marker date="1531736608697" expanded="true" signature="63959:64000" ph="{}" />
               </folding>
             </state>
           </provider>
@@ -167,7 +149,7 @@
       <file leaf-file-name="accountlistview.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/listview/accountlistview.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="969">
+            <state relative-caret-position="679">
               <caret line="80" column="40" lean-forward="false" selection-start-line="80" selection-start-column="40" selection-end-line="80" selection-end-column="40" />
               <folding>
                 <element signature="e#3253#3254#0" expanded="true" />
@@ -182,7 +164,7 @@
       <file leaf-file-name="listview_account_selection.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/listview_account_selection.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="370">
+            <state relative-caret-position="493">
               <caret line="29" column="38" lean-forward="false" selection-start-line="29" selection-start-column="38" selection-end-line="29" selection-end-column="38" />
               <folding />
             </state>
@@ -195,7 +177,7 @@
       <file leaf-file-name="categorylistview.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/listview/categorylistview.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="416">
+            <state relative-caret-position="1054">
               <caret line="89" column="63" lean-forward="false" selection-start-line="89" selection-start-column="63" selection-end-line="89" selection-end-column="63" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -243,7 +225,7 @@
   <component name="GradleLocalSettings">
     <option name="myGradleHomes">
       <map>
-        <entry key="$PROJECT_DIR$" value="C:\Users\Riandy\.gradle\wrapper\dists\gradle-4.4-all\9br9xq1tocpiv8o6njlyu5op1\gradle-4.4" />
+        <entry key="$PROJECT_DIR$" value="C:\Users\rwina\.gradle\wrapper\dists\gradle-4.4-all\9br9xq1tocpiv8o6njlyu5op1\gradle-4.4" />
       </map>
     </option>
     <option name="myGradleVersions">
@@ -2346,7 +2328,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/reports/chartofbalance.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/dialog_listview.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/listview_category_selection.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/transactionactivity/categorylist.java" />
@@ -2355,6 +2336,7 @@
         <option value="$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/listview/accountlistview.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/generator.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/MainActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/reports/chartofbalance.java" />
       </list>
     </option>
   </component>
@@ -2382,8 +2364,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
+      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="AndroidView">
         <subPane>
           <expand>
@@ -2405,19 +2388,14 @@
             <path>
               <item name="midascash" type="1abcf292:AndroidViewProjectNode" />
               <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="res" type="d4f16f75:AndroidResFolderNode" />
-            </path>
-            <path>
-              <item name="midascash" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="res" type="d4f16f75:AndroidResFolderNode" />
-              <item name="layout" type="ddeffd01:AndroidResFolderTypeNode" />
+              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
+              <item name="midascash" type="cbb59c9e:AndroidPsiDirectoryNode" />
+              <item name="reports" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="ProjectPane" />
     </panes>
   </component>
@@ -2625,35 +2603,35 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
+      <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2153518" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32900432" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32814237" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25266525" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32900432" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25241676" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32814237" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Device File Explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2153518" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
@@ -2707,13 +2685,92 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/generator.java">
       <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="14671">
+          <caret line="965" column="46" lean-forward="false" selection-start-line="965" selection-start-column="46" selection-end-line="965" selection-end-column="46" />
+          <folding>
+            <marker date="1531736608697" expanded="true" signature="62511:62517" ph="{...}" />
+            <marker date="1531736608697" expanded="true" signature="62558:63904" ph="{...}" />
+            <marker date="1531736608697" expanded="true" signature="62791:62802" ph="{}" />
+            <marker date="1531736608697" expanded="true" signature="63437:63500" ph="{...}" />
+            <marker date="1531736608697" expanded="true" signature="63689:63752" ph="{...}" />
+            <marker date="1531736608697" expanded="true" signature="63825:63896" ph="{...}" />
+            <marker date="1531736608697" expanded="true" signature="63959:64000" ph="{}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/listview/accountlistview.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="969">
+          <caret line="80" column="40" lean-forward="false" selection-start-line="80" selection-start-column="40" selection-end-line="80" selection-end-column="40" />
+          <folding>
+            <element signature="e#3253#3254#0" expanded="true" />
+            <element signature="e#3285#3286#0" expanded="true" />
+            <element signature="e#3326#3327#0" expanded="true" />
+            <element signature="e#3357#3358#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/listview_account_selection.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="493">
+          <caret line="29" column="38" lean-forward="false" selection-start-line="29" selection-start-column="38" selection-end-line="29" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/listview/categorylistview.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1054">
+          <caret line="89" column="63" lean-forward="false" selection-start-line="89" selection-start-column="63" selection-end-line="89" selection-end-column="63" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1332#1333#0" expanded="true" />
+            <element signature="e#1366#1367#0" expanded="true" />
+            <element signature="e#1423#1424#0" expanded="true" />
+            <element signature="e#1450#1451#0" expanded="true" />
+            <element signature="e#1507#1508#0" expanded="true" />
+            <element signature="e#1531#1532#0" expanded="true" />
+            <element signature="e#3366#3367#0" expanded="true" />
+            <element signature="e#3398#3399#0" expanded="true" />
+            <element signature="e#3439#3440#0" expanded="true" />
+            <element signature="e#3470#3471#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18275">
+          <caret line="1075" column="25" lean-forward="true" selection-start-line="1075" selection-start-column="25" selection-end-line="1075" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/transactionactivity/accountlist.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="86" column="0" lean-forward="false" selection-start-line="86" selection-start-column="0" selection-end-line="86" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/generator.java">
+      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="18462">
           <caret line="1194" column="133" lean-forward="false" selection-start-line="1194" selection-start-column="133" selection-end-line="1194" selection-end-column="133" />
           <folding>
-            <element signature="e#58620#58621#0" expanded="true" />
-            <element signature="e#58684#58685#0" expanded="true" />
-            <element signature="e#61672#61673#0" expanded="true" />
-            <element signature="e#61736#61737#0" expanded="true" />
+            <marker date="1531736608697" expanded="true" signature="62511:62517" ph="{...}" />
+            <marker date="1531736608697" expanded="true" signature="62558:63904" ph="{...}" />
+            <marker date="1531736608697" expanded="true" signature="62791:62802" ph="{}" />
+            <marker date="1531736608697" expanded="true" signature="63437:63500" ph="{...}" />
+            <marker date="1531736608697" expanded="true" signature="63689:63752" ph="{...}" />
+            <marker date="1531736608697" expanded="true" signature="63825:63896" ph="{...}" />
+            <marker date="1531736608697" expanded="true" signature="63959:64000" ph="{}" />
           </folding>
         </state>
       </provider>
@@ -2742,16 +2799,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="18037">
           <caret line="1061" column="12" lean-forward="false" selection-start-line="1061" selection-start-column="12" selection-end-line="1061" selection-end-column="12" />
-          <folding>
-            <element signature="e#6585#6616#0" expanded="true" />
-            <element signature="e#6618#6650#0" expanded="true" />
-            <element signature="e#7804#7805#0" expanded="true" />
-            <element signature="e#7848#7849#0" expanded="true" />
-            <element signature="e#15538#15539#0" expanded="true" />
-            <element signature="e#15592#15593#0" expanded="true" />
-            <element signature="e#31615#31623#0" expanded="true" />
-            <element signature="e#34042#34050#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -2781,10 +2829,13 @@
         <state relative-caret-position="18462">
           <caret line="1194" column="133" lean-forward="false" selection-start-line="1194" selection-start-column="133" selection-end-line="1194" selection-end-column="133" />
           <folding>
-            <element signature="e#58620#58621#0" expanded="true" />
-            <element signature="e#58684#58685#0" expanded="true" />
-            <element signature="e#61672#61673#0" expanded="true" />
-            <element signature="e#61736#61737#0" expanded="true" />
+            <marker date="1531736608697" expanded="true" signature="62511:62517" ph="{...}" />
+            <marker date="1531736608697" expanded="true" signature="62558:63904" ph="{...}" />
+            <marker date="1531736608697" expanded="true" signature="62791:62802" ph="{}" />
+            <marker date="1531736608697" expanded="true" signature="63437:63500" ph="{...}" />
+            <marker date="1531736608697" expanded="true" signature="63689:63752" ph="{...}" />
+            <marker date="1531736608697" expanded="true" signature="63825:63896" ph="{...}" />
+            <marker date="1531736608697" expanded="true" signature="63959:64000" ph="{}" />
           </folding>
         </state>
       </provider>
@@ -2813,16 +2864,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="19635">
           <caret line="1155" column="137" lean-forward="false" selection-start-line="1155" selection-start-column="137" selection-end-line="1155" selection-end-column="137" />
-          <folding>
-            <element signature="e#6585#6616#0" expanded="true" />
-            <element signature="e#6618#6650#0" expanded="true" />
-            <element signature="e#7804#7805#0" expanded="true" />
-            <element signature="e#7848#7849#0" expanded="true" />
-            <element signature="e#15538#15539#0" expanded="true" />
-            <element signature="e#15592#15593#0" expanded="true" />
-            <element signature="e#31615#31623#0" expanded="true" />
-            <element signature="e#34042#34050#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -2864,22 +2906,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/reports/chartofbalance.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="18" column="0" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
-      <provider editor-type-id="android-manifest">
-        <state />
-      </provider>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-102">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
+      </provider>
+      <provider editor-type-id="android-manifest">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/settings/settings.java" />
@@ -2958,7 +2993,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/listview_account_selection.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="370">
+        <state relative-caret-position="493">
           <caret line="29" column="38" lean-forward="false" selection-start-line="29" selection-start-column="38" selection-end-line="29" selection-end-column="38" />
           <folding />
         </state>
@@ -2967,17 +3002,9 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/transactionactivity/accountlist.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="86" column="0" lean-forward="false" selection-start-line="86" selection-start-column="0" selection-end-line="86" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/listview/categorylistview.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="416">
+        <state relative-caret-position="1054">
           <caret line="89" column="63" lean-forward="false" selection-start-line="89" selection-start-column="63" selection-end-line="89" selection-end-column="63" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -2997,7 +3024,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/listview/accountlistview.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="969">
+        <state relative-caret-position="679">
           <caret line="80" column="40" lean-forward="false" selection-start-line="80" selection-start-column="40" selection-end-line="80" selection-end-column="40" />
           <folding>
             <element signature="e#3253#3254#0" expanded="true" />
@@ -3008,33 +3035,43 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/generator.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/transactionactivity/accountlist.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3715">
-          <caret line="965" column="46" lean-forward="false" selection-start-line="965" selection-start-column="46" selection-end-line="965" selection-end-column="46" />
-          <folding>
-            <element signature="e#58620#58621#0" expanded="true" />
-            <element signature="e#58684#58685#0" expanded="true" />
-            <element signature="e#61672#61673#0" expanded="true" />
-            <element signature="e#61736#61737#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="0">
+          <caret line="86" column="0" lean-forward="false" selection-start-line="86" selection-start-column="0" selection-end-line="86" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/MainActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="1075" column="64" lean-forward="true" selection-start-line="1075" selection-start-column="64" selection-end-line="1075" selection-end-column="64" />
+        <state relative-caret-position="266">
+          <caret line="1453" column="93" lean-forward="true" selection-start-line="1453" selection-start-column="93" selection-end-line="1453" selection-end-column="93" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/generator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="971" column="46" lean-forward="false" selection-start-line="971" selection-start-column="46" selection-end-line="971" selection-end-column="46" />
           <folding>
-            <element signature="e#6585#6616#0" expanded="true" />
-            <element signature="e#6618#6650#0" expanded="true" />
-            <element signature="e#7804#7805#0" expanded="true" />
-            <element signature="e#7848#7849#0" expanded="true" />
-            <element signature="e#15538#15539#0" expanded="true" />
-            <element signature="e#15592#15593#0" expanded="true" />
-            <element signature="e#31615#31623#0" expanded="true" />
-            <element signature="e#34042#34050#0" expanded="true" />
+            <marker date="1531736608697" expanded="true" signature="62511:62517" ph="{...}" />
+            <marker date="1531736608697" expanded="true" signature="62558:63904" ph="{...}" />
+            <marker date="1531736608697" expanded="true" signature="62791:62802" ph="{}" />
+            <marker date="1531736608697" expanded="true" signature="63437:63500" ph="{...}" />
+            <marker date="1531736608697" expanded="true" signature="63689:63752" ph="{...}" />
+            <marker date="1531736608697" expanded="true" signature="63825:63896" ph="{...}" />
+            <marker date="1531736608697" expanded="true" signature="63959:64000" ph="{}" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/midascash/indonesia/optima/prima/midascash/reports/chartofbalance.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="26" column="0" lean-forward="false" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
