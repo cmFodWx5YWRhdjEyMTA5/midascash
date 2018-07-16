@@ -4,8 +4,6 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -15,7 +13,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -28,14 +25,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -44,7 +39,6 @@ import android.widget.Toast;
 import io.realm.Realm;
 
 
-import com.annimon.stream.iterator.LsaExtIterator;
 import com.fake.shopee.shopeefake.formula.commaedittext;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -53,12 +47,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.mynameismidori.currencypicker.CurrencyPicker;
 import com.mynameismidori.currencypicker.CurrencyPickerListener;
-import com.mynameismidori.currencypicker.ExtendedCurrency;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -74,11 +68,11 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import midascash.indonesia.optima.prima.midascash.administrator.main_administrator;
-import midascash.indonesia.optima.prima.midascash.formula.calculatordialog;
+import midascash.indonesia.optima.prima.midascash.listview.categorylistview;
 import midascash.indonesia.optima.prima.midascash.recycleview.adapterviewcategory;
 import midascash.indonesia.optima.prima.midascash.recycleview.mainactivityviews;
 import midascash.indonesia.optima.prima.midascash.reports.chartofbalance;
-import midascash.indonesia.optima.prima.midascash.settings.settings;
+import midascash.indonesia.optima.prima.midascash.settings.SettingsActivity;
 import midascash.indonesia.optima.prima.midascash.transactionactivity.listexpense;
 import midascash.indonesia.optima.prima.midascash.transactionactivity.listincome;
 import midascash.indonesia.optima.prima.midascash.transactionactivity.listtransfer;
@@ -432,7 +426,7 @@ public class MainActivity extends AppCompatActivity
             reportmethod(report);
             mainview.addView(report);
         } else if (id == R.id.nav_settings) {
-            Intent a = new Intent(MainActivity.this, settings.class);
+            Intent a = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(a);
         } else if (id == R.id.nav_transferlist) {
             Intent a = new Intent(MainActivity.this, listtransfer.class);
@@ -1028,6 +1022,14 @@ public class MainActivity extends AppCompatActivity
                 chartofbalanc.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        final int[] state = {0};
+
+                        final int[] selftransaction = {0};
+                        if(generator.isadmin==0){
+                            selftransaction[0]=1;
+                        }
+
+                        generator.accorcat = new ArrayList<>();
 
                         AlertDialog.Builder choicechart = new AlertDialog.Builder(MainActivity.this,R.style.AppCompatAlertDialogStyle);
 
@@ -1041,7 +1043,6 @@ public class MainActivity extends AppCompatActivity
 
                         CheckBox opt1;
                         CheckBox opt2;
-                        CheckBox optcat;
                         final CheckBox[] optacc = new CheckBox[1];
                         TextView date1;
                         TextView date2;
@@ -1059,7 +1060,92 @@ public class MainActivity extends AppCompatActivity
                         optacc[0] = account.findViewById(R.id.opt1selectall);
                         selected[0] = account.findViewById(R.id.opt1acclist);
 
+                        List<String> data = new ArrayList<>();
+
+                        List<String> currency = new ArrayList<>();
+
+                        List<Double> balance = new ArrayList<>();
+
                         dynamic.addView(account);
+
+                        optacc[0].setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                if(isChecked){
+
+                                    optacc[0].setEnabled(false);
+                                    accbutton[0].setEnabled(false);
+                                    db.collection("account")
+                                            .orderBy("account_name", Query.Direction.ASCENDING)
+                                            .get()
+                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                    int count =0;
+                                                    if (task.isSuccessful()) {
+                                                        generator.accorcat.clear();
+                                                        for (DocumentSnapshot document : task.getResult()) {
+                                                            generator.accorcat.add(document.getData().get("account_name").toString());
+
+                                                            if(count == 0){
+                                                                selected[0].setText("");
+                                                                selected[0].setText(document.getData().get("account_name").toString());
+                                                            }
+                                                            else {
+                                                                selected[0].setText(selected[0].getText().toString()+", "+document.getData().get("account_name").toString());
+                                                            }
+                                                            count++;
+                                                        }
+                                                        optacc[0].setEnabled(true);
+                                                    } else {
+                                                        Log.e("", "Error getting documents.", task.getException());
+                                                    }
+                                                    if(generator.adapter!=null){
+                                                        generator.adapter.notifyDataSetChanged();
+                                                    }
+                                                }
+                                            });
+                                }
+                                else {
+                                    generator.accorcat.clear();
+                                    accbutton[0].setEnabled(true);
+                                    selected[0].setText("No Category Selected");
+                                    optacc[0].setEnabled(true);
+                                }
+                            }
+                        });
+
+                        accbutton[0].setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                generator.accorcat.clear();
+                                db.collection("account")
+                                        .orderBy("account_name", Query.Direction.ASCENDING)
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                                                if (task.isSuccessful()) {
+                                                    data.clear();
+                                                    currency.clear();
+                                                    balance.clear();
+                                                    for (DocumentSnapshot document : task.getResult()) {
+                                                        data.add(document.getData().get("account_name").toString());
+                                                        currency.add(document.getData().get("account_currency").toString());
+                                                        balance.add(Double.parseDouble(document.getData().get("account_balance_current").toString()));
+                                                    }
+                                                    generator.reportselectaccount(MainActivity.this,data,balance,selected[0],currency);
+                                                } else {
+                                                    Log.e("", "Error getting documents.", task.getException());
+                                                }
+                                                if(generator.adapter!=null){
+                                                    generator.adapter.notifyDataSetChanged();
+                                                }
+                                            }
+                                        });
+                            }
+                        });
 
 
 
@@ -1079,7 +1165,13 @@ public class MainActivity extends AppCompatActivity
                             @Override
                             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                                 if(isChecked){
+                                    generator.accorcat.clear();
+                                    final categorylistview[] adapter = new categorylistview[1];
 
+                                    List<String> data = new ArrayList<>();
+                                    List<Integer> image = new ArrayList<>();
+
+                                    state[0] =1 ;
                                     dynamic.removeAllViews();
 
                                     View account = inflate.inflate(R.layout.dialog_chart_opt2,null);
@@ -1088,11 +1180,100 @@ public class MainActivity extends AppCompatActivity
                                     optacc[0] = account.findViewById(R.id.opt2selectall);
                                     selected[0] = account.findViewById(R.id.opt2catlist);
 
+                                    optacc[0].setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                        @Override
+                                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                            if(isChecked){
+
+                                                optacc[0].setEnabled(false);
+                                                accbutton[0].setEnabled(false);
+                                                db.collection("category")
+                                                        .orderBy("category_name", Query.Direction.ASCENDING)
+                                                        .get()
+                                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                int count =0;
+                                                                if (task.isSuccessful()) {
+                                                                    generator.accorcat.clear();
+                                                                    for (DocumentSnapshot document : task.getResult()) {
+                                                                        generator.accorcat.add(document.getData().get("category_name").toString());
+
+                                                                        if(count == 0){
+                                                                            selected[0].setText("");
+                                                                            selected[0].setText(document.getData().get("category_name").toString());
+                                                                        }
+                                                                        else {
+                                                                            selected[0].setText(selected[0].getText().toString()+", "+document.getData().get("category_name").toString());
+                                                                        }
+                                                                        count++;
+                                                                    }
+                                                                    optacc[0].setEnabled(true);
+                                                                } else {
+                                                                    Log.e("", "Error getting documents.", task.getException());
+                                                                }
+                                                                if(generator.adapter!=null){
+                                                                    generator.adapter.notifyDataSetChanged();
+                                                                }
+                                                            }
+                                                        });
+                                            }
+                                            else {
+                                                generator.accorcat.clear();
+                                                accbutton[0].setEnabled(true);
+                                                selected[0].setText("No Category Selected");
+                                                optacc[0].setEnabled(true);
+                                            }
+                                        }
+                                    });
+
+                                    accbutton[0].setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+
+                                            Toast.makeText(MainActivity.this, "Loading Your Category", Toast.LENGTH_SHORT).show();
+
+                                            db.collection("category")
+                                                    .orderBy("category_name", Query.Direction.ASCENDING)
+                                                    .get()
+                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                                                            if (task.isSuccessful()) {
+                                                                data.clear();
+                                                                image.clear();
+                                                                for (DocumentSnapshot document : task.getResult()) {
+                                                                    data.add(document.getData().get("category_name").toString());
+                                                                    image.add(Integer.parseInt(document.getData().get("category_image").toString()));
+                                                                }
+                                                                generator.reportselectcategory(MainActivity.this,data,image,selected[0]);
+                                                            } else {
+                                                                Log.e("", "Error getting documents.", task.getException());
+                                                            }
+                                                            if(generator.adapter!=null){
+                                                                generator.adapter.notifyDataSetChanged();
+                                                            }
+                                                        }
+                                                    });
+                                        }
+                                    });
+
                                     dynamic.addView(account);
 
                                 }
                                 else {
+
+                                    generator.accorcat.clear();
+
+
+                                    state[0] = 0;
                                     dynamic.removeAllViews();
+
+                                    balance.clear();
+
+                                    data.clear();
+                                    currency.clear();
 
                                     View account = inflate.inflate(R.layout.dialog_chart_opt1,null);
 
@@ -1100,8 +1281,96 @@ public class MainActivity extends AppCompatActivity
                                     optacc[0] = account.findViewById(R.id.opt1selectall);
                                     selected[0] = account.findViewById(R.id.opt1acclist);
 
+                                    optacc[0].setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                        @Override
+                                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                            if(isChecked){
+
+                                                optacc[0].setEnabled(false);
+                                                accbutton[0].setEnabled(false);
+                                                db.collection("account")
+                                                        .orderBy("account_name", Query.Direction.ASCENDING)
+                                                        .get()
+                                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                int count =0;
+                                                                if (task.isSuccessful()) {
+                                                                    generator.accorcat.clear();
+                                                                    for (DocumentSnapshot document : task.getResult()) {
+                                                                        generator.accorcat.add(document.getData().get("account_name").toString());
+
+                                                                        if(count == 0){
+                                                                            selected[0].setText("");
+                                                                            selected[0].setText(document.getData().get("account_name").toString());
+                                                                        }
+                                                                        else {
+                                                                            selected[0].setText(selected[0].getText().toString()+", "+document.getData().get("account_name").toString());
+                                                                        }
+                                                                        count++;
+                                                                    }
+                                                                    optacc[0].setEnabled(true);
+                                                                } else {
+                                                                    Log.e("", "Error getting documents.", task.getException());
+                                                                }
+                                                                if(generator.adapter!=null){
+                                                                    generator.adapter.notifyDataSetChanged();
+                                                                }
+                                                            }
+                                                        });
+                                            }
+                                            else {
+                                                generator.accorcat.clear();
+                                                accbutton[0].setEnabled(true);
+                                                selected[0].setText("No account Selected");
+                                                optacc[0].setEnabled(true);
+                                            }
+                                        }
+                                    });
+
+                                    accbutton[0].setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            db.collection("account")
+                                                    .orderBy("account_name", Query.Direction.ASCENDING)
+                                                    .get()
+                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                                                            if (task.isSuccessful()) {
+                                                                balance.clear();
+                                                                data.clear();
+                                                                for (DocumentSnapshot document : task.getResult()) {
+                                                                    data.add(document.getData().get("account_name").toString());
+                                                                    currency.add(document.getData().get("account_currency").toString());
+                                                                    balance.add(Double.parseDouble(document.getData().get("account_balance_current").toString()));
+                                                                }
+                                                                generator.reportselectaccount(MainActivity.this,data,balance,selected[0],currency);
+                                                            } else {
+                                                                Log.e("", "Error getting documents.", task.getException());
+                                                            }
+                                                            if(generator.adapter!=null){
+                                                                generator.adapter.notifyDataSetChanged();
+                                                            }
+                                                        }
+                                                    });
+                                        }
+                                    });
                                     dynamic.addView(account);
 
+                                }
+                            }
+                        });
+
+                        opt2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                if(isChecked){
+                                    selftransaction[0] = 1 ;
+                                }
+                                else {
+                                    selftransaction[0] = 0;
                                 }
                             }
                         });
@@ -1150,46 +1419,62 @@ public class MainActivity extends AppCompatActivity
                             }
                         });
 
-                        List<String> accorcat = new ArrayList<>();
-
                         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
                         date1.setText(df.format(new Date()));
                         date2.setText(df.format(new Date()));
 
 
+
                         choicechart.setView(layout);
 
-                        AlertDialog dialog = choicechart.show();
+                        AlertDialog dialog1 = choicechart.create();
 
-                        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                        dialog1.setOnShowListener(new DialogInterface.OnShowListener() {
                             @Override
                             public void onShow(DialogInterface dialog) {
-                                Button button = ((AlertDialog) dialog).getButton(dialog.BUTTON_POSITIVE);
+                                Button button = ((AlertDialog) dialog1).getButton(AlertDialog.BUTTON_POSITIVE);
                                 button.setOnClickListener(new View.OnClickListener() {
 
                                     @Override
                                     public void onClick(View view) {
+
                                         // TODO Do something
                                         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
                                         try {
-                                            if(df.parse(date1.getText().toString()).after(df.parse(date2.getText().toString()))){
-                                                Toast.makeText(MainActivity.this, "First Date Shall be before the second date ", Toast.LENGTH_SHORT).show();
+
+                                            if(generator.accorcat.size()!=0){
+                                                if(df.parse(date1.getText().toString()).after(df.parse(date2.getText().toString()))){
+                                                    Toast.makeText(MainActivity.this, "First Date Should be before the second date ", Toast.LENGTH_SHORT).show();
+                                                }
+                                                else {
+                                                    Intent a = new Intent(MainActivity.this, chartofbalance.class);
+                                                    a.putStringArrayListExtra("test", (ArrayList<String>) generator.accorcat);
+                                                    a.putExtra("shownown", selftransaction[0]);
+                                                    a.putExtra("accountorcategory",state[0]);
+                                                    startActivity(a);
+                                                    dialog.dismiss();
+                                                    generator.accorcat = null;
+                                                }
+                                            }else {
+                                                if(state[0]==0){
+                                                    Toast.makeText(MainActivity.this, "Please select Account", Toast.LENGTH_SHORT).show();
+                                                }else{
+                                                    Toast.makeText(MainActivity.this, "Please select Category", Toast.LENGTH_SHORT).show();
+                                                }
+
                                             }
-                                            else {
-                                                Intent a = new Intent(MainActivity.this, chartofbalance.class);
-                                                startActivity(a);
-                                            }
+
                                         } catch (ParseException e) {
                                             e.printStackTrace();
                                         }
-
                                         //Dismiss once everything is OK.
-                                        dialog.dismiss();
                                     }
                                 });
                             }
                         });
+
+                        dialog1.show();
 
                     }
                 });

@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -65,6 +66,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.zip.Inflater;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import midascash.indonesia.optima.prima.midascash.formula.calculatordialog;
@@ -73,6 +75,8 @@ import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_
 import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_income;
 import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_income_show;
 import midascash.indonesia.optima.prima.midascash.fragment_transaction.fragment_income_show_scheduled;
+import midascash.indonesia.optima.prima.midascash.listview.accountlistview;
+import midascash.indonesia.optima.prima.midascash.listview.categorylistview;
 import midascash.indonesia.optima.prima.midascash.objects.expense;
 import midascash.indonesia.optima.prima.midascash.objects.income;
 import midascash.indonesia.optima.prima.midascash.recycleview.mainactivityviews;
@@ -92,6 +96,8 @@ public class generator {
 
     public static String newaccountrf = "";
     public static String newaccountrfsymbol = "";
+
+    public static  List<String> accorcat ;
 
     public static DecimalFormat formatter = new DecimalFormat("###,###,###.00");
 
@@ -1117,6 +1123,146 @@ public class generator {
 
         build.show();
 
+    }
+
+    public static void reportselectcategory(Context context,List<String> data,List<Integer> image,TextView text){
+
+        View layout = LayoutInflater.from(context).inflate(R.layout.dialog_listview,null);
+
+        categorylistview adapter =new categorylistview(context,0,data,image,text);
+
+        ListView list = layout.findViewById(R.id.listview);
+
+        AlertDialog dialog = new AlertDialog.Builder(context,R.style.AppCompatAlertDialogStyle).setPositiveButton("Done",null).setPositiveButton("Save",null).setNegativeButton("Cancel",null).setNeutralButton("Clear All",null).setView(layout).setTitle("Select Category").create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        List<String> datatext = new ArrayList<>();
+                        datatext = adapter.getSelected();
+
+
+                        if(datatext.size()==0){
+                            text.setText("No Category Selected");
+                        }
+                        else {
+                            for(int i=0;i<datatext.size();i++){
+                                if(i==0){
+                                    text.setText("");
+                                    text.setText(datatext.get(i));
+                                }else {
+                                    text.setText(text.getText().toString()+", "+datatext.get(i));
+                                }
+
+                            }
+                            generator.accorcat = datatext ;
+                        }
+                        dialog.dismiss();
+                    }
+                });
+
+                Button button1 = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+                button1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                Button button2 = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
+                button2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        for(int i=0; i<list.getChildCount();i++)
+                        {
+                            CheckBox cb = (CheckBox)list.getChildAt(i).findViewById(R.id.checkedcategory);
+                            cb.setChecked(false);
+                            adapter.setclear();
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        });
+
+        dialog.show();
+
+
+        list.setAdapter(adapter);
+    }
+
+    public static void reportselectaccount(Context context,List<String> data,List<Double> balance,TextView text,List<String> currency){
+
+        View layout = LayoutInflater.from(context).inflate(R.layout.dialog_listview,null);
+
+        accountlistview adapter =new accountlistview(context,0,data,balance,text,currency);
+
+        ListView list = layout.findViewById(R.id.listview);
+
+        AlertDialog dialog = new AlertDialog.Builder(context,R.style.AppCompatAlertDialogStyle).setPositiveButton("Done",null).setPositiveButton("Save",null).setNegativeButton("Cancel",null).setNeutralButton("Clear All",null).setView(layout).setTitle("Select Category").create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        List<String> datatext = new ArrayList<>();
+                        datatext = adapter.getSelected();
+
+
+                        if(datatext.size()==0){
+                            text.setText("No Account Selected");
+                        }
+                        else {
+                            for(int i=0;i<datatext.size();i++){
+                                if(i==0){
+                                    text.setText("");
+                                    text.setText(datatext.get(i));
+                                }else {
+                                    text.setText(text.getText().toString()+", "+datatext.get(i));
+                                }
+
+                            }
+                            generator.accorcat = datatext ;
+                        }
+                        dialog.dismiss();
+                    }
+                });
+
+                Button button1 = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+                button1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                Button button2 = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
+                button2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        for(int i=0; i<list.getChildCount();i++)
+                        {
+                            CheckBox cb = (CheckBox)list.getChildAt(i).findViewById(R.id.checkedcategory);
+                            cb.setChecked(false);
+                            adapter.setclear();
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        });
+
+        dialog.show();
+
+
+        list.setAdapter(adapter);
     }
 
     private static class accountobject {
