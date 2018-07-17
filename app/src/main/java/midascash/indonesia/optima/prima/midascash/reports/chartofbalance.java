@@ -42,6 +42,7 @@ public class chartofbalance extends AppCompatActivity {
 
     int showowntrans =0;
     int iscat = 0 ;
+    int datediff=0;
 
     int totaldata = 0;
 
@@ -76,6 +77,8 @@ public class chartofbalance extends AppCompatActivity {
 
         showowntrans = bundle.getIntExtra("shownown", 0);
         iscat = bundle.getIntExtra("accountorcategory", 0);
+        datediff = bundle.getIntExtra("datediff", 0);
+
 
 
         try {
@@ -89,6 +92,7 @@ public class chartofbalance extends AppCompatActivity {
         Log.e("request size", String.valueOf(request.size()));
         Log.e("show trans", String.valueOf(showowntrans));
         Log.e("is category", String.valueOf(iscat));
+        Log.e("datediff", String.valueOf(datediff));
 
         charttask task = new charttask(chartofbalance.this,R.style.AppCompatAlertDialogStyle);
         task.execute("");
@@ -129,6 +133,7 @@ public class chartofbalance extends AppCompatActivity {
                                             try {
                                                 Log.e("transaction",  df.format(date1) + " " + df.format(date2) +" "+ df.format(df.parse(document.getData().get("income_date").toString())));
                                                 if ((df.parse(document.getData().get("income_date").toString())).after(date1) && (df.parse(document.getData().get("income_date").toString())).before(date2)){
+
                                                     Log.e("income datas", document.getId() + " => " + document.getData());
                                                 }
                                             } catch (ParseException e) {

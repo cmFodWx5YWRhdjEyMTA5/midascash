@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -53,6 +54,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.mynameismidori.currencypicker.CurrencyPicker;
 import com.mynameismidori.currencypicker.CurrencyPickerListener;
+
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -101,6 +107,8 @@ public class MainActivity extends AppCompatActivity
 
     private SQLiteHelper dbase;
 
+    private SwipeRefreshLayout swipe ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,8 +118,35 @@ public class MainActivity extends AppCompatActivity
 
         db = FirebaseFirestore.getInstance();
 
+        swipe = findViewById(R.id.swiperefresh);
+
+        generator.mainmenurefresh = 0;
+
         prefs = getSharedPreferences("midascash", MODE_PRIVATE);
         editor = getSharedPreferences("midascash", MODE_PRIVATE).edit();
+
+        swipe.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        if(generator.mainmenurefresh == 0){
+                            if(generator.adapter==null) {
+                                if (swipe.isRefreshing()) {
+                                    swipe.setRefreshing(false);
+                                }
+                                generator.adapter.notifyDataSetChanged();
+                                Toast.makeText(MainActivity.this, "Refreshing.. PLease Wait", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        else {
+                            if (swipe.isRefreshing()) {
+                                swipe.setRefreshing(false);
+                            }
+                            Toast.makeText(MainActivity.this, "Nothing to Refresh", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+        );
 
         syncdata();
       /*  Map<String, Object> user = new HashMap<>();
@@ -399,6 +434,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_dashboard) {
+            generator.mainmenurefresh =1;
             mainview.removeAllViews();
             View dashboards = inflate.inflate(R.layout.layout_main,null);
             loadmainmenu(dashboards);
@@ -484,6 +520,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void transactionmethod(View v){
+        generator.mainmenurefresh = 0;
         final Button akun,cashin,listtransaction,reminder,category,editereminder;
 
         akun = v.findViewById(R.id.twoaccounts);
@@ -934,10 +971,12 @@ public class MainActivity extends AppCompatActivity
             }
 
             private void calendermethod(View v) {
+                generator.mainmenurefresh = 0;
 
             }
 
             public void reportmethod(View v) {
+                generator.mainmenurefresh = 0;
                 final Button accounts, cashflow, schedulelist, chartofbalanc, summaryd;
 
                 accounts = v.findViewById(R.id.reportaccount);
@@ -1125,6 +1164,7 @@ public class MainActivity extends AppCompatActivity
                             public void onClick(View v) {
                                 generator.accorcat.clear();
                                 db.collection("account")
+                                        .whereEqualTo("account_status",1)
                                         .orderBy("account_name", Query.Direction.ASCENDING)
                                         .get()
                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -1457,6 +1497,15 @@ public class MainActivity extends AppCompatActivity
                                                     a.putStringArrayListExtra("request", (ArrayList<String>) generator.accorcat);
                                                     a.putExtra("shownown", selftransaction[0]);
                                                     a.putExtra("accountorcategory",state[0]);
+
+                                                    DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
+                                                    DateTime dt1 = formatter.parseDateTime(date1.getText().toString());
+
+                                                    DateTime dt2 = formatter.parseDateTime(date2.getText().toString());
+
+                                                    int diff = Days.daysBetween(dt1.toLocalDate(), dt2.toLocalDate()).getDays();
+
+                                                    a.putExtra("datediff",diff);
                                                     a.putExtra("date1",date1.getText().toString());
                                                     a.putExtra("date2",date2.getText().toString());
 

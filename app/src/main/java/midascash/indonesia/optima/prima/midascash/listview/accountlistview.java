@@ -21,7 +21,7 @@ import midascash.indonesia.optima.prima.midascash.R;
 
 public class accountlistview extends BaseAdapter {
 
-    DecimalFormat formatter = new DecimalFormat("###,###,###,00");
+    DecimalFormat formatter = new DecimalFormat("###,###,###.00");
 
     Context contextdata;
     List<String> data ;

@@ -94,6 +94,8 @@ public class generator {
     private static AlertDialog dialogaccount;
     private static Calendar myCalendar;
 
+    public static int mainmenurefresh=0;
+
     public static String newaccountrf = "";
     public static String newaccountrfsymbol = "";
 
@@ -1255,7 +1257,9 @@ public class generator {
                         for(int i=0; i<list.getChildCount();i++)
                         {
                             CheckBox cb = (CheckBox)list.getChildAt(i).findViewById(R.id.checkedcategory);
-                            cb.setChecked(false);
+                            if(cb.isChecked()){
+                                cb.setChecked(false);
+                            }
                             adapter.setclear();
                         }
                         adapter.notifyDataSetChanged();

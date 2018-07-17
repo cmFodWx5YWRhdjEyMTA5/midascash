@@ -472,6 +472,11 @@ public class accountlist extends AppCompatActivity{
 
                         fdb.collection("account").document(holder.documenref)
                                 .set(data, SetOptions.merge());
+
+                        if(generator.adapter!=null){
+                            generator.adapter.notifyDataSetChanged();
+                        }
+
                         Toast.makeText(accountlist.this,holder.accountname.getText().toString() + " Deactivated",Toast.LENGTH_SHORT).show();
                     }
                     // do something, the isChecked will be
