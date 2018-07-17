@@ -898,6 +898,7 @@ public class generator {
 
         if(generator.newaccountrf.equals("")){
             generator.choseaccount1(context,chosenacc,allcurrencyselected,currchosen);
+
         }
         else {
             chosenacc.setText(generator.newaccountrf);
@@ -988,6 +989,10 @@ public class generator {
                                                                 mapdata.put("transfer_src",chosenacc.getText().toString());
                                                                 mapdata.put("transfer_notes",notesdata.getText().toString());
                                                                 mapdata.put("transfer_date",chosendate.getText().toString());
+
+
+
+                                                                mapdata.put("transfer_datesys",chosendated.getTime());
                                                                 mapdata.put("transfer_isdated","0");
                                                                 mapdata.put("transfer_isdone",temp);
                                                                 // mapdata.put("transfer_repeat_time",repeattimedata);

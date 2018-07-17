@@ -974,6 +974,8 @@ public class MainActivity extends AppCompatActivity
                 cashflow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+
                         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.AppCompatAlertDialogStyle);
 // ...Irrelevant code for customizing the buttons and title
                         LayoutInflater inflater = getLayoutInflater();
@@ -1022,6 +1024,9 @@ public class MainActivity extends AppCompatActivity
                 chartofbalanc.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        
+                        generator.accorcat = null;
+
                         final int[] state = {0};
 
                         final int[] selftransaction = {0};
@@ -1415,7 +1420,7 @@ public class MainActivity extends AppCompatActivity
                         date2.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                new DatePickerDialog(MainActivity.this,R.style.datepicker, date1obj, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                                new DatePickerDialog(MainActivity.this,R.style.datepicker, date2obj, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show();
                             }
                         });
 
@@ -1449,12 +1454,14 @@ public class MainActivity extends AppCompatActivity
                                                 }
                                                 else {
                                                     Intent a = new Intent(MainActivity.this, chartofbalance.class);
-                                                    a.putStringArrayListExtra("test", (ArrayList<String>) generator.accorcat);
+                                                    a.putStringArrayListExtra("request", (ArrayList<String>) generator.accorcat);
                                                     a.putExtra("shownown", selftransaction[0]);
                                                     a.putExtra("accountorcategory",state[0]);
+                                                    a.putExtra("date1",date1.getText().toString());
+                                                    a.putExtra("date2",date2.getText().toString());
+
                                                     startActivity(a);
-                                                    dialog.dismiss();
-                                                    generator.accorcat = null;
+
                                                 }
                                             }else {
                                                 if(state[0]==0){

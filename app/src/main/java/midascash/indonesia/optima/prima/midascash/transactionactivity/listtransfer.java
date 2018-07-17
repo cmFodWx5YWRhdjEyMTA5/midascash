@@ -531,6 +531,7 @@ public class listtransfer extends AppCompatActivity{
                                                                                                     mapdata.put("transfer_src",chosenacc.getText().toString());
                                                                                                     mapdata.put("transfer_notes",notesdata.getText().toString());
                                                                                                     mapdata.put("transfer_date",chosendate.getText().toString());
+                                                                                                    mapdata.put("transfer_datesys",chosendated.getTime());
                                                                                                     mapdata.put("transfer_isdated","0");
                                                                                                     mapdata.put("transfer_isdone",temp);
                                                                                                     // mapdata.put("transfer_repeat_time",repeattimedata);
@@ -551,6 +552,7 @@ public class listtransfer extends AppCompatActivity{
                                                                                                     mapdata.put("transfer_src",chosenacc.getText().toString());
                                                                                                     mapdata.put("transfer_notes",notesdata.getText().toString());
                                                                                                     mapdata.put("transfer_date",chosendate.getText().toString());
+                                                                                                    mapdata.put("transfer_datesys",chosendated.getTime());
                                                                                                     mapdata.put("transfer_isdated","0");
                                                                                                     mapdata.put("transfer_isdone",temp);
                                                                                                     // mapdata.put("transfer_repeat_time",repeattimedata);
@@ -625,6 +627,7 @@ public class listtransfer extends AppCompatActivity{
                                                                                                 List<accountdata> dataaccount=new ArrayList<>();
                                                                                                 dataaccount.clear();
                                                                                                 String finalTemp = temp;
+                                                                                                Date finalChosendated = chosendated;
                                                                                                 db.collection("account")
                                                                                                         .get()
                                                                                                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -885,6 +888,7 @@ public class listtransfer extends AppCompatActivity{
                                                                                                                     mapdata.put("transfer_src",chosenacc.getText().toString());
                                                                                                                     mapdata.put("transfer_notes",notesdata.getText().toString());
                                                                                                                     mapdata.put("transfer_date",chosendate.getText().toString());
+                                                                                                                    mapdata.put("transfer_datesys", finalChosendated.getTime());
                                                                                                                     mapdata.put("transfer_isdated","0");
                                                                                                                     mapdata.put("transfer_isdone", finalTemp);
                                                                                                                     // mapdata.put("transfer_repeat_time",repeattimedata);
