@@ -68,7 +68,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeactionbar" />
         <activity
-            android:name=".reports.chartofbalance"
+            android:name=".reports.chartofbalance.chartofbalance"
             android:label="Report By Chart"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeactionbar" />

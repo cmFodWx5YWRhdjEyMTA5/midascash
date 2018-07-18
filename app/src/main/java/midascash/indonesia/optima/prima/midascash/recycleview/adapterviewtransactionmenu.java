@@ -72,23 +72,24 @@ public class adapterviewtransactionmenu extends RecyclerView.Adapter<adapterview
             Drawable resImg = contexts.getResources().getDrawable(generator.images[transactionlis.get(position).getExpense_image()-1]);
             holder.dataimage.setImageDrawable(resImg);
             holder.dataimage.setTag(transactionlis.get(position).getExpense_image());
+            holder.datacat.setText(transactionlis.get(position).getExpense_category());
             holder.dataamount.setText(formatter.format(transactionlis.get(position).getExpense_amount()));
             holder.dataacc.setText(transactionlis.get(position).getExpense_account());
             holder.datafrom.setText(transactionlis.get(position).getExpense_to());
-            holder.dataacc.setText(transactionlis.get(position).getExpense_account());
             holder.datanote.setText(transactionlis.get(position).getExpense_notes());
             holder.datadate.setText(transactionlis.get(position).getExpense_date());
 
             holder.color.setBackgroundColor(generator.red);
         }
         else{
+
             Drawable resImg = contexts.getResources().getDrawable(generator.images[transactionlis.get(position).getIncome_image()-1]);
             holder.dataimage.setImageDrawable(resImg);
             holder.dataimage.setTag(transactionlis.get(position).getIncome_image());
             holder.dataamount.setText(formatter.format(transactionlis.get(position).getIncome_amount()));
             holder.dataacc.setText(transactionlis.get(position).getIncome_account());
             holder.datafrom.setText(transactionlis.get(position).getIncome_from());
-            holder.dataacc.setText(transactionlis.get(position).getIncome_account());
+            holder.datacat.setText(transactionlis.get(position).getIncome_category());
             holder.datanote.setText(transactionlis.get(position).getIncome_notes());
             holder.datadate.setText(transactionlis.get(position).getIncome_date());
 

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:orientation="vertical" android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="0sp"
+            android:textAlignment="center"
+            android:layout_weight="1"
+            android:id="@+id/chartacc"
+            android:textColor="@color/colorAccentBlack"
+            android:textSize="8pt"
+            android:text="Account"
+            android:padding="8sp"
+            android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="0sp"
+                android:textAlignment="center"
+                android:layout_weight="1"
+                android:id="@+id/chartstartbalance"
+                android:textColor="@color/colorAccentBlack"
+                android:textSize="8pt"
+                android:text="Start Balance"
+                android:padding="8sp"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:id="@+id/chartrecycleritem"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <LinearLayout
+        android:layout_marginTop="20sp"
+        android:orientation="vertical"
+        android:layout_margin="2sp"
+        android:padding="2sp"
+        android:background="@drawable/bordershadow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:padding="8sp"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content">
+            <TextView
+                android:textSize="8pt"
+                android:textColor="@color/colorAccentBlack"
+                android:layout_width="wrap_content"
+                android:layout_marginRight="10sp"
+                android:text="Total Debit  "
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="0sp"
+                android:textSize="8pt"
+                android:id="@+id/chartdebit"
+                android:textColor="@color/colorAccentBlack"
+                android:text="Total Debit"
+                android:textAlignment="textEnd"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:padding="8sp"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content">
+            <TextView
+                android:textSize="8pt"
+                android:textColor="@color/colorAccentBlack"
+                android:layout_width="wrap_content"
+                android:layout_marginRight="10sp"
+                android:text="Total Credit  "
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="0sp"
+                android:textSize="8pt"
+                android:id="@+id/chartcredit"
+                android:textColor="@color/colorAccentBlack"
+                android:text="Total Credit"
+                android:textAlignment="textEnd"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:padding="8sp"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content">
+            <TextView
+                android:textSize="8pt"
+                android:textColor="@color/colorAccentBlack"
+                android:layout_width="wrap_content"
+                android:layout_marginRight="10sp"
+                android:text="Account Balance "
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="0sp"
+                android:textSize="8pt"
+                android:id="@+id/charttotal"
+                android:textColor="@color/colorAccentBlack"
+                android:text="Total Account"
+                android:textAlignment="textEnd"
+                android:layout_weight="1"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+</LinearLayout>

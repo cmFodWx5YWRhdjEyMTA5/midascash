@@ -102,6 +102,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/linearadditional"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
@@ -142,10 +143,13 @@
 
                 <android.support.v7.widget.AppCompatCheckBox
                     android:id="@+id/opt1"
+                    android:visibility="gone"
                     android:theme="@style/CheckboxStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Use Category Instead"/>
+
+
 
                 <android.support.v7.widget.AppCompatCheckBox
                     android:theme="@style/CheckboxStyle"
@@ -153,6 +157,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Show Your Own Transaction"/>
+
+                <android.support.v7.widget.AppCompatCheckBox
+                    android:id="@+id/opt3"
+                    android:theme="@style/CheckboxStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Show Inactive Account"/>
 
             </LinearLayout>
 

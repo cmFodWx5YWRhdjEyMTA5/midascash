@@ -751,13 +751,13 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
             holder.layoutextra.removeAllViews();
             View transactions = inflater.inflate(R.layout.recycler_layout_transactions_mainmenu,null);
 
-
+            final adapterviewtransactionmenu[] adapter = {null};
 
             RecyclerView transactionlist = transactions.findViewById(R.id.mainmenutransactionrecycler);
 
             List<incomeexpense> alltransaction = new ArrayList<>() ;
 
-            adapterviewtransactionmenu adapter = new adapterviewtransactionmenu(contexts,alltransaction);
+
 
             fdb.collection("income")
                     .whereEqualTo("income_isdated","0")
@@ -799,10 +799,11 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
 
                                                             alltransaction.add(data);
 
-
+                                                            if(adapter[0] !=null){
+                                                                adapter[0].notifyDataSetChanged();
+                                                            }
 
                                                         }
-                                                        adapter.notifyDataSetChanged();
                                                     } else {
                                                         Log.d("data", "Error getting documents: ", task.getException());
                                                     }
@@ -856,10 +857,14 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
 
                                                                                 alltransaction.add(data1);
 
+                                                                                if(adapter[0] !=null){
+                                                                                    adapter[0].notifyDataSetChanged();
+                                                                                }
+
                                                                             }
                                                                             Collections.sort(alltransaction);
                                                                             Collections.reverse(alltransaction);
-                                                                            adapter.notifyDataSetChanged();
+
                                                                         } else {
                                                                             Log.d("data", "Error getting documents: ", task.getException());
                                                                         }
@@ -870,14 +875,12 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
 
                                                         Log.d("Get data account", document1.getId() + " => " + document1.getData());
                                                     }
-
-
+                                                    adapter[0] = new adapterviewtransactionmenu(contexts,alltransaction);
                                                     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(contexts.getApplicationContext());
                                                     transactionlist.setLayoutManager(mLayoutManager);
                                                     transactionlist.setItemAnimator(new DefaultItemAnimator());
                                                     transactionlist.addItemDecoration(new MyDividerItemDecoration(contexts, LinearLayoutManager.VERTICAL, 16));
-                                                    transactionlist.setAdapter(adapter);
-
+                                                    transactionlist.setAdapter(adapter[0]);
                                                 } else {
                                                     Log.w("Get account error", "Error getting documents.", task.getException());
                                                 }
