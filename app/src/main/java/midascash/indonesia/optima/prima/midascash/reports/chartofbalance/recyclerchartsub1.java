@@ -1,6 +1,7 @@
 package midascash.indonesia.optima.prima.midascash.reports.chartofbalance;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import midascash.indonesia.optima.prima.midascash.R;
+import midascash.indonesia.optima.prima.midascash.generator;
 import midascash.indonesia.optima.prima.midascash.objects.income;
 import midascash.indonesia.optima.prima.midascash.objects.incomeexpensetransfer;
 import midascash.indonesia.optima.prima.midascash.objects.transfer;
@@ -22,9 +24,10 @@ public class recyclerchartsub1 extends RecyclerView.Adapter<recyclerchartsub1.My
 
     DecimalFormat formatter= new DecimalFormat("###,###,###.00");
     Context contexts;
-    int times=0;
-    int locationimage=0;
-    int totalcircle=0;
+    Double currentbalance = 0.0d;
+    Double totaldebet = 0.0d;
+    Double totalkredit = 0.0d;
+    Double total = 0.0d;
 
     private List<incomeexpensetransfer> transactionlis;
     private List<income> incomes;
@@ -44,9 +47,11 @@ public class recyclerchartsub1 extends RecyclerView.Adapter<recyclerchartsub1.My
         }
     }
 
-    public recyclerchartsub1(Context context, List<incomeexpensetransfer> lis) {
+    public recyclerchartsub1(Context context, List<incomeexpensetransfer> lis,Double curbalance) {
         contexts=context;
         transactionlis=lis;
+        currentbalance = curbalance ;
+
     }
 
 
@@ -61,7 +66,57 @@ public class recyclerchartsub1 extends RecyclerView.Adapter<recyclerchartsub1.My
 
     @Override
     public void onBindViewHolder(final recyclerchartsub1.MyViewHolder holder, int position) {
+        if(transactionlis.get(position).getExpense_account() != null && !transactionlis.get(position).getExpense_account().equals("")){
 
+
+            holder.dataupdown.setText("▼");
+            holder.dataupdown.setTextColor(generator.red);
+
+            currentbalance = currentbalance - transactionlis.get(position).getExpense_amount();
+
+            holder.dataamount.setText(formatter.format(transactionlis.get(position).getExpense_amount()));
+            holder.databalance.setText(formatter.format(currentbalance));
+
+            holder.datadatenote.setText("("+transactionlis.get(position).getExpense_date()+")"+transactionlis.get(position).getExpense_notes());
+
+        }
+        else if(transactionlis.get(position).getIncome_account() != null && !transactionlis.get(position).getIncome_account().equals("")){
+
+            holder.dataupdown.setText("▲");
+            holder.dataupdown.setTextColor(generator.green);
+
+            currentbalance = currentbalance + transactionlis.get(position).getIncome_amount();
+
+            holder.dataamount.setText("+ " +formatter.format(transactionlis.get(position).getIncome_amount()));
+            holder.databalance.setText(formatter.format(currentbalance));
+
+            holder.datadatenote.setText("("+transactionlis.get(position).getIncome_date()+")"+transactionlis.get(position).getIncome_notes());
+
+        }
+        else if(transactionlis.get(position).getTransfer_src() != null && !transactionlis.get(position).getTransfer_src().equals("")){
+
+            holder.dataupdown.setText("\u2B65");
+
+            currentbalance = currentbalance - transactionlis.get(position).getTransfer_amount();
+
+            holder.dataamount.setText("- " +formatter.format(transactionlis.get(position).getTransfer_amount()));
+            holder.databalance.setText(formatter.format(currentbalance));
+
+            holder.datadatenote.setText("("+transactionlis.get(position).getTransfer_date()+")"+transactionlis.get(position).getTransfer_notes());
+
+        }
+        else if(transactionlis.get(position).getTransfer_dest() != null && !transactionlis.get(position).getTransfer_dest().equals("")){
+
+            holder.dataupdown.setText("\u2B65");
+
+            currentbalance = currentbalance + transactionlis.get(position).getTransfer_amount();
+
+            holder.dataamount.setText("+ " +formatter.format(transactionlis.get(position).getTransfer_amount()));
+            holder.databalance.setText(formatter.format(currentbalance));
+
+            holder.datadatenote.setText("("+transactionlis.get(position).getTransfer_date()+")"+transactionlis.get(position).getTransfer_notes());
+
+        }
     }
 
     @Override

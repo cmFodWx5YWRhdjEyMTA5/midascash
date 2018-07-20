@@ -36,6 +36,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import midascash.indonesia.optima.prima.midascash.R;
+import midascash.indonesia.optima.prima.midascash.generator;
 import midascash.indonesia.optima.prima.midascash.objects.account;
 import midascash.indonesia.optima.prima.midascash.objects.incomeexpensetransfer;
 
@@ -72,6 +73,8 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
     }
 
     public recyclerchartmain(Context context, List<String> acc, int category , int isown, int datediff, Date dt1 , Date dt2) {
+        transactionlis = new ArrayList<>();
+        acclis = new ArrayList<>();
         acclis = acc;
         contexts=context;
         fdb = FirebaseFirestore.getInstance();
@@ -95,7 +98,9 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
     @Override
     public void onBindViewHolder(final recyclerchartmain.MyViewHolder holder, int position) {
         transactionlis.clear();
-        recyclerchartsub1 adapter=new recyclerchartsub1(contexts,transactionlis);
+        final recyclerchartsub1[] adapter = new recyclerchartsub1[1];
+
+        final Double[] saldo = {0.0d};
 
         fdb.collection("account")
                 .whereEqualTo("account_name",acclis.get(position))
@@ -106,8 +111,10 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
                         if (task.isSuccessful()) {
                             for (DocumentSnapshot document : task.getResult()) {
                                 holder.dataacc.setText(document.getData().get("account_name").toString());
-                                holder.databalance.setText(formatter.format(document.getData().get("account_balance").toString()));
+                                saldo[0] = generator.makedouble(document.getData().get("account_balance").toString());
+                                holder.databalance.setText(formatter.format(generator.makedouble(document.getData().get("account_balance").toString())));
                             }
+                            adapter[0] =new recyclerchartsub1(contexts,transactionlis,saldo[0]);
                         } else {
                         Log.w("Get account error", "Error getting documents.", task.getException());
                         }
@@ -116,13 +123,13 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
 
         holder.dataacc.setText("");
 
-        charttask task = new charttask(contexts,R.style.AppCompatAlertDialogStyle,acclis.get(position),adapter,holder.datadebt,holder.datacred,holder.datatotal);
+        charttask task = new charttask(contexts,R.style.AppCompatAlertDialogStyle,acclis.get(position), adapter[0],holder.datadebt,holder.datacred,holder.datatotal);
         task.execute("");
 
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(contexts, 1);
         holder.recycler.setLayoutManager(mLayoutManager);
         holder.recycler.setItemAnimator(new DefaultItemAnimator());
-        holder.recycler.setAdapter(adapter);
+        holder.recycler.setAdapter(adapter[0]);
 
     }
 
@@ -342,7 +349,6 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
                                                                                                 data.setDatedata(document.getData().get("transfer_date").toString());
                                                                                                 data.setTransfer_notes(document.getData().get("transfer_notes").toString());
                                                                                                 data.setTransfer_src(document.getData().get("transfer_src").toString());
-                                                                                                data.setTransfer_dest(document.getData().get("transfer_dest").toString());
 
                                                                                                 transactionlis.add(data);
                                                                                                 Collections.sort(transactionlis);
@@ -361,7 +367,6 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
                                                                                                 data.setTransfer_date(document.getData().get("transfer_date").toString());
                                                                                                 data.setDatedata(document.getData().get("transfer_date").toString());
                                                                                                 data.setTransfer_notes(document.getData().get("transfer_notes").toString());
-                                                                                                data.setTransfer_src(document.getData().get("transfer_src").toString());
                                                                                                 data.setTransfer_dest(document.getData().get("transfer_dest").toString());
 
                                                                                                 transactionlis.add(data);
