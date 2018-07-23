@@ -60,11 +60,13 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView databalance,dataacc,datacred,datadebt,datatotal;
         public RecyclerView recycler;
+        View nothing;
 
         public MyViewHolder(View view) {
             super(view);
+            nothing = view.findViewById(R.id.chartitemnothing);
             recycler = view.findViewById(R.id.chartrecycleritem);
-            databalance = view.findViewById(R.id.chartbalance);
+            databalance = view.findViewById(R.id.chartstartbalance);
             dataacc = view.findViewById(R.id.chartacc);
             datacred = view.findViewById(R.id.chartcredit);
             datadebt = view.findViewById(R.id.chartdebit);
@@ -123,7 +125,7 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
 
         holder.dataacc.setText("");
 
-        charttask task = new charttask(contexts,R.style.AppCompatAlertDialogStyle,acclis.get(position), adapter[0],holder.datadebt,holder.datacred,holder.datatotal);
+        charttask task = new charttask(contexts,R.style.AppCompatAlertDialogStyle,acclis.get(position), adapter[0],holder.datadebt,holder.datacred,holder.datatotal,holder);
         task.execute("");
 
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(contexts, 1);
@@ -141,6 +143,7 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
     private class charttask extends AsyncTask<String, Integer, String> {
 
         private ProgressDialog dialog;
+        private recyclerchartmain.MyViewHolder holder ;
         private String account="";
         private int count=0;
         private TextView debit,credit,total;
@@ -151,9 +154,14 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
         private Context context;
 
         private String erro="";
-        public charttask(Context context, int resource, String account, recyclerchartsub1 adap, TextView debt , TextView cred,TextView tota) {
+        public charttask(Context context, int resource, String account, recyclerchartsub1 adap, TextView debt , TextView cred,TextView tota,recyclerchartmain.MyViewHolder hold)
+        {
             this.dialog = new ProgressDialog(context,resource).show(context,"Loading Report","Please wait while your report Loads");
+
+            this.dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            this.dialog.setProgress(0);
             countcredit = 0.0d;
+            holder=hold;
             countdebit =0.0d;
             counttotal =0.0d;
             debit = debt;
@@ -524,13 +532,21 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
             // Display the progress on text view
             dialog.setMessage(""+count + " %");
             // Update the progress bar
-            dialog.setProgress(count);
+            dialog.incrementProgressBy((int)(25));
         }
 
         // When all async task done
         protected void onPostExecute(Boolean issuccess){
 
             if(issuccess){
+                if(transactionlis.size()==0){
+                    holder.nothing.setVisibility(View.VISIBLE);
+                    holder.recycler.setVisibility(View.GONE);
+                }
+                else {
+                    holder.recycler.setVisibility(View.VISIBLE);
+                    holder.nothing.setVisibility(View.GONE);
+                }
                 if(adapter!=null){
                     adapter.notifyDataSetChanged();
                 }
