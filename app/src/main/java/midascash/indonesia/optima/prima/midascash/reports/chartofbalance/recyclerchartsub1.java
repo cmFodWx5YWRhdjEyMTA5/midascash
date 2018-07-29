@@ -27,7 +27,9 @@ public class recyclerchartsub1 extends RecyclerView.Adapter<recyclerchartsub1.My
     Double currentbalance = 0.0d;
     Double totaldebet = 0.0d;
     Double totalkredit = 0.0d;
-    Double total = 0.0d;
+    Double totalall = 0.0d;
+
+    TextView total,debet,kredit;
 
     private List<incomeexpensetransfer> transactionlis;
     private List<income> incomes;
@@ -47,11 +49,14 @@ public class recyclerchartsub1 extends RecyclerView.Adapter<recyclerchartsub1.My
         }
     }
 
-    public recyclerchartsub1(Context context, List<incomeexpensetransfer> lis,Double curbalance) {
+    public recyclerchartsub1(Context context, List<incomeexpensetransfer> lis,Double curbalance,TextView ttl , TextView credt, TextView debt) {
         contexts=context;
         transactionlis=lis;
         currentbalance = curbalance ;
 
+        total = ttl;
+        kredit = credt;
+        debet = debt;
     }
 
 
@@ -74,6 +79,8 @@ public class recyclerchartsub1 extends RecyclerView.Adapter<recyclerchartsub1.My
 
             currentbalance = currentbalance - transactionlis.get(position).getExpense_amount();
 
+            total.setText(formatter.format(currentbalance));
+
             holder.dataamount.setText(formatter.format(transactionlis.get(position).getExpense_amount()));
             holder.databalance.setText(formatter.format(currentbalance));
 
@@ -87,6 +94,8 @@ public class recyclerchartsub1 extends RecyclerView.Adapter<recyclerchartsub1.My
 
             currentbalance = currentbalance + transactionlis.get(position).getIncome_amount();
 
+            total.setText(formatter.format(currentbalance));
+
             holder.dataamount.setText("+ " +formatter.format(transactionlis.get(position).getIncome_amount()));
             holder.databalance.setText(formatter.format(currentbalance));
 
@@ -99,6 +108,8 @@ public class recyclerchartsub1 extends RecyclerView.Adapter<recyclerchartsub1.My
 
             currentbalance = currentbalance - transactionlis.get(position).getTransfer_amount();
 
+            total.setText(formatter.format(currentbalance));
+
             holder.dataamount.setText("- " +formatter.format(transactionlis.get(position).getTransfer_amount()));
             holder.databalance.setText(formatter.format(currentbalance));
 
@@ -110,6 +121,8 @@ public class recyclerchartsub1 extends RecyclerView.Adapter<recyclerchartsub1.My
             holder.dataupdown.setText("\u2B65");
 
             currentbalance = currentbalance + transactionlis.get(position).getTransfer_amount();
+
+            total.setText(formatter.format(currentbalance));
 
             holder.dataamount.setText("+ " +formatter.format(transactionlis.get(position).getTransfer_amount()));
             holder.databalance.setText(formatter.format(currentbalance));

@@ -116,7 +116,7 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
                                 saldo[0] = generator.makedouble(document.getData().get("account_balance").toString());
                                 holder.databalance.setText(formatter.format(generator.makedouble(document.getData().get("account_balance").toString())));
                             }
-                            adapter[0] =new recyclerchartsub1(contexts,transactionlis,saldo[0]);
+                            adapter[0] =new recyclerchartsub1(contexts,transactionlis,saldo[0],holder.datatotal,holder.datadebt,holder.datacred);
                         } else {
                         Log.w("Get account error", "Error getting documents.", task.getException());
                         }
@@ -208,8 +208,6 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
                                                         Collections.sort(transactionlis);
                                                         Collections.reverse(transactionlis);
 
-
-
                                                     }
                                                 }
                                                 else if(datediff==1){
@@ -230,6 +228,7 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
                                                         transactionlis.add(item);
                                                         Collections.sort(transactionlis);
                                                         Collections.reverse(transactionlis);
+
                                                     }
                                                 }
 
@@ -251,6 +250,7 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
                                                         transactionlis.add(item);
                                                         Collections.sort(transactionlis);
                                                         Collections.reverse(transactionlis);
+
                                                     }
                                                 }
                                                 Log.e("transaction",  df.format(date1) + " " + df.format(date2) +" "+ df.format(df.parse(document.getData().get("income_date").toString())));
@@ -289,6 +289,7 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
                                                                             transactionlis.add(item2);
                                                                             Collections.sort(transactionlis);
                                                                             Collections.reverse(transactionlis);
+
                                                                         }
                                                                     }
                                                                     else if(datediff==1){
@@ -308,6 +309,7 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
                                                                             transactionlis.add(item2);
                                                                             Collections.sort(transactionlis);
                                                                             Collections.reverse(transactionlis);
+
                                                                         }
                                                                     }
 
@@ -328,6 +330,7 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
                                                                             transactionlis.add(item2);
                                                                             Collections.sort(transactionlis);
                                                                             Collections.reverse(transactionlis);
+
                                                                         }
                                                                     }
                                                                 } catch (ParseException e) {
@@ -380,6 +383,7 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
                                                                                                 transactionlis.add(data);
                                                                                                 Collections.sort(transactionlis);
                                                                                                 Collections.reverse(transactionlis);
+
                                                                                             }
                                                                                         }
 
@@ -400,6 +404,8 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
                                                                                                 transactionlis.add(data);
                                                                                                 Collections.sort(transactionlis);
                                                                                                 Collections.reverse(transactionlis);
+
+
                                                                                             }
                                                                                         }
                                                                                     } catch (ParseException e) {
@@ -436,6 +442,7 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
                                                                                                                     transactionlis.add(data);
                                                                                                                     Collections.sort(transactionlis);
                                                                                                                     Collections.reverse(transactionlis);
+
                                                                                                                 }
                                                                                                             }
                                                                                                             else if(datediff==1){
@@ -455,6 +462,7 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
                                                                                                                     transactionlis.add(data);
                                                                                                                     Collections.sort(transactionlis);
                                                                                                                     Collections.reverse(transactionlis);
+
                                                                                                                 }
                                                                                                             }
 
@@ -475,6 +483,7 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
                                                                                                                     transactionlis.add(data);
                                                                                                                     Collections.sort(transactionlis);
                                                                                                                     Collections.reverse(transactionlis);
+
                                                                                                                 }
                                                                                                             }
                                                                                                         } catch (ParseException e) {
@@ -537,6 +546,12 @@ public class recyclerchartmain extends RecyclerView.Adapter<recyclerchartmain.My
 
         // When all async task done
         protected void onPostExecute(Boolean issuccess){
+
+
+            if(adapter!=null){
+                adapter.notifyDataSetChanged();
+            }
+
 
             if(issuccess){
                 if(transactionlis.size()==0){
