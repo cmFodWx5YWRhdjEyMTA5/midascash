@@ -3,7 +3,6 @@ apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "midascash.indonesia.optima.prima.midascash"
@@ -42,6 +41,10 @@ dependencies {
 
     implementation 'joda-time:joda-time:2.10'
 
+    implementation 'com.google.firebase:firebase-auth:11.6.2'
+    implementation 'com.google.android.gms:play-services-auth:11.6.2'
+
+    implementation 'com.google.firebase:firebase-firestore:11.6.2'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation 'com.android.support:appcompat-v7:27.1.1'
@@ -62,7 +65,6 @@ dependencies {
     implementation 'com.applandeo:material-calendar-view:1.4.0'
     implementation 'com.google.firebase:firebase-core:16.0.1'
 
-    implementation 'com.google.firebase:firebase-firestore:17.0.2'
 
     implementation 'com.balysv:material-ripple:1.0.2'
     // ripple effect
@@ -83,6 +85,7 @@ dependencies {
     // google flexible box
     implementation 'com.android.support:support-v13:27.1.1'
 }
+
 
 
 apply plugin: 'com.google.gms.google-services'

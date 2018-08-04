@@ -1,37 +1,21 @@
 {
   "project_info": {
-    "project_number": "295323727797",
-    "firebase_url": "https://midascash-27552.firebaseio.com",
-    "project_id": "midascash-27552",
-    "storage_bucket": "midascash-27552.appspot.com"
+    "project_number": "993853645410",
+    "firebase_url": "https://midascash-aa072.firebaseio.com",
+    "project_id": "midascash-aa072",
+    "storage_bucket": "midascash-aa072.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:295323727797:android:89fce4ddbecf3992",
+        "mobilesdk_app_id": "1:993853645410:android:89fce4ddbecf3992",
         "android_client_info": {
           "package_name": "midascash.indonesia.optima.prima.midascash"
         }
       },
       "oauth_client": [
         {
-          "client_id": "295323727797-auhu45b7b0sb4hb8d2fb39kkgg1qqjsv.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "midascash.indonesia.optima.prima.midascash",
-            "certificate_hash": "b649b6d1f6a7b890920a19b541c5388f19066621"
-          }
-        },
-        {
-          "client_id": "295323727797-bae1tgmud8o1qp3dmeujija9dn9a15ii.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "midascash.indonesia.optima.prima.midascash",
-            "certificate_hash": "622465487c1d1377da28927e9e4523c470b56865"
-          }
-        },
-        {
-          "client_id": "295323727797-1ng3nstrhtebbui19p6gt9dhr799fpjv.apps.googleusercontent.com",
+          "client_id": "993853645410-glulj4gre6jjdhg6kvamrj4q78pmubnt.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "midascash.indonesia.optima.prima.midascash",
@@ -39,13 +23,13 @@
           }
         },
         {
-          "client_id": "295323727797-l2p1ug9empgi62cb0ams6be56hr2ghil.apps.googleusercontent.com",
+          "client_id": "993853645410-m92voieq2dafot8g2c16v7j9nmocmspf.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCWx-ldPia7PfGtwTPZCFkXFOboltdcuxo"
+          "current_key": "AIzaSyCZot7SX2M6ftLDn68X7hlVOMGhtSd6Dh8"
         }
       ],
       "services": {
@@ -56,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "295323727797-l2p1ug9empgi62cb0ams6be56hr2ghil.apps.googleusercontent.com",
+              "client_id": "993853645410-m92voieq2dafot8g2c16v7j9nmocmspf.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
