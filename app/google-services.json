@@ -1,35 +1,35 @@
 {
   "project_info": {
-    "project_number": "993853645410",
-    "firebase_url": "https://midascash-aa072.firebaseio.com",
-    "project_id": "midascash-aa072",
-    "storage_bucket": "midascash-aa072.appspot.com"
+    "project_number": "185576140030",
+    "firebase_url": "https://primacash-5708b.firebaseio.com",
+    "project_id": "primacash-5708b",
+    "storage_bucket": "primacash-5708b.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:993853645410:android:89fce4ddbecf3992",
+        "mobilesdk_app_id": "1:185576140030:android:1f5258161e0d0c18",
         "android_client_info": {
-          "package_name": "midascash.indonesia.optima.prima.midascash"
+          "package_name": "prima.optimasi.indonesia.primacash"
         }
       },
       "oauth_client": [
         {
-          "client_id": "993853645410-glulj4gre6jjdhg6kvamrj4q78pmubnt.apps.googleusercontent.com",
+          "client_id": "185576140030-gu4d9a0tff0ibkg8oi10t71d6l9umu3j.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "midascash.indonesia.optima.prima.midascash",
+            "package_name": "prima.optimasi.indonesia.primacash",
             "certificate_hash": "9bd61a2856d63dc17825204216bb114a843ad765"
           }
         },
         {
-          "client_id": "993853645410-m92voieq2dafot8g2c16v7j9nmocmspf.apps.googleusercontent.com",
+          "client_id": "185576140030-ubec3evl88rh3p2jtv5n6e69luvbrs6m.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCZot7SX2M6ftLDn68X7hlVOMGhtSd6Dh8"
+          "current_key": "AIzaSyCFuiviJoluQGPzkScUNloJkUx9-HWMjLU"
         }
       ],
       "services": {
@@ -40,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "993853645410-m92voieq2dafot8g2c16v7j9nmocmspf.apps.googleusercontent.com",
+              "client_id": "185576140030-ubec3evl88rh3p2jtv5n6e69luvbrs6m.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
