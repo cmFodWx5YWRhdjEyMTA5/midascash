@@ -209,12 +209,22 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
                                                     for (QueryDocumentSnapshot document : task.getResult()) {
                                                         exptotal=exptotal+Double.parseDouble(document.getData().get("expense_amount").toString());
                                                     }
+
+
+
                                                     totaling[0] = totaling[0] - exptotal;
                                                     Float total1 = exptotal.floatValue()+ finalInctotal1.floatValue();
                                                     float inc = exptotal.floatValue()/total1;
                                                     float exps = finalInctotal1.floatValue()/total1;
-                                                    entries.add(new PieEntry(inc, "E"));
-                                                    entries.add(new PieEntry(exps, "I"));
+
+                                                    if(totaling[0]==0.0d){
+                                                        entries.add(new PieEntry(0.5f, "E"));
+                                                        entries.add(new PieEntry(0.5f, "I"));
+                                                    }
+                                                    else{
+                                                        entries.add(new PieEntry(inc, "E"));
+                                                        entries.add(new PieEntry(exps, "I"));
+                                                    }
                                                     exp.setText(formatter.format(exptotal));
 
                                                     total.setText(formatter.format(totaling[0]));
@@ -224,6 +234,8 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
                                                     else {
                                                         total.setTextColor(generator.red);
                                                     }
+
+
 
                                                     PieChart mChart;
                                                     mChart = summary.findViewById(R.id.chartsummary);
@@ -304,6 +316,7 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
 
             RecyclerView accountlis = account.findViewById(R.id.mainmenuaccountlistview);
 
+            View nothing = account.findViewById(R.id.nothingaccount);
 
             List<account> allaccount = new ArrayList<>();
 
@@ -336,6 +349,12 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
 
                                     allaccount.add(new account(document.getData().get("account_name").toString(),document.getData().get("account_category").toString(),dtStart,document.getData().get("account_balance").toString(),document.getData().get("account_balance_current").toString(),document.getData().get("username").toString(),Integer.parseInt(document.getData().get("account_status").toString()),document.getData().get("account_currency").toString(),document.getData().get("account_fullcurency").toString(),temp));
                                     Log.d("Get data account", document.getId() + " => " + document.getData());
+                                }
+                                if(allaccount.size()==0){
+                                    nothing.setVisibility(View.VISIBLE);
+                                }
+                                else{
+                                    nothing.setVisibility(View.GONE);
                                 }
                                 adapterviewaccountsmenu adapter = new adapterviewaccountsmenu(contexts,allaccount);
                                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(contexts.getApplicationContext());

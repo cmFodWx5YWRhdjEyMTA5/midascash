@@ -114,6 +114,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         Realm.init(MainActivity.this);
 
         db = FirebaseFirestore.getInstance();
@@ -178,6 +180,11 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        Menu nav_Menu1 = navigationView.getMenu();
+
+        nav_Menu1.findItem(R.id.nav_supervisor).setVisible(false);
+
 
         LayoutInflater inflater = LayoutInflater.from(this);
 
@@ -294,6 +301,16 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
 
         getMenuInflater().inflate(R.menu.main, menu);
+
+        MenuItem item = menu.findItem(R.id.action_logout);
+
+        if(generator.issignedin==0){
+            item.setVisible(false);
+        }
+        else {
+            item.setVisible(true);
+        }
+
         return true;
     }
 
@@ -394,7 +411,8 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
         if (id == R.id.action_logout) {
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.AppCompatAlertDialogStyle);
+
+            /*AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this, R.style.AppCompatAlertDialogStyle);
 
             dialogBuilder.setMessage("Are you sure to Log out from System ?")
                     .setTitle("Confirm").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -407,7 +425,8 @@ public class MainActivity extends AppCompatActivity
                 public void onClick(DialogInterface dialogInterface, int i) {
 
                 }
-            }).show();
+            }).show();*/
+                this.finish();
             return true;
         }
 /*-----------------------notification--------------------//
@@ -482,6 +501,9 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_mail) {
 
+        } else if (id == R.id.nav_signin) {
+            Intent login = new Intent(MainActivity.this,LoginActivity.class);
+            startActivity(login);
         } else if (id == R.id.nav_supervisor) {
             Intent a = new Intent(MainActivity.this, main_administrator.class);
             startActivity(a);

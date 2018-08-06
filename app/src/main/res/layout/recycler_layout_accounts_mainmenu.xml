@@ -10,5 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </android.support.v7.widget.RecyclerView>
+    <include android:id="@+id/nothingaccount" android:visibility="gone" layout="@layout/layout_nothing" android:layout_width="match_parent" android:layout_height="100px"></include>
 
 </LinearLayout>

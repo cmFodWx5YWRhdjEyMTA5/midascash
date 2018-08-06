@@ -9,33 +9,9 @@
             android:icon="@drawable/ic_info_black_24dp"
             android:title="Dashboard" />
         <item
-            android:id="@+id/nav_accountlist"
-            android:icon="@drawable/baseline_account_balance_wallet_black_36dp"
-            android:title="Accounts" />
-        <item
-            android:id="@+id/nav_incomelist"
-            android:icon="@drawable/baseline_add_box_black_36dp"
-            android:title="Income" />
-        <item
-            android:id="@+id/nav_expenselist"
-            android:icon="@drawable/baseline_indeterminate_check_box_black_36dp"
-            android:title="Expense" />
-        <item
-            android:id="@+id/nav_transferlist"
-            android:icon="@drawable/baseline_swap_horizontal_circle_black_36dp"
-            android:title="Transfer" />
-        <item
-            android:id="@+id/nav_Transaction"
-            android:icon="@drawable/ic_dashboard_black_24dp"
-            android:title="Transaction" />
-        <item
-            android:id="@+id/nav_report"
-            android:icon="@drawable/reportmenuresized"
-            android:title="Report" />
-        <item
-            android:id="@+id/nav_calenderview"
-            android:icon="@drawable/scheduleresized"
-            android:title="Calender" />
+            android:id="@+id/nav_signin"
+            android:icon="@drawable/baseline_backup_black_36dp"
+            android:title="Sign In" />
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/settings"
@@ -45,6 +21,49 @@
             android:icon="@drawable/baseline_supervised_user_circle_black_36dp"
             android:title="Administrator" />
     </group>
+
+    <item android:title="Action">
+        <menu>
+            <item
+                android:id="@+id/nav_accountlist"
+                android:icon="@drawable/baseline_account_balance_wallet_black_36dp"
+                android:title="Accounts" />
+            <item
+                android:id="@+id/nav_incomelist"
+                android:icon="@drawable/baseline_add_box_black_36dp"
+                android:title="Income" />
+            <item
+                android:id="@+id/nav_expenselist"
+                android:icon="@drawable/baseline_indeterminate_check_box_black_36dp"
+                android:title="Expense" />
+            <item
+                android:id="@+id/nav_transferlist"
+                android:icon="@drawable/baseline_swap_horizontal_circle_black_36dp"
+                android:title="Transfer" />
+            <item
+                android:id="@+id/nav_Transaction"
+                android:icon="@drawable/ic_dashboard_black_24dp"
+                android:title="Transaction" />
+
+
+        </menu>
+    </item>
+
+    <item android:title="Information">
+        <menu>
+
+            <item
+                android:id="@+id/nav_report"
+                android:icon="@drawable/reportmenuresized"
+                android:title="Report" />
+            <item
+                android:id="@+id/nav_calenderview"
+                android:icon="@drawable/scheduleresized"
+                android:title="Calender" />
+
+        </menu>
+    </item>
+
 
     <item android:title="Communicate">
         <menu>

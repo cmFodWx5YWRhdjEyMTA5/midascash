@@ -89,6 +89,7 @@ import static android.content.Context.MODE_PRIVATE;
  */
 
 public class generator {
+    public static int issignedin=0;
 
     private static AlertDialog dialog;
     private static AlertDialog dialogaccount;
