@@ -11,6 +11,7 @@
     <color name="colorPrimaryDarkOrange">#ffaa00</color>
     <color name="colorRipple">#00ff00</color>
     <color name="colorAccent">#ffffff</color>
+    <color name="colorAccentDark">#F50057</color>
     <color name="colorAccentBlack">#000000</color>
     <color name="colorAccentWhite">#ffffff</color>
     <color name="colorgrey">#D3D3D3</color>
