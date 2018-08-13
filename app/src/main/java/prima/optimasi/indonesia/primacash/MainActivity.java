@@ -42,10 +42,14 @@ import io.realm.Realm;
 
 
 import com.fake.shopee.shopeefake.formula.commaedittext;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -94,6 +98,10 @@ import prima.optimasi.indonesia.primacash.transactionactivity.expense;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private FirebaseAuth mAuth;
+
+    GoogleSignInAccount account ;
+
     FirebaseFirestore db;
     SharedPreferences prefs;
     SharedPreferences.Editor editor;
@@ -114,7 +122,9 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        account = GoogleSignIn.getLastSignedInAccount(this);
 
+        mAuth = FirebaseAuth.getInstance();
 
         Realm.init(MainActivity.this);
 
@@ -124,8 +134,8 @@ public class MainActivity extends AppCompatActivity
 
         generator.mainmenurefresh = 1;
 
-        prefs = getSharedPreferences("midascash", MODE_PRIVATE);
-        editor = getSharedPreferences("midascash", MODE_PRIVATE).edit();
+        prefs = getSharedPreferences("primacash", MODE_PRIVATE);
+        editor = getSharedPreferences("primacash", MODE_PRIVATE).edit();
 
         syncdata();
       /*  Map<String, Object> user = new HashMap<>();
@@ -181,9 +191,24 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
+
+
         Menu nav_Menu1 = navigationView.getMenu();
 
         nav_Menu1.findItem(R.id.nav_supervisor).setVisible(false);
+
+        if(!prefs.getString("username","").equals("")){
+            nav_Menu1.findItem(R.id.nav_signin).setVisible(false);
+            TextView username = (TextView) findViewById(R.id.usernamelogin);
+            username.setText(prefs.getString("username",""));
+        }
+        else
+        {
+            nav_Menu1.findItem(R.id.nav_signin).setVisible(true);
+        }
+
+
+
 
 
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -2359,6 +2384,24 @@ public class MainActivity extends AppCompatActivity
             this.accountfullcurrency = accountfullcurrency;
         }
 
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        account = GoogleSignIn.getLastSignedInAccount(this);
+        updateUIgoogle(account);
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        updateUI(currentUser);
+    }
+
+    private void updateUI(FirebaseUser dataauth){
+
+    }
+
+    private void updateUIgoogle(GoogleSignInAccount dataauth){
 
     }
 }

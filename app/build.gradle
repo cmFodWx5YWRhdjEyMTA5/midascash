@@ -37,7 +37,10 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'io.realm:realm-annotations-processor:4.0.0'
     implementation 'joda-time:joda-time:2.10'
-    implementation 'com.google.firebase:firebase-auth:15.0.0'
+
+    implementation 'com.google.firebase:firebase-auth:16.0.2'
+    implementation 'com.google.android.gms:play-services-auth:15.0.1'
+
     implementation 'com.google.firebase:firebase-firestore:15.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
