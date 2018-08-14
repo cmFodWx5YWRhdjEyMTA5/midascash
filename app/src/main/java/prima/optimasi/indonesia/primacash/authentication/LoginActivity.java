@@ -1,23 +1,19 @@
-package prima.optimasi.indonesia.primacash;
+package prima.optimasi.indonesia.primacash.authentication;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -26,7 +22,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.signin.SignIn;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -37,6 +32,10 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import prima.optimasi.indonesia.primacash.MainActivity;
+import prima.optimasi.indonesia.primacash.R;
+import prima.optimasi.indonesia.primacash.generator;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -62,6 +61,8 @@ public class LoginActivity extends AppCompatActivity {
 
     int RC_SIGN_IN = 2;
 
+    int SIGN_UP = 3;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,10 +72,10 @@ public class LoginActivity extends AppCompatActivity {
         password = findViewById(R.id.usrvalue);
 
         dialog = new ProgressDialog(LoginActivity.this,R.style.AppCompatAlertDialogStyle);
-
-
         dialog.setTitle("Please Wait");
         dialog.setMessage("Signing in...");
+        dialog.setCancelable(false);
+
         parent_view = findViewById(android.R.id.content);
 
         inflater = LayoutInflater.from(this);
@@ -86,10 +87,19 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
+
+
         gsignin = findViewById(R.id.google_button);
         signin = findViewById(R.id.login_auth);
         signup = findViewById(R.id.sign_up);
 
+        signup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent data = new Intent(LoginActivity.this,SignupActivity.class);
+                startActivityForResult(data,SIGN_UP);
+            }
+        });
         //Tools.setSystemBarColor(this, R.color.blue_grey_900);
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,8 +158,6 @@ public class LoginActivity extends AppCompatActivity {
                 GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(LoginActivity.this, gso);
                 GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(LoginActivity.this);
 
-
-
                 Intent signInIntent = mGoogleSignInClient.getSignInIntent();
                 startActivityForResult(signInIntent, RC_SIGN_IN);
             }
@@ -159,12 +167,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Snackbar.make(parent_view, "Forgot Password", Snackbar.LENGTH_SHORT).show();
-            }
-        });
-        ((View) findViewById(R.id.sign_up)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(parent_view, "Sign Up", Snackbar.LENGTH_SHORT).show();
             }
         });
     }
@@ -186,6 +188,12 @@ public class LoginActivity extends AppCompatActivity {
                 // ...
             }
         }
+
+        if (requestCode == SIGN_UP && resultCode == RESULT_OK) {
+            this.finish();
+        }else  if(requestCode == SIGN_UP && resultCode != RESULT_OK){
+
+        }
     }
 
 
@@ -204,7 +212,7 @@ public class LoginActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
                             Snackbar.make(findViewById(R.id.coordinatorsnake), "Authentication Success.", Snackbar.LENGTH_SHORT).show();
 
-                            SharedPreferences pref = getSharedPreferences("primacash",MODE_PRIVATE);
+                           /* SharedPreferences pref = getSharedPreferences("primacash",MODE_PRIVATE);
                             SharedPreferences.Editor  edit =pref.edit();
 
                             if (acct != null) {
@@ -219,7 +227,7 @@ public class LoginActivity extends AppCompatActivity {
                             edit.putString("email",user.getEmail().toString());
                             edit.putString("userid",user.getUid().toString());
 
-                            edit.apply();
+                            edit.apply();*/
 
                             startActivity(new Intent(LoginActivity.this,MainActivity.class));
 
@@ -268,6 +276,12 @@ public class LoginActivity extends AppCompatActivity {
 
         return matcher.matches();
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        generator.acct = null ;
     }
 
 }

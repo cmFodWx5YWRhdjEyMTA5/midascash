@@ -164,13 +164,17 @@
             android:name=".settings.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".authentication.LoginActivity"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_login"></activity>
         <activity
-            android:name=".SignupActivity"
+            android:name=".authentication.SignupActivity"
             android:screenOrientation="portrait"
             android:label="Sign up"></activity>
+        <activity
+            android:name=".authentication.VerificationHeader"
+            android:screenOrientation="portrait"
+            android:label="Verification"></activity>
     </application>
 
 </manifest>

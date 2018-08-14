@@ -9,6 +9,8 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:datePickerStyle">@style/datepicker</item>
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="pinViewStyle">@style/PinWidget.PinView</item>
     </style>
 
     <style name="textinput" parent="Theme.AppCompat.DayNight">
@@ -143,5 +145,6 @@
         <item name="colorControlHighlight">@color/grey_60</item>
         <item name="colorControlNormal">@color/grey_40</item>
     </style>
+
 
 </resources>

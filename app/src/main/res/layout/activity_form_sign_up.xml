@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<android.support.design.widget.CoordinatorLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/coordinatorsignup"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
+        android:layout_marginBottom="20sp"
         android:layout_height="wrap_content">
 
         <include layout="@layout/toolbar" />
@@ -15,179 +17,185 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_horizontal"
+        android:background="@color/colorAccent"
         android:orientation="vertical">
 
-        <!-- Login progress -->
-        <ProgressBar
-            android:id="@+id/login_progress"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/spacing_xlarge"
-            android:visibility="gone" />
 
-        <ScrollView
-            android:id="@+id/login_form"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fillViewport="true">
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
-            <RelativeLayout
-                android:id="@+id/email_login_form"
+            <!-- Login progress -->
+
+            <ScrollView
+                android:id="@+id/login_form"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/spacing_xlarge">
+                android:layout_height="match_parent"
+                android:fillViewport="true">
 
-                <LinearLayout
+                <RelativeLayout
+                    android:id="@+id/email_login_form"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:orientation="vertical">
-
-                    <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <AutoCompleteTextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Full Name"
-                            android:inputType="text"
-                            android:maxLines="1"
-                            android:singleLine="true" />
-
-                    </android.support.design.widget.TextInputLayout>
-
-
-                    <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <AutoCompleteTextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Username"
-                            android:inputType="text"
-                            android:maxLines="1"
-                            android:singleLine="true" />
-
-                    </android.support.design.widget.TextInputLayout>
-
-                    <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <AutoCompleteTextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Email"
-                            android:inputType="textEmailAddress"
-                            android:maxLines="1"
-                            android:singleLine="true" />
-
-                    </android.support.design.widget.TextInputLayout>
-
-                    <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Password"
-                            android:inputType="textPassword"
-                            android:maxLines="1"
-                            android:singleLine="true" />
-
-                    </android.support.design.widget.TextInputLayout>
-
-                    <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <EditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Re-type Password"
-                            android:inputType="textPassword"
-                            android:maxLines="1"
-                            android:singleLine="true" />
-
-                    </android.support.design.widget.TextInputLayout>
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_xlarge">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/spacing_middle"
-                        android:layout_marginTop="@dimen/spacing_middle"
+                        android:layout_centerInParent="true"
                         android:orientation="vertical">
 
-                        <TextView
+                        <android.support.design.widget.TextInputLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="@dimen/spacing_medium"
-                            android:paddingRight="@dimen/spacing_medium"
-                            android:text="Gender"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                            android:textColor="@color/grey_90" />
+                            app:hintTextAppearance="@color/colorPrimary"
+                            android:layout_marginTop="30sp"
+                            android:layout_height="wrap_content">
 
-                        <RadioGroup
-                            android:id="@+id/gender"
+                            <AutoCompleteTextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Full Name"
+                                android:backgroundTint="@color/colorAccentBlack"
+                                android:textColor="@color/colorAccentBlack"
+                                android:inputType="text"
+                                android:id="@+id/signupfullname"
+                                android:maxLines="1"
+                                android:singleLine="true" />
+
+                        </android.support.design.widget.TextInputLayout>
+
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            app:hintTextAppearance="@color/colorPrimary"
+                            android:layout_height="wrap_content">
+
+                            <AutoCompleteTextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Username"
+                                android:backgroundTint="@color/colorAccentBlack"
+                                android:textColor="@color/colorAccentBlack"
+                                android:id="@+id/signupusername"
+                                android:inputType="text"
+                                android:maxLines="1"
+                                android:singleLine="true" />
+
+                        </android.support.design.widget.TextInputLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            app:hintTextAppearance="@color/colorPrimary"
+                            android:layout_marginBottom="20sp"
+                            android:layout_height="wrap_content">
+
+                            <AutoCompleteTextView
+                                android:backgroundTint="@color/colorAccentBlack"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Email"
+                                android:textColor="@color/colorAccentBlack"
+                                android:id="@+id/signupemail"
+                                android:inputType="textEmailAddress"
+                                android:maxLines="1"
+                                android:singleLine="true" />
+
+                        </android.support.design.widget.TextInputLayout>
+
+                        <LinearLayout
+                            android:layout_marginBottom="20sp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/spacing_medium"
                             android:orientation="horizontal">
 
-                            <android.support.v7.widget.AppCompatRadioButton
-                                android:id="@+id/radio_female"
+                            <android.support.design.widget.TextInputEditText
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Female"
-                                android:checked="true"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                                android:textColor="@color/grey_90" />
+                                android:backgroundTint="@color/colorAccentBlack"
+                                android:inputType="phone"
+                                android:maxLines="1"
+                                android:id="@+id/signupheadnum"
+                                android:singleLine="true"
+                                android:text="+61"
+                                android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
+                                android:textColor="@color/colorAccentBlack" />
 
                             <View
-                                android:layout_width="@dimen/spacing_mlarge"
+                                android:layout_width="@dimen/spacing_medium"
                                 android:layout_height="0dp" />
 
-                            <android.support.v7.widget.AppCompatRadioButton
-                                android:id="@+id/radio_male"
-                                android:layout_width="wrap_content"
+                            <android.support.design.widget.TextInputEditText
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Male"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                                android:textColor="@color/grey_90" />
+                                android:backgroundTint="@color/colorAccentBlack"
+                                android:hint="Phone Number"
+                                android:inputType="phone"
+                                android:maxLines="1"
+                                android:singleLine="true"
+                                android:id="@+id/signupfootnum"
+                                android:text=""
+                                android:textColor="@color/colorAccentBlack" >
 
-                        </RadioGroup>
 
+                            </android.support.design.widget.TextInputEditText>
+
+                        </LinearLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            app:hintTextAppearance="@color/colorPrimary"
+                            android:layout_height="wrap_content">
+                            <EditText
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Password"
+                                android:backgroundTint="@color/colorAccentBlack"
+                                android:id="@+id/signuppass"
+                                android:textColor="@color/colorAccentBlack"
+                                android:inputType="textPassword"
+                                android:maxLines="1"
+                                android:singleLine="true" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            app:hintTextAppearance="@color/colorPrimary"
+                            android:layout_marginBottom="20sp"
+                            android:layout_height="wrap_content">
+
+                            <EditText
+                                android:id="@+id/signupretypepass"
+                                android:layout_width="match_parent"
+                                android:backgroundTint="@color/colorAccentBlack"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorAccentBlack"
+                                android:hint="Re-type Password"
+                                android:inputType="textPassword"
+                                android:maxLines="1"
+                                android:singleLine="true" />
+
+                        </android.support.design.widget.TextInputLayout>
+
+                        <Button
+                            android:id="@+id/email_sign_in_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_large"
+                            android:backgroundTint="@color/blue_300"
+                            android:background="@drawable/btn_rounded_accent"
+                            android:text="REGISTER"
+                            android:textColor="@android:color/white" />
                     </LinearLayout>
 
-                    <Button
-                        android:id="@+id/email_sign_in_button"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_large"
-                        android:background="@drawable/btn_rounded_accent"
-                        android:text="REGISTER"
-                        android:textColor="@android:color/white" />
+                </RelativeLayout>
 
+            </ScrollView>
 
-                    <Button
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/btn_rounded_primary"
-                        android:text="REGISTER WITH FACEBOOK"
-                        android:textColor="@android:color/white" />
-
-                </LinearLayout>
-
-            </RelativeLayout>
-
-        </ScrollView>
+        </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

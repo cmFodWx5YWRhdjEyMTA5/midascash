@@ -35,11 +35,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskExecutors;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -90,6 +92,18 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class generator {
     public static int issignedin=0;
+
+    public static int activitychecker=0;
+
+    public static GoogleSignInAccount acct = null;
+
+    //Google sign in data
+
+
+    //Firebase Phone AUTHentication data
+    public static PhoneAuthProvider.ForceResendingToken token = null;
+    public static String verificationid = null;
+
 
     private static AlertDialog dialog;
     private static AlertDialog dialogaccount;
