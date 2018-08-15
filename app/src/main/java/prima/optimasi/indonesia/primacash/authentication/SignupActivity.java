@@ -69,11 +69,13 @@ public class SignupActivity extends AppCompatActivity {
 
         username = findViewById(R.id.signupusername);
         email = findViewById(R.id.signupemail);
-        password = findViewById(R.id.signupfullname);
+        password = findViewById(R.id.signuppass);
         retype = findViewById(R.id.signupretypepass);
         fullname = findViewById(R.id.signupfullname);
         phonenumberhead = findViewById(R.id.signupheadnum);
+        phonenumberhead.setVisibility(View.GONE);
         phonenumberfoot = findViewById(R.id.signupfootnum);
+        phonenumberfoot.setVisibility(View.GONE);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -105,7 +107,7 @@ public class SignupActivity extends AppCompatActivity {
                                     phonenumberhead.setError("Please Check Your Phone Number Prefix");
                                 }
                                 else {
-                                    if(phonenumberfoot.getText().toString().equals("")){
+                                    /*if(phonenumberfoot.getText().toString().equals("")){
                                         phonenumberfoot.setError("Please Check Your Phone Number");
                                     }
                                     else {
@@ -113,34 +115,99 @@ public class SignupActivity extends AppCompatActivity {
                                             phonenumberfoot.setError("Your Phone Number is too short");
                                         }
                                         else {
-                                            if(password.length()<8){
-                                                password.setError("Password Too Short");
+
+                                        }
+                                    }*/
+
+                                    if(password.length()<8){
+                                        password.setError("Password Too Short");
+                                    }
+                                    else {
+                                        if(isvalidpassword(password.getText().toString())){
+                                            if(retype.getText().toString().equals(password.getText().toString())){
+
+                                                dialog = new ProgressDialog(SignupActivity.this,R.style.AppCompatAlertDialogStyle);
+                                                dialog.setTitle("Please Wait");
+                                                dialog.setMessage("Signing Up...");
+                                                dialog.setCancelable(false);
+                                                dialog.show();
+
+
+                                                mAuth.createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
+                                                        .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    // Sign in success, update UI with the signed-in user's information
+                                                                    Log.d(TAG, "createUserWithEmail:success");
+                                                                    FirebaseUser user = mAuth.getCurrentUser();
+
+                                                                    Map<String, Object> data = new HashMap<>();
+                                                                    data.put("fullname", fullname.getText().toString());
+                                                                    data.put("username", username.getText().toString());
+                                                                    //data.put("phonehead", phonenumberhead.getText().toString());
+                                                                    data.put("email", email.getText().toString());
+                                                                    //data.put("phonefoot", phonenumberfoot.getText().toString());
+
+                                                                    db.collection(user.getUid()).document("identification")
+                                                                            .set(data)
+                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                @Override
+                                                                                public void onSuccess(Void aVoid) {
+                                                                                    Log.d(TAG, "DocumentSnapshot successfully written!");
+                                                                                    generator.activitychecker = 1;
+
+                                                                                    if(dialog.isShowing())
+                                                                                        dialog.dismiss();
+
+                                                                                    setResult(RESULT_OK);
+
+                                                                                    finish();
+                                                                                }
+                                                                            })
+                                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                                @Override
+                                                                                public void onFailure(@NonNull Exception e) {
+                                                                                    Log.w(TAG, "Error writing document", e);
+                                                                                }
+                                                                            });
+
+                                                                    Snackbar.make(findViewById(R.id.coordinatorsignup), "Authentication Success, Registering Data.", Snackbar.LENGTH_LONG).show();
+                                                                    user.getUid();
+
+                                                                    //updateUI(user);
+                                                                } else {
+                                                                    // If sign in fails, display a message to the user.
+                                                                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                                                    Snackbar.make(findViewById(R.id.coordinatorsignup), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
+                                                                    //updateUI(null);
+                                                                }
+
+                                                                // ...
+                                                            }
+                                                        });
+
+
+                                                //Intent verify = new Intent(SignupActivity.this,VerificationHeader.class);
+                                                //Bundle extras = new Bundle();
+                                                //extras.putString("username", username.getText().toString());
+                                                //extras.putString("fullname",fullname.getText().toString());
+                                                //extras.putString("email",email.getText().toString());
+                                                //extras.putString("phonehead",phonenumberhead.getText().toString());
+                                                //extras.putString("phonefoot",phonenumberfoot.getText().toString());
+                                                //extras.putString("password",password.getText().toString());
+                                                //extras.putInt("verify",0);
+                                                //verify.putExtras(extras);
+                                                //startActivityForResult(verify,VERIFCATION_RESULT);
+
+
                                             }
                                             else {
-                                                if(isvalidpassword(password.getText().toString())){
-                                                    if(retype.getText().toString().equals(password.getText().toString())){
-
-                                                        Intent verify = new Intent(SignupActivity.this,VerificationHeader.class);
-                                                        Bundle extras = verify.getExtras();
-                                                        extras.putString("username", username.getText().toString());
-                                                        extras.putString("fullname",fullname.getText().toString());
-                                                        extras.putString("email",email.getText().toString());
-                                                        extras.putString("phonehead",phonenumberhead.getText().toString());
-                                                        extras.putString("phonefoot",phonenumberfoot.getText().toString());
-                                                        extras.putString("password",password.getText().toString());
-                                                        verify.putExtras(extras);
-                                                        startActivityForResult(verify,VERIFCATION_RESULT);
-
-
-                                                    }
-                                                    else {
-                                                        password.setError("Password Doesn't Match");
-                                                        retype.setError("Password Doesn't Match");
-                                                    }
-                                                }else {
-                                                    password.setError("Password must be at least 8 character with Alphanumeric combination");
-                                                }
+                                                password.setError("Password Doesn't Match");
+                                                retype.setError("Password Doesn't Match");
                                             }
+                                        }else {
+                                            password.setError("Password must be at least 8 character with Alphanumeric combination");
                                         }
                                     }
                                 }

@@ -191,6 +191,8 @@ public class LoginActivity extends AppCompatActivity {
 
         if (requestCode == SIGN_UP && resultCode == RESULT_OK) {
             this.finish();
+            setResult(RESULT_OK);
+
         }else  if(requestCode == SIGN_UP && resultCode != RESULT_OK){
 
         }
@@ -282,6 +284,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         generator.acct = null ;
+        setResult(RESULT_CANCELED);
     }
 
 }

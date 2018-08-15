@@ -73,7 +73,10 @@ public class VerificationHeader extends AppCompatActivity {
         fullname = intent.getString("fullname","");
 
         headnum = findViewById(R.id.verifyheadnum);
-        footnum = findViewById(R.id.verifyheadnum);
+        footnum = findViewById(R.id.verifyfootnum);
+
+        headnum.setText(phonehead);
+        footnum.setText(phonefoot);
 
         PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
@@ -92,56 +95,6 @@ public class VerificationHeader extends AppCompatActivity {
                 dialog.setMessage("Signing Up...");
                 dialog.setCancelable(false);
 
-                mAuth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(VerificationHeader.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    Log.d(TAG, "createUserWithEmail:success");
-                                    FirebaseUser user = mAuth.getCurrentUser();
-
-                                    Map<String, Object> data = new HashMap<>();
-                                    data.put("fullname", fullname);
-                                    data.put("username", username);
-                                    data.put("phonehead", phonehead);
-                                    data.put("email", email);
-                                    data.put("phonefoot", phonefoot);
-
-                                    db.collection(user.getUid()).document("identification")
-                                            .set(data)
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    Log.d(TAG, "DocumentSnapshot successfully written!");
-                                                    generator.activitychecker = 1;
-
-                                                    setResult(RESULT_OK);
-
-                                                    finish();
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Log.w(TAG, "Error writing document", e);
-                                                }
-                                            });
-
-                                    Snackbar.make(findViewById(R.id.coordinatorsignup), "Authentication Success, Registering Data.", Snackbar.LENGTH_LONG).show();
-                                    user.getUid();
-
-                                    //updateUI(user);
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                    Snackbar.make(findViewById(R.id.coordinatorsignup), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
-                                    //updateUI(null);
-                                }
-
-                                // ...
-                            }
-                        });
 
                 //signInWithPhoneAuthCredential(credential);
             }

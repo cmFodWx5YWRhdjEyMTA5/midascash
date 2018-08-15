@@ -529,7 +529,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_signin) {
             Intent login = new Intent(MainActivity.this,LoginActivity.class);
-            startActivity(login);
+            startActivityForResult(login,5);
         } else if (id == R.id.nav_supervisor) {
             Intent a = new Intent(MainActivity.this, main_administrator.class);
             startActivity(a);
@@ -2404,5 +2404,20 @@ public class MainActivity extends AppCompatActivity
 
     private void updateUIgoogle(GoogleSignInAccount dataauth){
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 5 && resultCode == RESULT_OK) {
+            Intent a = new Intent(MainActivity.this,MainActivity.class);
+            startActivity(a);
+            this.finish();
+
+        }else  if(requestCode == 5 && resultCode != RESULT_OK){
+
+
+        }
     }
 }
