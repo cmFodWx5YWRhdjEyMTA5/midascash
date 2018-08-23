@@ -1,5 +1,7 @@
 package prima.optimasi.indonesia.primacash.objects;
 
+import org.joda.time.DateTime;
+
 import java.util.Date;
 
 /**
@@ -9,7 +11,7 @@ import java.util.Date;
 public class category {
     String category_name,username;
     int category_image;
-    Object category_createdate;
+    Date category_createdate;
     int category_status;
 
     public category(){

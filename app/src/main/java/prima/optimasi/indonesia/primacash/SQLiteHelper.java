@@ -23,6 +23,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     private static final String LOG = "DatabaseHelper";
 
+
+    Calendar cal = Calendar.getInstance();
     // Database Version
     private static final int DATABASE_VERSION = 1;
 
@@ -34,6 +36,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String TABLE_CATEGORY = "category";
     private static final String TABLE_COST = "cost";
     private static final String TABLE_EXPENSE = "expense";
+    private static final String TABLE_TRANSFER = "transfer";
     private static final String TABLE_INCOME = "income";
     private static final String TABLE_LOG = "log";
     private static final String TABLE_REMINDER = "reminder";
@@ -43,10 +46,23 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     // account
 
+    String account_name;
+    String account_category;
+    String account_currency;
+    String fullaccount_currency;
+    Object account_createdate;
+    String account_balance;
+    String account_balance_current;
+    String username;
+    int account_status;
+    int createorlast;
+
     private static final String KEY_ACCOUNT_NAME = "account_name";
     private static final String KEY_ACCOUNT_CATEGORY = "account_category";
     private static final String KEY_ACCOUNT_CREATEDATE = "account_createdate";
+    private static final String KEY_ACCOUNT_createorlast = "account_createorlast";
     private static final String KEY_ACCOUNT_BALANCE = "account_balance";
+    private static final String KEY_ACCOUNT_BALANCE_CURRENT = "account_balance_current";
     private static final String KEY_ACCOUNT_STATUS = "account_status";
     private static final String KEY_ACCOUNT_CURRENCY = "account_currency";
     private static final String KEY_ACCOUNT_FULLCURRENCY = "fullaccount_curency";
@@ -79,6 +95,20 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String KEY_EXPENSE_TYPE = "expense_type";
     private static final String KEY_EXPENSE_NOTES = "expense_notes";
     private static final String KEY_EXPENSE_AMOUNT = "expense_amount";
+    private static final String KEY_EXPENSE_CATEGORY = "expense_category";
+
+    //transfer
+
+    private static final String KEY_TRANSFER_ACCOUNT = "transfer_account";
+    private static final String KEY_TRANSFER_TO = "transfer_to";
+    private static final String KEY_TRANSFER_CREATEDATE = "transfer_createdate";
+    private static final String KEY_TRANSFER_IMAGE = "transfer_image";
+    private static final String KEY_TRANSFER_DATE = "transfer_date";
+    private static final String KEY_TRANSFER_ID = "transfer_id";
+    private static final String KEY_TRANSFER_TYPE = "transfer_type";
+    private static final String KEY_TRANSFER_NOTES = "transfer_notes";
+    private static final String KEY_TRANSFER_AMOUNT = "transfer_amount";
+    private static final String KEY_TRANSFER_CATEGORY = "transfer_category";
 
     //income
 
@@ -91,6 +121,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String KEY_INCOME_TYPE = "income_type";
     private static final String KEY_INCOME_NOTES = "income_notes";
     private static final String KEY_INCOME_AMOUNT = "income_amount";
+    private static final String KEY_INCOME_CATEGORY = "expense_category";
 
     //log
 
@@ -132,6 +163,12 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             + KEY_EXPENSE_ID + " TEXT," + KEY_EXPENSE_NOTES + " TEXT," +KEY_EXPENSE_TYPE+ " TEXT,"+ KEY_EXPENSE_DATE
             + " DATETIME,"+ KEY_EXPENSE_IMAGE + " TEXT," + KEY_EXPENSE_TO + " TEXT," + KEY_EXPENSE_ACCOUNT + " TEXT" +")";
 
+    private static final String CREATE_TABLE_TRANSFER ="CREATE TABLE "
+            + TABLE_TRANSFER + "(" + KEY_USERNAME + " TEXT,"
+            + KEY_TRANSFER_CREATEDATE+ " DATETIME," + KEY_TRANSFER_AMOUNT + " REAL,"
+            + KEY_TRANSFER_ID + " TEXT," + KEY_TRANSFER_NOTES + " TEXT," +KEY_TRANSFER_TYPE+ " TEXT,"+ KEY_TRANSFER_DATE
+            + " DATETIME,"+ KEY_TRANSFER_IMAGE + " TEXT," + KEY_TRANSFER_TO + " TEXT," + KEY_TRANSFER_ACCOUNT + " TEXT" +")";
+
     private static final String CREATE_TABLE_INCOME="CREATE TABLE "
             + TABLE_INCOME + "(" + KEY_USERNAME + " TEXT,"
             + KEY_INCOME_CREATEDATE+ " DATETIME," + KEY_INCOME_AMOUNT + " REAL,"
@@ -163,6 +200,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_INCOME);
         db.execSQL(CREATE_TABLE_EXPENSE);
         db.execSQL(CREATE_TABLE_REMINDER);
+        db.execSQL(CREATE_TABLE_TRANSFER);
         db.execSQL(CREATE_TABLE_LOG);
 
     }
@@ -175,6 +213,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " +TABLE_COST);
         db.execSQL("DROP TABLE IF EXISTS " +TABLE_INCOME);
         db.execSQL("DROP TABLE IF EXISTS " +TABLE_EXPENSE);
+        db.execSQL("DROP TABLE IF EXISTS " +TABLE_TRANSFER);
         db.execSQL("DROP TABLE IF EXISTS " +TABLE_REMINDER);
         db.execSQL("DROP TABLE IF EXISTS " +TABLE_LOG);
 
@@ -201,10 +240,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         Date c = Calendar.getInstance().getTime();
         System.out.println("Current time => " + c);
 
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String formattedDate = df.format(c);
-
-        values.put(KEY_ACCOUNT_CREATEDATE, formattedDate);
+        values.put(KEY_ACCOUNT_CREATEDATE, cal.getTimeInMillis());
         values.put(KEY_ACCOUNT_NAME,accs.getAccount_name());
         values.put(KEY_USERNAME,user);
 
