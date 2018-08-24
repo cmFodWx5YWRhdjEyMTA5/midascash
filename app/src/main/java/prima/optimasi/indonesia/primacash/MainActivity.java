@@ -765,7 +765,12 @@ public class MainActivity extends AppCompatActivity
 
                         List<String> spinneritem = new ArrayList<String>();
                         spinneritem.add("Select One");
-                        db.collection("category")
+
+                        List<category> allcat = dbase.getAllcategory();
+                        for (int a=0;a<allcat.size();a++){
+                            spinneritem.add(allcat.get(a).getCategory_name());
+                        }
+                        /*db.collection("category")
                                 .get()
                                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                     @Override
@@ -782,7 +787,7 @@ public class MainActivity extends AppCompatActivity
 
                                     }
                                 });
-
+*/
                         //translatedcategory.add(allcategory.get(i).getCategory_name()+allcategory.get(i).getCategory_image());
 
                         tempcurrencycode[0]="IDR";
@@ -838,6 +843,7 @@ public class MainActivity extends AppCompatActivity
                                                 if (accountbalance.getText().toString().equals("")) {
                                                     Toast.makeText(MainActivity.this, "Account Balance default 0", Toast.LENGTH_SHORT).show();
                                                 } else {
+                                                    /*
                                                     Toast.makeText(MainActivity.this,"Please Wait",Toast.LENGTH_SHORT).show();
                                                     final int[] statuscode = {0};
                                                     db.collection("account")
@@ -910,6 +916,8 @@ public class MainActivity extends AppCompatActivity
                                                             }
                                                         }
                                                     });
+
+                                                    */
                                                 }
                                         }
                                     }

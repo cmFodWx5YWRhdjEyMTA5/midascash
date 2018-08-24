@@ -441,6 +441,26 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return todo_id;
     }
 
+    public int updatecategory(String oldcat,category newcat,String user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_CATEGORY_STATUS, newcat.getCategory_status());
+        values.put(KEY_CATEGORY_IMAGE, newcat.getCategory_image());
+        values.put(KEY_CATEGORY_NAME, newcat.getCategory_name());
+
+        Date c = Calendar.getInstance().getTime();
+        System.out.println("Current time => " + c);
+
+        values.put(KEY_CATEGORY_CREATEDATE, Calendar.getInstance().getTimeInMillis());
+        values.put(KEY_USERNAME,user);
+
+
+        // updating row
+        return db.update(TABLE_CATEGORY, values, KEY_CATEGORY_NAME + " = ?",
+                new String[]{oldcat});
+    }
+
     public category getcategory(String categoryname) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -523,30 +543,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return count;
     }
 
-    /**
-     * Updating a todo
-     */
-    public int updatecategory(category accs,String catname,String user) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(KEY_CATEGORY_STATUS, accs.getCategory_status());
-
-        Date c = Calendar.getInstance().getTime();
-        System.out.println("Current time => " + c);
-
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String formattedDate = df.format(c);
-
-        values.put(KEY_CATEGORY_CREATEDATE, formattedDate);
-        values.put(KEY_CATEGORY_NAME,accs.getCategory_name());
-        values.put(KEY_CATEGORY_IMAGE,accs.getCategory_image());
-        values.put(KEY_USERNAME,user);
-
-        // updating row
-        return db.update(TABLE_CATEGORY, values, KEY_CATEGORY_NAME + " = ?",
-                new String[] { catname });
-    }
 
     /**
      * Deleting a todo

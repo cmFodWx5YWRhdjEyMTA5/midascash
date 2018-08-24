@@ -331,6 +331,7 @@ public class categorylist extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int position) {
                             if(position==0) {
+                                //edit
                                 String temp="";
                                 String tempcategory="";
                                 final String tempword=finalHolder.textView.getText().toString();
@@ -393,19 +394,35 @@ public class categorylist extends AppCompatActivity {
                                                             Toast.makeText(categorylist.this,"Please Select a Picture",Toast.LENGTH_SHORT).show();
                                                         }
                                                         else {
-                                                            Date c = Calendar.getInstance().getTime();
+                                                            prima.optimasi.indonesia.primacash.objects.category check = dbase.getcategory(categoryname.getText().toString());
 
-                                                            Map<String, Object> categorymap = new HashMap<>();
-                                                            categorymap.put("category_name", categoryname.getText().toString());
-                                                            categorymap.put("category_image", selected.getTag());
+                                                            if(check!=null && !check.getCategory_name().equals("")){
+                                                                Toast.makeText(categorylist.this, categoryname.getText().toString() + " is Already Registered", Toast.LENGTH_SHORT).show();
 
-                                                            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                                            String formattedDate = df.format(c);
+                                                            }
+                                                            else {
+                                                                check = new prima.optimasi.indonesia.primacash.objects.category();
+                                                                check.setCategory_image((Integer) selected.getTag());
+                                                                check.setCategory_status(1);
+                                                                check.setCategory_name(categoryname.getText().toString());
 
-                                                            categorymap.put("category_createdate", finalHolder.categorycreatedate);
-                                                            categorymap.put("category_editedate", formattedDate);
-                                                            categorymap.put("category_status",1);
-                                                            categorymap.put("username",generator.userlogin);
+                                                                int a  = dbase.updatecategory(finalHolder.textView.getText().toString(),check,generator.userlogin);
+
+                                                                if(a>0){
+                                                                    dialog1.dismiss();
+                                                                    Toast.makeText(categorylist.this, "Category "+finalHolder.textView.getText().toString()+" Edited to "+ categoryname.getText().toString(), Toast.LENGTH_SHORT).show();
+                                                                    reloaddata();
+                                                                    if(adapter!=null){
+                                                                        adapter.notifyDataSetChanged();
+                                                                    }
+                                                                }
+                                                                else {
+                                                                    Toast.makeText(categorylist.this, "Error Occured", Toast.LENGTH_SHORT).show();
+
+                                                                }
+
+                                                            }
+
 
                                                          /*   fdb.collection("category").document(finalHolder1.hiddentextView.getText().toString())
                                                                     .set(categorymap)
@@ -498,8 +515,6 @@ public class categorylist extends AppCompatActivity {
                                                             //Intent reload = new Intent(categorylist.this,categorylist.class);
                                                             //startActivity(reload);
                                                             //finish();
-                                                            dialog1.dismiss();
-                                                            Toast.makeText(categorylist.this, "Category Edited", Toast.LENGTH_SHORT).show();
                                                         }
                                                     }
                                                 }
@@ -520,6 +535,17 @@ public class categorylist extends AppCompatActivity {
                                         String finalTempcategory="";
                                         finalTempcategory = finalHolder.textView.getText().toString();;
                                         String finalTempcategory1 = finalTempcategory;
+
+                                        dbase.deletecategory(finalHolder.textView.getText().toString());
+
+                                        dialog.dismiss();
+                                            Toast.makeText(categorylist.this, "Category "+finalHolder.textView.getText().toString()+" Deleted", Toast.LENGTH_SHORT).show();
+                                            reloaddata();
+                                            if(adapter!=null){
+                                                adapter.notifyDataSetChanged();
+                                            }
+
+                                        /*
                                         fdb.collection("category").document(finalHolder.hiddentextView.getText().toString())
                                                 .delete()
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -568,6 +594,8 @@ public class categorylist extends AppCompatActivity {
                                                         // final String date = df.format(Calendar.getInstance().getTime());
                                                         // editor.putString("dateprocess",date);
                                                         //  editor.apply();
+
+                                                        //delete
                                                         fdb.collection("expense")
                                                                 .whereEqualTo("expense_category", finalTempcategory1)
                                                                 .get()
@@ -604,8 +632,7 @@ public class categorylist extends AppCompatActivity {
                                                         Log.w("Error delete", "Error deleting document", e);
                                                     }
                                                 });
-
-                                        dialog.dismiss();
+*/
                                     }
                                 });
                                 alerts.setNegativeButton("No", new DialogInterface.OnClickListener() {
