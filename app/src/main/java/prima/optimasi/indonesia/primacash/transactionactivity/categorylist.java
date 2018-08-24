@@ -35,6 +35,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -48,6 +50,7 @@ import prima.optimasi.indonesia.primacash.MainActivity;
 import prima.optimasi.indonesia.primacash.R;
 import prima.optimasi.indonesia.primacash.SQLiteHelper;
 import prima.optimasi.indonesia.primacash.generator;
+import prima.optimasi.indonesia.primacash.objects.category;
 import prima.optimasi.indonesia.primacash.recycleview.adapterviewcategory;
 
 /**
@@ -56,9 +59,11 @@ import prima.optimasi.indonesia.primacash.recycleview.adapterviewcategory;
 
 public class categorylist extends AppCompatActivity {
 
-    SQLiteHelper db;
+    SQLiteHelper dbase;
 
     ListView categorylist;
+
+    Calendar calendar = Calendar.getInstance();
 
     FirebaseFirestore fdb;
 
@@ -80,10 +85,33 @@ public class categorylist extends AppCompatActivity {
 
         categorylist = findViewById(R.id.lvcategory);
 
-        db = new SQLiteHelper(categorylist.this);
+        dbase = new SQLiteHelper(categorylist.this);
         values = new ArrayList<MyListObject>();
 
-        loaddata();
+        List<category> total = dbase.getAllcategory();
+
+
+
+
+        for(int i=0;i<total.size();i++){
+
+            MyListObject b = new MyListObject();
+            b.setCategoryname(total.get(i).getCategory_name());
+            b.setImage(total.get(i).getCategory_image());
+
+            calendar.setTime((Date) total.get(i).getCategory_createdate());
+
+            b.setCreatedate(calendar.getTime());
+            values.add(b);
+
+        }
+        adapter = new MySimpleArrayAdapter(categorylist.this, R.layout.row_layout_category, values);
+        if (categorylist.getAdapter()==null){
+            categorylist.setAdapter(adapter);
+        }
+        if(generator.adapter!=null){
+            generator.adapter.notifyDataSetChanged();
+        }
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -144,8 +172,27 @@ public class categorylist extends AppCompatActivity {
                                     if (Integer.parseInt(selected.getTag().toString()) == 0) {
                                         Toast.makeText(categorylist.this,"Please Select Picture",Toast.LENGTH_SHORT).show();
                                     } else {
+                                        prima.optimasi.indonesia.primacash.objects.category check = dbase.getcategory(categoryname.getText().toString());
 
-                                        final int[] statuscode = {0};
+                                        if(check!=null && !check.getCategory_name().equals("")){
+                                            Toast.makeText(categorylist.this, categoryname.getText().toString() + " is Already Registered", Toast.LENGTH_SHORT).show();
+
+                                        }
+                                        else {
+                                            check = new prima.optimasi.indonesia.primacash.objects.category();
+                                            check.setCategory_image((Integer) selected.getTag());
+                                            check.setCategory_status(1);
+                                            check.setCategory_name(categoryname.getText().toString());
+
+                                            dbase.createCategory(check,generator.userlogin);
+                                            dialog1.dismiss();
+                                            Toast.makeText(categorylist.this, "New Category Saved", Toast.LENGTH_SHORT).show();
+                                            reloaddata();
+                                            if(adapter!=null){
+                                                adapter.notifyDataSetChanged();
+                                            }
+                                        }
+                                        /*final int[] statuscode = {0};
                                         Log.e("selected", "2");
                                         Toast.makeText(categorylist.this,"Please Wait",Toast.LENGTH_SHORT).show();
                                         fdb.collection("category")
@@ -206,7 +253,7 @@ public class categorylist extends AppCompatActivity {
                                                         }
                                                     }
                                                 });
-
+*/
                                     }
                                 }
 
@@ -255,7 +302,13 @@ public class categorylist extends AppCompatActivity {
             holder.textView = (TextView) convertView.findViewById(R.id.categorynameitem);
             holder.imageView =  convertView.findViewById(R.id.categoryitemimage);
             holder.hiddentextView =  convertView.findViewById(R.id.categorydatadocument);
-            holder.categorycreatedate = rowItem.getCreatedate();
+
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+            Date startDate = rowItem.getCreatedate();
+            String newDateString = df.format(startDate);
+            System.out.println(newDateString);
+
+            holder.categorycreatedate = newDateString ;
 
 
             holder.textView.setText(rowItem.getCategoryitem());
@@ -354,7 +407,7 @@ public class categorylist extends AppCompatActivity {
                                                             categorymap.put("category_status",1);
                                                             categorymap.put("username",generator.userlogin);
 
-                                                            fdb.collection("category").document(finalHolder1.hiddentextView.getText().toString())
+                                                         /*   fdb.collection("category").document(finalHolder1.hiddentextView.getText().toString())
                                                                     .set(categorymap)
                                                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                         @Override
@@ -438,7 +491,7 @@ public class categorylist extends AppCompatActivity {
                                                                         }
                                                                     });
 
-
+*/
                                                             //db.deletecategory(finalHolder.textView.getText().toString());
                                                             //db.createCategory(new category(categoryname.getText().toString(), Integer.parseInt(selected.getTag().toString()), generator.userlogin, c, 1), generator.userlogin);
 
@@ -540,6 +593,9 @@ public class categorylist extends AppCompatActivity {
 
                                                         Log.e("Finish delete", "DocumentSnapshot successfully deleted!");
                                                         reloaddata();
+                                                        if(adapter!=null){
+                                                            adapter.notifyDataSetChanged();
+                                                        }
                                                     }
                                                 })
                                                 .addOnFailureListener(new OnFailureListener() {
@@ -593,7 +649,7 @@ public class categorylist extends AppCompatActivity {
         private int image;
         private String country;
         private String hiddendata;
-        private String createdate;
+        private Date createdate;
 
         public int getImage() {
             return image;
@@ -627,11 +683,11 @@ public class categorylist extends AppCompatActivity {
             this.hiddendata = hiddendata;
         }
 
-        public String getCreatedate() {
+        public Date getCreatedate() {
             return createdate;
         }
 
-        public void setCreatedate(String createdate) {
+        public void setCreatedate(Date createdate) {
             this.createdate = createdate;
         }
     }
@@ -743,7 +799,10 @@ public class categorylist extends AppCompatActivity {
     */
     }
     private void loaddata(){
-        fdb.collection("category")
+
+
+
+    /*    fdb.collection("category")
                 .orderBy("category_name", Query.Direction.ASCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -778,10 +837,39 @@ public class categorylist extends AppCompatActivity {
                         }
                     }
                 });
-
+*/
     }
     private void reloaddata(){
-        fdb.collection("category")
+
+        values.clear();
+        adapter.notifyDataSetChanged();
+
+        List<category> total = dbase.getAllcategory();
+
+
+
+
+        for(int i=0;i<total.size();i++){
+
+            MyListObject b = new MyListObject();
+            b.setCategoryname(total.get(i).getCategory_name());
+            b.setImage(total.get(i).getCategory_image());
+
+            calendar.setTime((Date) total.get(i).getCategory_createdate());
+
+            b.setCreatedate(calendar.getTime());
+            values.add(b);
+
+
+        }
+        adapter.notifyDataSetChanged();
+
+
+        if(generator.adapter!=null){
+            generator.adapter.notifyDataSetChanged();
+        }
+
+        /*fdb.collection("category")
                 .orderBy("category_name", Query.Direction.ASCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -812,7 +900,7 @@ public class categorylist extends AppCompatActivity {
                         }
                     }
                 });
-
+*/
     }
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

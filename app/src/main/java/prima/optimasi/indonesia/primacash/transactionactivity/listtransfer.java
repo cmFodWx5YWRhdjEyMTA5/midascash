@@ -60,6 +60,7 @@ import java.util.Map;
 
 import prima.optimasi.indonesia.primacash.MainActivity;
 import prima.optimasi.indonesia.primacash.R;
+import prima.optimasi.indonesia.primacash.commaedittext;
 import prima.optimasi.indonesia.primacash.formula.calculatordialog;
 import prima.optimasi.indonesia.primacash.generator;
 import prima.optimasi.indonesia.primacash.objects.income;
@@ -270,8 +271,8 @@ public class listtransfer extends AppCompatActivity{
                                     Double temprate= generator.makedouble(holder.trfrate.getText().toString().replace(",",""));
                                     Double temptrf = generator.makedouble(holder.trfvalue.getText().toString().replace(",",""));
 
-                                    inputrate.addTextChangedListener(new com.fake.shopee.shopeefake.formula.commaedittext(inputrate));
-                                    trfvalue.addTextChangedListener(new com.fake.shopee.shopeefake.formula.commaedittext(trfvalue));
+                                    inputrate.addTextChangedListener(new commaedittext(inputrate));
+                                    trfvalue.addTextChangedListener(new commaedittext(trfvalue));
 
                                     ImageView calc = layout.findViewById(R.id.transcalc);
 

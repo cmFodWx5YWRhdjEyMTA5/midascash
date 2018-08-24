@@ -65,6 +65,7 @@ import java.util.Map;
 import prima.optimasi.indonesia.primacash.MainActivity;
 import prima.optimasi.indonesia.primacash.R;
 import prima.optimasi.indonesia.primacash.SQLiteHelper;
+import prima.optimasi.indonesia.primacash.commaedittext;
 import prima.optimasi.indonesia.primacash.extramenuactivity.accountsstatistic;
 import prima.optimasi.indonesia.primacash.extramenuactivity.accounttransactions;
 import prima.optimasi.indonesia.primacash.formula.calculatordialog;
@@ -165,7 +166,7 @@ public class accountlist extends AppCompatActivity{
             final EditText accountname = dialogView.findViewById(R.id.account_name);
             final EditText accountbalance = dialogView.findViewById(R.id.account_balance);
 
-            accountbalance.addTextChangedListener(new com.fake.shopee.shopeefake.formula.commaedittext(accountbalance));
+            accountbalance.addTextChangedListener(new commaedittext(accountbalance));
 
             final Spinner accountcategory = dialogView.findViewById(R.id.account_category);
 
@@ -557,7 +558,7 @@ public class accountlist extends AppCompatActivity{
                                             final EditText accountbalance = dialogView.findViewById(R.id.account_balance);
                                             accountbalance.setText(formatter.format(Double.parseDouble(thisaccount[0].getAccount_balance())));
 
-                                            accountbalance.addTextChangedListener(new com.fake.shopee.shopeefake.formula.commaedittext(accountbalance));
+                                            accountbalance.addTextChangedListener(new commaedittext(accountbalance));
 
                                             final Spinner accountcategory = dialogView.findViewById(R.id.account_category);
 

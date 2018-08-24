@@ -25,7 +25,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fake.shopee.shopeefake.formula.commaedittext;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -46,6 +45,7 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import prima.optimasi.indonesia.primacash.R;
+import prima.optimasi.indonesia.primacash.commaedittext;
 import prima.optimasi.indonesia.primacash.formula.calculatordialog;
 import prima.optimasi.indonesia.primacash.generator;
 

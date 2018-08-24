@@ -41,7 +41,6 @@ import android.widget.Toast;
 import io.realm.Realm;
 
 
-import com.fake.shopee.shopeefake.formula.commaedittext;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -82,6 +81,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import prima.optimasi.indonesia.primacash.administrator.main_administrator;
 import prima.optimasi.indonesia.primacash.authentication.LoginActivity;
 import prima.optimasi.indonesia.primacash.listview.categorylistview;
+import prima.optimasi.indonesia.primacash.objects.category;
 import prima.optimasi.indonesia.primacash.recycleview.adapterviewcategory;
 import prima.optimasi.indonesia.primacash.recycleview.mainactivityviews;
 import prima.optimasi.indonesia.primacash.reports.chartofbalance.chartofbalance;
@@ -122,6 +122,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        dbase = new SQLiteHelper(this);
 
         account = GoogleSignIn.getLastSignedInAccount(this);
 
@@ -646,10 +648,27 @@ public class MainActivity extends AppCompatActivity
                                             Toast.makeText(MainActivity.this,"Please Select Picture",Toast.LENGTH_SHORT).show();
                                         } else {
 
-                                            final int[] statuscode = {0};
-                                            Log.e("selected", "2");
-                                            Toast.makeText(MainActivity.this,"Please Wait",Toast.LENGTH_SHORT).show();
-                                            db.collection("category")
+
+
+                                            prima.optimasi.indonesia.primacash.objects.category check = dbase.getcategory(categoryname.getText().toString());
+
+                                            if(check!=null && !check.getCategory_name().equals("")){
+                                                Toast.makeText(MainActivity.this, categoryname.getText().toString() + " is Already Registered", Toast.LENGTH_SHORT).show();
+
+                                            }
+                                            else {
+                                                check = new prima.optimasi.indonesia.primacash.objects.category();
+                                                check.setCategory_image((Integer) selected.getTag());
+                                                check.setCategory_status(1);
+                                                check.setCategory_name(categoryname.getText().toString());
+
+                                                dbase.createCategory(check,generator.userlogin);
+
+                                                dialog1.dismiss();
+                                                Toast.makeText(MainActivity.this, "New Category Saved", Toast.LENGTH_SHORT).show();
+                                            }
+
+                                            /*db.collection("category")
                                                     .get()
                                                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                         @Override
@@ -706,7 +725,7 @@ public class MainActivity extends AppCompatActivity
                                                             }
                                                         }
                                                     });
-
+*/
                                         }
                                     }
 

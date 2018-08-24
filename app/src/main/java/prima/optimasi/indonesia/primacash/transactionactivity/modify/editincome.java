@@ -39,6 +39,7 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import prima.optimasi.indonesia.primacash.R;
+import prima.optimasi.indonesia.primacash.commaedittext;
 import prima.optimasi.indonesia.primacash.generator;
 import prima.optimasi.indonesia.primacash.objects.income;
 
@@ -92,7 +93,7 @@ public class editincome extends AppCompatActivity {
 
         inputvalue = layoutitems.findViewById(R.id.input_value);
 
-        inputvalue.addTextChangedListener(new com.fake.shopee.shopeefake.formula.commaedittext(inputvalue));
+        inputvalue.addTextChangedListener(new commaedittext(inputvalue));
 
         incfrom = layoutitems.findViewById(R.id.incfromtxt);
         incnote = layoutitems.findViewById(R.id.incnotetxt);

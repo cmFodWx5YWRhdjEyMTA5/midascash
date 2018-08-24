@@ -432,10 +432,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         Date c = Calendar.getInstance().getTime();
         System.out.println("Current time => " + c);
 
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String formattedDate = df.format(c);
-
-        values.put(KEY_CATEGORY_CREATEDATE, formattedDate);
+        values.put(KEY_CATEGORY_CREATEDATE, Calendar.getInstance().getTimeInMillis());
         values.put(KEY_USERNAME,user);
 
         // insert row
@@ -454,64 +451,64 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         Cursor c = db.rawQuery(selectQuery, null);
 
-        if (c != null)
-            c.moveToFirst();
+        if( c != null && c.moveToFirst() ){
 
-        category td = new category();
-        td.setCategory_name(c.getString(c.getColumnIndex(KEY_CATEGORY_NAME)));
-        td.setCategory_image(c.getInt(c.getColumnIndex(KEY_CATEGORY_IMAGE)));
-        td.setCategory_status(c.getInt(c.getColumnIndex(KEY_CATEGORY_STATUS)));
+            category td = new category();
+            td.setCategory_name(c.getString(c.getColumnIndex(KEY_CATEGORY_NAME)));
+            td.setCategory_image(c.getInt(c.getColumnIndex(KEY_CATEGORY_IMAGE)));
+            td.setCategory_status(c.getInt(c.getColumnIndex(KEY_CATEGORY_STATUS)));
 
-        Date date=null;
-        String dtStart = c.getString(c.getColumnIndex(KEY_CATEGORY_CREATEDATE));
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
-            date = format.parse(dtStart);
-            System.out.println(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
+            Date date = null;
+            String dtStart = c.getString(c.getColumnIndex(KEY_CATEGORY_CREATEDATE));
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            try {
+                date = format.parse(dtStart);
+                System.out.println(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            td.setCategory_createdate(date);
+            return  td;
         }
-
-        td.setCategory_createdate(date);
-
-        return td;
+        else {
+            return null;
+        }
     }
 
     public List<category> getAllcategory() {
-        List<category> todos = new ArrayList<category>();
-        String selectQuery = "SELECT  * FROM " + TABLE_CATEGORY;
+        List<category> allcat = new ArrayList<category>();
+        String selectQuery = "SELECT  * FROM " + TABLE_CATEGORY + " ORDER BY "+KEY_CATEGORY_NAME+" ASC";
 
         Log.e(LOG, selectQuery);
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery, null);
 
+
+        Calendar calender = Calendar.getInstance();
         // looping through all rows and adding to list
-        if (c.moveToFirst()) {
+        if( c != null && c.moveToFirst() ){
             do {
+
                 category td = new category();
                 td.setCategory_name(c.getString(c.getColumnIndex(KEY_CATEGORY_NAME)));
                 td.setCategory_status(c.getInt(c.getColumnIndex(KEY_CATEGORY_STATUS)));
                 td.setCategory_image(c.getInt(c.getColumnIndex(KEY_CATEGORY_IMAGE)));
 
                 Date date=null;
-                String dtStart = c.getString(c.getColumnIndex(KEY_CATEGORY_CREATEDATE));
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                try {
-                    date = format.parse(dtStart);
-                    System.out.println(date);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                calender.setTimeInMillis(c.getColumnIndex(KEY_CATEGORY_CREATEDATE));
+
+                date = calender.getTime() ;
 
                 td.setCategory_createdate(date);
 
                 // adding to todo list
-                todos.add(td);
+                allcat.add(td);
             } while (c.moveToNext());
         }
 
-        return todos;
+        return allcat;
     }
 
     public int getcategoryCount() {

@@ -772,8 +772,8 @@ public class generator {
         trfvalue = layout.findViewById(R.id.input_value);
         allcurrencyselected = layout.findViewById(R.id.allcurrency);
 
-        inputrate.addTextChangedListener(new com.fake.shopee.shopeefake.formula.commaedittext(inputrate));
-        trfvalue.addTextChangedListener(new com.fake.shopee.shopeefake.formula.commaedittext(trfvalue));
+        inputrate.addTextChangedListener(new commaedittext(inputrate));
+        trfvalue.addTextChangedListener(new commaedittext(trfvalue));
 
         ImageView calc = layout.findViewById(R.id.transcalc);
 

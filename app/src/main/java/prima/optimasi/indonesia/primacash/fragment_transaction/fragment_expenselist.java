@@ -46,6 +46,7 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import prima.optimasi.indonesia.primacash.R;
+import prima.optimasi.indonesia.primacash.commaedittext;
 import prima.optimasi.indonesia.primacash.formula.calculatordialog;
 import prima.optimasi.indonesia.primacash.generator;
 
@@ -148,7 +149,7 @@ public class fragment_expenselist extends Fragment {
 
         generator.expamount1 = child.findViewById(R.id.input_value);
         generator.expamount1.setSelected(false);
-        generator.expamount1.addTextChangedListener(new com.fake.shopee.shopeefake.formula.commaedittext(generator.expamount1));
+        generator.expamount1.addTextChangedListener(new commaedittext(generator.expamount1));
 
 
 

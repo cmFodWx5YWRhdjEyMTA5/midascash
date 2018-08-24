@@ -35,6 +35,7 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import prima.optimasi.indonesia.primacash.R;
+import prima.optimasi.indonesia.primacash.commaedittext;
 import prima.optimasi.indonesia.primacash.generator;
 import prima.optimasi.indonesia.primacash.objects.expense;
 
@@ -89,7 +90,7 @@ public class editexpensesch extends AppCompatActivity {
 
         inputvalue = layoutitems.findViewById(R.id.input_value);
 
-        inputvalue.addTextChangedListener(new com.fake.shopee.shopeefake.formula.commaedittext(inputvalue));
+        inputvalue.addTextChangedListener(new commaedittext(inputvalue));
 
         expto= layoutitems.findViewById(R.id.expto);
         expnote = layoutitems.findViewById(R.id.expnote);

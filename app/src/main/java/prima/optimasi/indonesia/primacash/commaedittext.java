@@ -1,4 +1,4 @@
-package com.fake.shopee.shopeefake.formula;
+package prima.optimasi.indonesia.primacash;
 
 /**
  * Created by riandy on 1/14/2018.
