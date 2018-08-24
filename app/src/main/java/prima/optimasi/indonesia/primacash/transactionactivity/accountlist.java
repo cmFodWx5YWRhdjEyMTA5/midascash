@@ -81,6 +81,8 @@ public class accountlist extends AppCompatActivity{
 
     FirebaseFirestore db;
 
+    SQLiteHelper dbase;
+
     RecyclerView accountlist;
 
     List<account> allaccount;
@@ -93,6 +95,7 @@ public class accountlist extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accountlist);
 
+        dbase = new SQLiteHelper(this);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -242,6 +245,37 @@ public class accountlist extends AppCompatActivity{
                                     if (accountbalance.getText().toString().equals("")) {
                                         Toast.makeText(accountlist.this, "Account Balance default 0", Toast.LENGTH_SHORT).show();
                                     } else {
+
+                                        prima.optimasi.indonesia.primacash.objects.account check = dbase.getaccount(accountname.getText().toString());
+
+                                        if(check!=null && !check.getAccount_name().equals("")){
+                                            Toast.makeText(accountlist.this, accountname.getText().toString() + " is Already Registered", Toast.LENGTH_SHORT).show();
+
+                                        }
+                                        else {
+                                            check = new prima.optimasi.indonesia.primacash.objects.account();
+
+                                            check.setAccount_name(accountname.getText().toString());
+                                            if(accountcategory.getSelectedItem().toString().equals("Select One")){
+                                                check.setAccount_category("-");
+                                            }
+                                            else {
+                                                check.setAccount_category(accountcategory.getSelectedItem().toString());
+                                            }
+                                            check.setAccount_balance(accountbalance.getText().toString().replace(",",""));
+                                            check.setAccount_balance_current(accountbalance.getText().toString().replace(",",""));
+                                            check.setAccount_currency(tempcurrencycode[0]);
+                                            check.setFullaccount_currency(currency.getText().toString());
+                                            check.setAccount_status(1);
+
+                                            dbase.createAccount(check,generator.userlogin);
+
+                                            dialog1.dismiss();
+                                            Toast.makeText(accountlist.this, "New Account Saved", Toast.LENGTH_SHORT).show();
+
+                                        }
+                                        /*
+
                                         Toast.makeText(accountlist.this,"Please Wait",Toast.LENGTH_SHORT).show();
                                         final int[] statuscode = {0};
                                         db.collection("account")
@@ -316,6 +350,8 @@ public class accountlist extends AppCompatActivity{
                                                         }
                                                     }
                                                 });
+
+                                        */
                                     }
                             }
                         }
