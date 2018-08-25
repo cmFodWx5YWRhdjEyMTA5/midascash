@@ -71,6 +71,7 @@ import prima.optimasi.indonesia.primacash.extramenuactivity.accounttransactions;
 import prima.optimasi.indonesia.primacash.formula.calculatordialog;
 import prima.optimasi.indonesia.primacash.generator;
 import prima.optimasi.indonesia.primacash.objects.account;
+import prima.optimasi.indonesia.primacash.objects.category;
 import prima.optimasi.indonesia.primacash.objects.firebasedocument;
 
 /**
@@ -107,6 +108,35 @@ public class accountlist extends AppCompatActivity{
         allaccount=new ArrayList<account>();
         alldoc=new ArrayList<firebasedocument>();
 
+
+        List<account> total = dbase.getAllaccount();
+
+
+
+
+        for(int i=0;i<total.size();i++){
+
+            account b = new account();
+            b.setAccount_name(total.get(i).getAccount_name());
+            b.setAccount_category(total.get(i).getAccount_category());
+            b.setAccount_createdate(total.get(i).getAccount_createdate());
+            b.setAccount_balance(total.get(i).getAccount_balance());
+            b.setAccount_balance_current(total.get(i).getAccount_balance_current());
+            b.setUsername(total.get(i).getUsername());
+            b.setAccount_status(total.get(i).getAccount_status());
+            b.setAccount_currency(total.get(i).getAccount_currency());
+            b.setFullaccount_currency(total.get(i).getFullaccount_currency());
+
+            allaccount.add(b);
+
+        }
+
+        adapter = new adapteraccounts(accountlist.this,accountlist.this,allaccount);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        accountlist.setLayoutManager(mLayoutManager);
+        accountlist.setItemAnimator(new DefaultItemAnimator());
+        accountlist.setAdapter(adapter);
+/*
         db.collection("account")
                 .orderBy("account_name", Query.Direction.ASCENDING)
                 .get()
@@ -136,7 +166,7 @@ public class accountlist extends AppCompatActivity{
                     }
                 });
 
-
+*/
 
 
     }
@@ -177,24 +207,10 @@ public class accountlist extends AppCompatActivity{
 
             List<String> spinneritem = new ArrayList<String>();
             spinneritem.add("Select One");
-            db.collection("category")
-                    .orderBy("category_name", Query.Direction.ASCENDING)
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-                            if (task.isSuccessful()) {
-                                for (DocumentSnapshot document : task.getResult()) {
-                                    Log.e("getting data", document.getId() + " => " + document.getData());
-                                    spinneritem.add(document.getData().get("category_name").toString());
-                                }
-                            } else {
-                                Log.e("", "Error getting documents.", task.getException());
-                            }
-
-                        }
-                    });
+            List<category> allcat = dbase.getAllcategory();
+            for (int a=0;a<allcat.size();a++){
+                spinneritem.add(allcat.get(a).getCategory_name());
+            }
 
             //translatedcategory.add(allcategory.get(i).getCategory_name()+allcategory.get(i).getCategory_image());
 
@@ -381,7 +397,6 @@ public class accountlist extends AppCompatActivity{
         private List<firebasedocument> docList;
 
         public class MyViewHolder extends RecyclerView.ViewHolder {
-            String documenref;
             int status;
             public TextView accountcategory, accountname, accountbalance,moreoptions;
             ImageView eye,summarylist,accounttrans;
@@ -402,13 +417,12 @@ public class accountlist extends AppCompatActivity{
             }
         }
 
-        public adapteraccounts(Context context,Activity activities,List<account> moviesList,List<firebasedocument> documentref) {
+        public adapteraccounts(Context context,Activity activities,List<account> moviesList) {
             this.accountList = moviesList;
             contexts=context;
             db = new SQLiteHelper(contexts);
             activity=activities;
             fdb = FirebaseFirestore.getInstance();
-            docList =documentref;
 
             symbols.setGroupingSeparator(',');
             formatterdecimal.setDecimalFormatSymbols(symbols);
@@ -426,7 +440,6 @@ public class accountlist extends AppCompatActivity{
         @Override
         public void onBindViewHolder(final adapteraccounts.MyViewHolder holder, int position) {
             account acc = accountList.get(position);
-            firebasedocument doc =docList.get(position);
             if(acc.getAccount_status()==1){
                 holder.isactive.setChecked(true);
                 holder.status=1;
@@ -436,7 +449,6 @@ public class accountlist extends AppCompatActivity{
                 holder.status=0;
             }
 
-            holder.documenref = doc.getDocument();
             holder.accountcategory.setText("Category :"+" "+acc.getAccount_category());
             String string = acc.getFullaccount_currency();
             String[] parts = string.split("-");
@@ -493,16 +505,17 @@ public class accountlist extends AppCompatActivity{
             holder.isactive.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if(isChecked){
-                        holder.status=1;
+                        /*holder.status=1;
                         Map<String, Object> data = new HashMap<>();
                         data.put("account_status", holder.status);
 
                         fdb.collection("account").document(holder.documenref)
                                 .set(data, SetOptions.merge());
                         Toast.makeText(accountlist.this,holder.accountname.getText().toString() + " Activated",Toast.LENGTH_SHORT).show();
-
+                        */
                     }
                     else {
+                        /*
                         holder.status=0;
                         Map<String, Object> data = new HashMap<>();
                         data.put("account_status", holder.status);
@@ -515,6 +528,7 @@ public class accountlist extends AppCompatActivity{
                         }
 
                         Toast.makeText(accountlist.this,holder.accountname.getText().toString() + " Deactivated",Toast.LENGTH_SHORT).show();
+                        */
                     }
                     // do something, the isChecked will be
                     // true if the switch is in the On position
@@ -554,7 +568,7 @@ public class accountlist extends AppCompatActivity{
                                 case R.id.accountedititem:
                                     Toast.makeText(accountlist.this,"Loading "+holder.accountname.getText().toString()+"....",Toast.LENGTH_SHORT).show();
                                     //---------------------------------------------------------------------
-                                    DocumentReference docRef = fdb.collection("account").document(holder.documenref);
+                                    DocumentReference docRef = fdb.collection("account").document("fixing");
                                     docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                         @Override
                                         public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -740,7 +754,7 @@ public class accountlist extends AppCompatActivity{
 
 
 
-                                                                        fdb.collection("account").document(holder.documenref)
+                                                                        fdb.collection("account").document("fixing")
                                                                                 .set(accountsmap)
                                                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                     @Override
@@ -866,7 +880,7 @@ public class accountlist extends AppCompatActivity{
                                     alerts.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            fdb.collection("account").document(holder.documenref)
+                                            fdb.collection("account").document("fixing")
                                                     .delete()
                                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                         @Override

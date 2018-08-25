@@ -293,12 +293,25 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     public List<account> getAllaccount() {
         List<account> todos = new ArrayList<account>();
-        String selectQuery = "SELECT  * FROM " + TABLE_ACCOUNT;
+        String selectQuery = "SELECT  * FROM " + TABLE_ACCOUNT +" ORDER BY "+KEY_ACCOUNT_NAME + " ASC";
 
         Log.e(LOG, selectQuery);
 
+        Calendar cal = Calendar.getInstance();
+
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery, null);
+
+        String account_name;
+        String account_category;
+        String account_currency;
+        String fullaccount_currency;
+        Object account_createdate;
+        String account_balance;
+        String account_balance_current;
+        String username;
+        int account_status;
+        int createorlast;
 
         // looping through all rows and adding to list
         if (c.moveToFirst()) {
@@ -311,17 +324,15 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 td.setFullaccount_currency(c.getString(c.getColumnIndex(KEY_ACCOUNT_FULLCURRENCY)));
 
                 Date date=null;
-                String dtStart = c.getString(c.getColumnIndex(KEY_ACCOUNT_CREATEDATE));
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                try {
-                    date = format.parse(dtStart);
-                    System.out.println(date);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                cal.setTimeInMillis(c.getColumnIndex(KEY_CATEGORY_CREATEDATE));
 
-                td.setAccount_createdate(c.getString(c.getColumnIndex(KEY_ACCOUNT_CREATEDATE)));
+                date = cal.getTime() ;
+
+                td.setAccount_createdate(date);
                 td.setAccount_balance(c.getString(c.getColumnIndex(KEY_ACCOUNT_BALANCE)));
+                td.setAccount_balance_current(c.getString(c.getColumnIndex(KEY_ACCOUNT_BALANCE_CURRENT)));
+                td.setCreateorlast(c.getInt(c.getColumnIndex(KEY_ACCOUNT_CREATEORLAST)));
+                td.setUsername(c.getString(c.getColumnIndex(KEY_USERNAME)));
 
                 // adding to todo list
                 todos.add(td);
