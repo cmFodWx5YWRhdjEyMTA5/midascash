@@ -266,23 +266,21 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
             account td = new account();
             td.setAccount_name(c.getString(c.getColumnIndex(KEY_ACCOUNT_NAME)));
-            td.setAccount_balance(c.getString(c.getColumnIndex(KEY_ACCOUNT_BALANCE)));
             td.setAccount_category(c.getString(c.getColumnIndex(KEY_ACCOUNT_CATEGORY)));
             td.setAccount_status(c.getInt(c.getColumnIndex(KEY_ACCOUNT_STATUS)));
             td.setAccount_currency(c.getString(c.getColumnIndex(KEY_ACCOUNT_CURRENCY)));
             td.setFullaccount_currency(c.getString(c.getColumnIndex(KEY_ACCOUNT_FULLCURRENCY)));
 
-            Date date = null;
-            String dtStart = c.getString(c.getColumnIndex(KEY_ACCOUNT_CREATEDATE));
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            try {
-                date = format.parse(dtStart);
-                System.out.println(date);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            Date date=null;
+            cal.setTimeInMillis(c.getColumnIndex(KEY_CATEGORY_CREATEDATE));
 
-            td.setAccount_createdate(c.getString(c.getColumnIndex(KEY_ACCOUNT_CREATEDATE)));
+            date = cal.getTime() ;
+
+            td.setAccount_createdate(date);
+            td.setAccount_balance(c.getString(c.getColumnIndex(KEY_ACCOUNT_BALANCE)));
+            td.setAccount_balance_current(c.getString(c.getColumnIndex(KEY_ACCOUNT_BALANCE_CURRENT)));
+            td.setCreateorlast(c.getInt(c.getColumnIndex(KEY_ACCOUNT_CREATEORLAST)));
+            td.setUsername(c.getString(c.getColumnIndex(KEY_USERNAME)));
 
             return td;
         }
@@ -301,17 +299,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery, null);
-
-        String account_name;
-        String account_category;
-        String account_currency;
-        String fullaccount_currency;
-        Object account_createdate;
-        String account_balance;
-        String account_balance_current;
-        String username;
-        int account_status;
-        int createorlast;
 
         // looping through all rows and adding to list
         if (c.moveToFirst()) {
@@ -342,7 +329,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return todos;
     }
 
-    public List<account> getAllaccountorderedbycategory() {
+    /*public List<account> getAllaccountorderedbycategory() {
         List<account> todos = new ArrayList<account>();
         String selectQuery = "SELECT  * FROM " + TABLE_ACCOUNT + "ORDER BY " + KEY_ACCOUNT_CATEGORY + "DESC";
 
@@ -385,7 +372,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         }
 
         return todos;
-    }
+    }*/
 
     public int getaccountCount() {
         String countQuery = "SELECT  * FROM " + TABLE_ACCOUNT;
@@ -406,21 +393,52 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+
+        account td = new account();
+
         values.put(KEY_ACCOUNT_STATUS, accs.getAccount_status());
         values.put(KEY_ACCOUNT_BALANCE, accs.getAccount_balance());
+        values.put(KEY_ACCOUNT_BALANCE_CURRENT, accs.getAccount_balance_current());
         values.put(KEY_ACCOUNT_CATEGORY, accs.getAccount_category());
         values.put(KEY_ACCOUNT_CURRENCY, accs.getAccount_currency());
         values.put(KEY_ACCOUNT_FULLCURRENCY, accs.getFullaccount_currency());
 
-        Date c = Calendar.getInstance().getTime();
-        System.out.println("Current time => " + c);
+        Date date=(Date) accs.getAccount_createdate();
+        cal.setTimeInMillis(date.getTime());
 
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String formattedDate = df.format(c);
 
-        values.put(KEY_ACCOUNT_CREATEDATE, formattedDate);
+        values.put(KEY_ACCOUNT_CREATEDATE, cal.getTimeInMillis());
+        values.put(KEY_ACCOUNT_CREATEORLAST,accs.getCreateorlast());
         values.put(KEY_ACCOUNT_NAME,accs.getAccount_name());
-        values.put(KEY_USERNAME,user);
+        values.put(KEY_USERNAME,accs.getUsername());
+
+        // updating row
+        return db.update(TABLE_ACCOUNT, values, KEY_ACCOUNT_NAME + " = ?",
+                new String[] { accountname });
+    }
+
+    public int updateaccountstatus(account accs,String user,String accountname) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        account td = new account();
+
+        values.put(KEY_ACCOUNT_STATUS, accs.getAccount_status());
+        values.put(KEY_ACCOUNT_BALANCE, accs.getAccount_balance());
+        values.put(KEY_ACCOUNT_BALANCE_CURRENT, accs.getAccount_balance_current());
+        values.put(KEY_ACCOUNT_CATEGORY, accs.getAccount_category());
+        values.put(KEY_ACCOUNT_CURRENCY, accs.getAccount_currency());
+        values.put(KEY_ACCOUNT_FULLCURRENCY, accs.getFullaccount_currency());
+
+        Date date=(Date) accs.getAccount_createdate();
+        cal.setTimeInMillis(date.getTime());
+
+
+        values.put(KEY_ACCOUNT_CREATEDATE, cal.getTimeInMillis());
+        values.put(KEY_ACCOUNT_CREATEORLAST,accs.getCreateorlast());
+        values.put(KEY_ACCOUNT_NAME,accs.getAccount_name());
+        values.put(KEY_USERNAME,accs.getUsername());
 
         // updating row
         return db.update(TABLE_ACCOUNT, values, KEY_ACCOUNT_NAME + " = ?",
@@ -494,16 +512,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             td.setCategory_image(c.getInt(c.getColumnIndex(KEY_CATEGORY_IMAGE)));
             td.setCategory_status(c.getInt(c.getColumnIndex(KEY_CATEGORY_STATUS)));
 
-            Date date = null;
-            String dtStart = c.getString(c.getColumnIndex(KEY_CATEGORY_CREATEDATE));
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            try {
-                date = format.parse(dtStart);
-                System.out.println(date);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            Date date=null;
+            cal.setTimeInMillis(c.getColumnIndex(KEY_CATEGORY_CREATEDATE));
 
+            date = cal.getTime() ;
             td.setCategory_createdate(date);
             return  td;
         }
@@ -546,20 +558,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         return allcat;
     }
-
-    public int getcategoryCount() {
-        String countQuery = "SELECT  * FROM " + TABLE_CATEGORY;
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(countQuery, null);
-
-        int count = cursor.getCount();
-        cursor.close();
-
-        // return count
-        return count;
-    }
-
-
     /**
      * Deleting a todo
      */

@@ -283,10 +283,11 @@ public class accountlist extends AppCompatActivity{
                                             check.setAccount_currency(tempcurrencycode[0]);
                                             check.setFullaccount_currency(currency.getText().toString());
                                             check.setAccount_status(1);
-
+                                            check.setCreateorlast(0);
                                             dbase.createAccount(check,generator.userlogin);
 
                                             dialog1.dismiss();
+                                            reloaddata();
                                             Toast.makeText(accountlist.this, "New Account Saved", Toast.LENGTH_SHORT).show();
 
                                         }
@@ -505,6 +506,25 @@ public class accountlist extends AppCompatActivity{
             holder.isactive.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if(isChecked){
+
+                        holder.status=1;
+                        account acc = accountList.get(position);
+
+                        acc.setAccount_status(holder.status);
+
+                        int a = dbase.updateaccountstatus(acc,generator.userlogin,acc.getAccount_name());
+
+                        if(a>0)
+                        {
+                            Toast.makeText(accountlist.this,holder.accountname.getText().toString() + " Activated",Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Toast.makeText(accountlist.this,"Error occured",Toast.LENGTH_SHORT).show();
+                        }
+
+
+
                         /*holder.status=1;
                         Map<String, Object> data = new HashMap<>();
                         data.put("account_status", holder.status);
@@ -515,6 +535,21 @@ public class accountlist extends AppCompatActivity{
                         */
                     }
                     else {
+                        holder.status=0;
+                        account acc = accountList.get(position);
+
+                        acc.setAccount_status(holder.status);
+
+                        int a = dbase.updateaccountstatus(acc,generator.userlogin,acc.getAccount_name());
+
+                        if(a>0)
+                        {
+                            Toast.makeText(accountlist.this,holder.accountname.getText().toString() + " Deactivated",Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Toast.makeText(accountlist.this,"Error occured",Toast.LENGTH_SHORT).show();
+                        }
                         /*
                         holder.status=0;
                         Map<String, Object> data = new HashMap<>();
@@ -566,320 +601,361 @@ public class accountlist extends AppCompatActivity{
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()) {
                                 case R.id.accountedititem:
-                                    Toast.makeText(accountlist.this,"Loading "+holder.accountname.getText().toString()+"....",Toast.LENGTH_SHORT).show();
+
+                                    account acc = dbase.getaccount(accountList.get(position).getAccount_name());
+
+                                    String tempword="";
+                                    String current_balance="";
+
+                                    DecimalFormat formatter = new DecimalFormat("###,###,###,###.##");
+
+                                    final String[] tempcurrencycode = {""};
+                                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(contexts,R.style.AppCompatAlertDialogStyle);
+// ...Irrelevant code for customizing the buttons and title
+                                    LayoutInflater inflater = (LayoutInflater) contexts.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+                                    dialogBuilder.setTitle("Transaction");
+
+                                    View dialogView = inflater.inflate(R.layout.layout_input_akun, null);
+
+                                    //get temp balance for calculation
+                                    Double tempbalance = generator.makedouble(acc.getAccount_balance());
+
+
+                                    Button editaccount = dialogView.findViewById(R.id.accountedit);
+
+                                    current_balance =  acc.getAccount_balance_current();
+
+                                    final Button currency = dialogView.findViewById(R.id.btnaccountcurrency);
+                                    Log.e("account currency data", "onSuccess: "+ acc.getFullaccount_currency() +acc.getAccount_currency());
+                                    currency.setText(acc.getFullaccount_currency());
+
+                                    final EditText accountname = dialogView.findViewById(R.id.account_name);
+                                    accountname.setText(acc.getAccount_name());
+                                    tempword= acc.getAccount_name();
+
+                                    final EditText accountbalance = dialogView.findViewById(R.id.account_balance);
+                                    accountbalance.setText(formatter.format(Double.parseDouble(acc.getAccount_balance())));
+
+                                    accountbalance.addTextChangedListener(new commaedittext(accountbalance));
+
+                                    final Spinner accountcategory = dialogView.findViewById(R.id.account_category);
+
+                                    Button accountedit = dialogView.findViewById(R.id.accountedit);
+                                    accountedit.setVisibility(View.GONE);
+
+                                    final TextView currencyicon = dialogView.findViewById(R.id.accountcurrencysymbol);
+                                    currencyicon.setText(acc.getAccount_currency());
+
+                                    List<String> spinneritem = new ArrayList<String>();
+                                    spinneritem.add("Select One");
+
+                                    List<category> allcat = dbase.getAllcategory();
+                                    for (int a=0;a<allcat.size();a++){
+                                        spinneritem.add(allcat.get(a).getCategory_name());
+                                    }
+
+                                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(contexts,
+                                            android.R.layout.simple_spinner_item,spinneritem);
+                                    adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                                    accountcategory.setAdapter(adapter);
+
+                                    String compareValue = acc.getAccount_category();
+
+                                    if (compareValue != null) {
+                                        Log.e("occured compare ", "onSuccess: ");
+                                        int spinnerPosition = adapter.getPosition(compareValue);
+                                        accountcategory.setSelection(spinnerPosition);
+                                    }
+
+                                    tempcurrencycode[0]=acc.getAccount_currency();
+                                    currency.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            final CurrencyPicker picker = CurrencyPicker.newInstance("Select Currency");  // dialog title
+                                            picker.setListener(new CurrencyPickerListener() {
+                                                @Override
+                                                public void onSelectCurrency(String name, String code, String symbol, int flagDrawableResID) {
+                                                    currency.setText(code+" - "+ symbol);
+                                                    tempcurrencycode[0] =code;
+                                                    currencyicon.setText(code);
+                                                    picker.dismiss();
+                                                }
+                                            });
+
+                                            picker.show(((FragmentActivity) contexts).getSupportFragmentManager(), "CURRENCY_PICKER");
+
+                                        }
+                                    });
+
+
+                                    editaccount.setVisibility(View.GONE);
+
+                                    dialogBuilder.setPositiveButton("Save",null);
+
+                                    dialogBuilder.setNegativeButton("Cancel",null);
+
+                                    dialogBuilder.setView(dialogView);
+
+                                    final AlertDialog dialog1 = dialogBuilder.create();
+
+                                    final String finalTempword = tempword;
+                                    String finalCurrent_balance = current_balance;
+                                    String finalTempword1 = tempword;
+                                    dialog1.setOnShowListener(new DialogInterface.OnShowListener() {
+                                        @Override
+                                        public void onShow(DialogInterface dialog) {
+
+                                            Button button = ((AlertDialog) dialog1).getButton(AlertDialog.BUTTON_POSITIVE);
+                                            button.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    if(accountname.getText().toString().equals("") || accountname.getText().toString().equals("Empty")){
+                                                        Toast.makeText(contexts,"Invalid Account Name",Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    else {
+                                                        if(accountbalance.getText().toString().equals("")){
+                                                            Toast.makeText(contexts,"Account Balance default 0",Toast.LENGTH_SHORT).show();
+                                                        }else {
+                                                            Double difference = 0.0d;
+                                                            Double calculateresult = 0.0d;
+                                                            if(generator.makedouble(accountbalance.getText().toString().replace(",",""))-tempbalance!=0.0d){
+                                                                Log.e("calculate result","not same"+ accountbalance.getText().toString() +String.valueOf(tempbalance));
+                                                                if(generator.makedouble(accountbalance.getText().toString().replace(",",""))>tempbalance){
+                                                                    calculateresult=generator.makedouble(finalCurrent_balance.replace(",",""))+(generator.makedouble(accountbalance.getText().toString().replace(",",""))-tempbalance);
+                                                                    Log.e("calculate result",String.valueOf(calculateresult) );
+                                                                }
+                                                                else if(generator.makedouble(accountbalance.getText().toString().replace(",",""))<tempbalance){
+                                                                    calculateresult=generator.makedouble(finalCurrent_balance.replace(",",""))-(tempbalance-generator.makedouble(accountbalance.getText().toString().replace(",","")));
+                                                                    Log.e("calculate result",String.valueOf(calculateresult) );
+                                                                }
+                                                            }
+                                                            else {
+                                                                Log.e("calculate result","same" );
+                                                                calculateresult = generator.makedouble(accountbalance.getText().toString().replace(",",""));
+                                                            }
+
+                                                            Date c = Calendar.getInstance().getTime();
+                                                            Map<String, Object> accountsmap = new HashMap<>();
+                                                            accountsmap.put("account_name", accountname.getText().toString());
+
+                                                            if(accountcategory.getSelectedItem().toString().equals("Select One")){
+                                                                accountsmap.put("account_category", "-");
+                                                            }
+                                                            else {
+                                                                accountsmap.put("account_category", accountcategory.getSelectedItem().toString());
+                                                            }
+
+                                                            prima.optimasi.indonesia.primacash.objects.account check = dbase.getaccount(accountname.getText().toString());
+
+                                                            if(check!=null && !check.getAccount_name().equals("") && !check.getAccount_name().equals(accountname.getText().toString())){
+                                                                Toast.makeText(accountlist.this, accountname.getText().toString() + " is Already Registered", Toast.LENGTH_SHORT).show();
+
+                                                            }
+                                                            else if(check.getAccount_name().equals(accountname.getText().toString())){
+                                                                check = new prima.optimasi.indonesia.primacash.objects.account();
+
+                                                                check.setAccount_name(accountname.getText().toString());
+                                                                if(accountcategory.getSelectedItem().toString().equals("Select One")){
+                                                                    check.setAccount_category("-");
+                                                                }
+                                                                else {
+                                                                    check.setAccount_category(accountcategory.getSelectedItem().toString());
+                                                                }
+                                                                check.setAccount_balance(accountbalance.getText().toString().replace(",",""));
+                                                                check.setAccount_balance_current(accountbalance.getText().toString().replace(",",""));
+                                                                check.setAccount_currency(tempcurrencycode[0]);
+                                                                check.setFullaccount_currency(currency.getText().toString());
+                                                                check.setAccount_createdate(acc.getAccount_createdate());
+                                                                check.setAccount_status(1);
+                                                                check.setCreateorlast(0);
+                                                                dbase.updateaccount(check,generator.userlogin,acc.getAccount_name());
+
+                                                                dialog1.dismiss();
+                                                                reloaddata();
+                                                                Toast.makeText(accountlist.this, "New Account Saved", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                            else {
+                                                                check = new prima.optimasi.indonesia.primacash.objects.account();
+
+                                                                check.setAccount_name(accountname.getText().toString());
+                                                                if(accountcategory.getSelectedItem().toString().equals("Select One")){
+                                                                    check.setAccount_category("-");
+                                                                }
+                                                                else {
+                                                                    check.setAccount_category(accountcategory.getSelectedItem().toString());
+                                                                }
+                                                                check.setAccount_balance(accountbalance.getText().toString().replace(",",""));
+                                                                check.setAccount_balance_current(accountbalance.getText().toString().replace(",",""));
+                                                                check.setAccount_currency(tempcurrencycode[0]);
+                                                                check.setFullaccount_currency(currency.getText().toString());
+                                                                check.setAccount_createdate(acc.getAccount_createdate());
+                                                                check.setAccount_status(1);
+                                                                check.setCreateorlast(0);
+                                                                dbase.updateaccount(check,generator.userlogin,acc.getAccount_name());
+
+                                                                dialog1.dismiss();
+                                                                reloaddata();
+                                                                Toast.makeText(accountlist.this, "New Account Saved", Toast.LENGTH_SHORT).show();
+
+                                                            }
+
+                                                            /*SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                                            SimpleDateFormat df1 = new SimpleDateFormat("dd/MM/yyyy");
+                                                            String formattedDate = df.format(c);
+
+                                                            accountsmap.put("account_editdate", c);
+                                                            accountsmap.put("account_lastused", df1.format(c));
+                                                            accountsmap.put("account_createdate", acc.getAccount_createdate());
+                                                            accountsmap.put("account_balance", accountbalance.getText().toString().replace(",",""));
+                                                            accountsmap.put("account_balance_current", String.valueOf(calculateresult));
+                                                            accountsmap.put("account_currency", tempcurrencycode[0]);
+                                                            accountsmap.put("account_fullcurency", currency.getText().toString());
+                                                            accountsmap.put("account_status", holder.status);
+                                                            accountsmap.put("username", generator.userlogin);
+
+
+
+                                                            fdb.collection("account").document("fixing")
+                                                                    .set(accountsmap)
+                                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                        @Override
+                                                                        public void onSuccess(Void aVoid) {
+                                                                            Log.d("status write", "DocumentSnapshot successfully written!");
+
+                                                                            fdb.collection("income")
+                                                                                    .whereEqualTo("income_account", finalTempword1)
+                                                                                    .get()
+                                                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                        @Override
+                                                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                            if (task.isSuccessful()) {
+                                                                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                    datasrc1.put("income_account",accountname.getText().toString());
+
+                                                                                                    fdb.collection("income").document(document.getId())
+                                                                                                            .set(datasrc1, SetOptions.merge());
+                                                                                                }
+                                                                                            } else {
+                                                                                                Log.d("data splash weeor", "Error getting documents: ", task.getException());
+                                                                                            }
+                                                                                        }
+                                                                                    });
+
+                                                                            fdb.collection("transfer")
+                                                                                    .whereEqualTo("transfer_src", finalTempword1)
+                                                                                    .get()
+                                                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                        @Override
+                                                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                            if (task.isSuccessful()) {
+                                                                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                    datasrc1.put("transfer_src",accountname.getText().toString());
+
+                                                                                                    fdb.collection("transfer").document(document.getId())
+                                                                                                            .set(datasrc1, SetOptions.merge());
+                                                                                                }
+                                                                                            } else {
+                                                                                                Log.d("data tf weeor", "Error getting documents: ", task.getException());
+                                                                                            }
+                                                                                        }
+                                                                                    });
+                                                                            fdb.collection("transfer")
+                                                                                    .whereEqualTo("transfer_dest", finalTempword1)
+                                                                                    .get()
+                                                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                        @Override
+                                                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                            if (task.isSuccessful()) {
+                                                                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                    datasrc1.put("transfer_dest",accountname.getText().toString());
+
+                                                                                                    fdb.collection("transfer").document(document.getId())
+                                                                                                            .set(datasrc1, SetOptions.merge());
+                                                                                                }
+                                                                                            } else {
+                                                                                                Log.d("data tf weeor", "Error getting documents: ", task.getException());
+                                                                                            }
+                                                                                        }
+                                                                                    });
+                                                                            //  DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                                                                            // final String date = df.format(Calendar.getInstance().getTime());
+                                                                            // editor.putString("dateprocess",date);
+                                                                            //  editor.apply();
+                                                                            fdb.collection("expense")
+                                                                                    .whereEqualTo("expense_account", finalTempword1)
+                                                                                    .get()
+                                                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                                                        @Override
+                                                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                                                            if (task.isSuccessful()) {
+                                                                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
+                                                                                                    datasrc1.put("expense_account",accountname.getText().toString());
+
+                                                                                                    fdb.collection("expense").document(document.getId())
+                                                                                                            .set(datasrc1, SetOptions.merge());
+                                                                                                }
+                                                                                            } else {
+                                                                                                Log.d("data splash weeor", "Error getting documents: ", task.getException());
+                                                                                            }
+                                                                                        }
+                                                                                    });
+
+                                                                            reloaddata();
+                                                                            Toast.makeText(accountlist.this,thisaccount[0].getAccount_name() +" changed into " + accountname.getText().toString(),Toast.LENGTH_SHORT).show();
+                                                                        }
+                                                                    })
+                                                                    .addOnFailureListener(new OnFailureListener() {
+                                                                        @Override
+                                                                        public void onFailure(@NonNull Exception e) {
+                                                                            Log.w("data error fdb", "Error writing document", e);
+                                                                        }
+                                                                    }); //db.updateaccount(new account(accountname.getText().toString(),accountcategory.getSelectedItem().toString(),c,Double.parseDouble(balance), generator.userlogin,1,tempcurrencycode[0].toString(),currency.getText().toString()),generator.userlogin, finalTempword);
+                                                            dialog1.dismiss();
+                                                            Toast.makeText(contexts, "Account Edited", Toast.LENGTH_SHORT).show();
+*/
+                                                        }
+                                                    }
+                                                    dbase.closeDB();
+                                                }
+                                            });
+                                        }
+                                    });
+                                    dialog1.show();
+
+                                    /*
                                     //---------------------------------------------------------------------
                                     DocumentReference docRef = fdb.collection("account").document("fixing");
                                     docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                                         @Override
                                         public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-                                            String tempword="";
-                                            String current_balance="";
 
-                                            DecimalFormat formatter = new DecimalFormat("###,###,###,###.##");
-
-                                            final String[] tempcurrencycode = {""};
-                                            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(contexts,R.style.AppCompatAlertDialogStyle);
-// ...Irrelevant code for customizing the buttons and title
-                                            LayoutInflater inflater = (LayoutInflater) contexts.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-                                            dialogBuilder.setTitle("Transaction");
-
-                                            View dialogView = inflater.inflate(R.layout.layout_input_akun, null);
-
-                                            final account[] thisaccount = {null};
-                                            thisaccount[0] = documentSnapshot.toObject(account.class);
-
-                                            //get temp balance for calculation
-                                            Double tempbalance = generator.makedouble(thisaccount[0].getAccount_balance());
-
-
-                                            Button editaccount = dialogView.findViewById(R.id.accountedit);
-
-                                            current_balance =  thisaccount[0].getAccount_balance_current();
-
-                                            final Button currency = dialogView.findViewById(R.id.btnaccountcurrency);
-                                            Log.e("account currency data", "onSuccess: "+ thisaccount[0].getFullaccount_currency() +thisaccount[0].getAccount_currency());
-                                            currency.setText(documentSnapshot.getData().get("account_fullcurency").toString());
-
-                                            final EditText accountname = dialogView.findViewById(R.id.account_name);
-                                            accountname.setText(thisaccount[0].getAccount_name());
-                                            tempword= thisaccount[0].getAccount_name();
-
-                                            final EditText accountbalance = dialogView.findViewById(R.id.account_balance);
-                                            accountbalance.setText(formatter.format(Double.parseDouble(thisaccount[0].getAccount_balance())));
-
-                                            accountbalance.addTextChangedListener(new commaedittext(accountbalance));
-
-                                            final Spinner accountcategory = dialogView.findViewById(R.id.account_category);
-
-                                            Button accountedit = dialogView.findViewById(R.id.accountedit);
-                                            accountedit.setVisibility(View.GONE);
-
-                                            final TextView currencyicon = dialogView.findViewById(R.id.accountcurrencysymbol);
-                                            currencyicon.setText(documentSnapshot.getData().get("account_currency").toString());
-
-                                            List<String> spinneritem = new ArrayList<String>();
-                                            spinneritem.add("Select One");;
-                                            fdb.collection("category")
-                                                    .orderBy("category_name", Query.Direction.ASCENDING)
-                                                    .get()
-                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-                                                            if (task.isSuccessful()) {
-                                                                for (DocumentSnapshot document : task.getResult()) {
-                                                                    Log.e("getting data", document.getId() + " => " + document.getData());
-                                                                    spinneritem.add(document.getData().get("category_name").toString());
-                                                                }
-
-                                                                ArrayAdapter<String> adapter = new ArrayAdapter<String>(contexts,
-                                                                        android.R.layout.simple_spinner_item,spinneritem);
-                                                                adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-                                                                accountcategory.setAdapter(adapter);
-
-                                                                String compareValue = documentSnapshot.getData().get("account_category").toString();
-
-                                                                if (compareValue != null) {
-                                                                    Log.e("occured compare ", "onSuccess: ");
-                                                                    int spinnerPosition = adapter.getPosition(compareValue);
-                                                                    accountcategory.setSelection(spinnerPosition);
-                                                                }
-                                                            } else {
-                                                                Log.e("", "Error getting documents.", task.getException());
-                                                            }
-
-                                                        }
-                                                    });
-                                            tempcurrencycode[0]=thisaccount[0].getAccount_currency();
-                                            currency.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    final CurrencyPicker picker = CurrencyPicker.newInstance("Select Currency");  // dialog title
-                                                    picker.setListener(new CurrencyPickerListener() {
-                                                        @Override
-                                                        public void onSelectCurrency(String name, String code, String symbol, int flagDrawableResID) {
-                                                            currency.setText(code+" - "+ symbol);
-                                                            tempcurrencycode[0] =code;
-                                                            currencyicon.setText(code);
-                                                            picker.dismiss();
-                                                        }
-                                                    });
-
-                                                    picker.show(((FragmentActivity) contexts).getSupportFragmentManager(), "CURRENCY_PICKER");
-
-                                                }
-                                            });
-
-
-
-
-
-                                            Log.e("sopinner data", "onSuccess: " + documentSnapshot.getData().get("account_category").toString() );
-
-
-
-                                            editaccount.setVisibility(View.GONE);
-
-                                            dialogBuilder.setPositiveButton("Save",null);
-
-                                            dialogBuilder.setNegativeButton("Cancel",null);
-
-                                            dialogBuilder.setView(dialogView);
-
-                                            final AlertDialog dialog1 = dialogBuilder.create();
-
-                                            final String finalTempword = tempword;
-                                            String finalCurrent_balance = current_balance;
-                                            String finalTempword1 = tempword;
-                                            dialog1.setOnShowListener(new DialogInterface.OnShowListener() {
-                                                @Override
-                                                public void onShow(DialogInterface dialog) {
-
-                                                    Button button = ((AlertDialog) dialog1).getButton(AlertDialog.BUTTON_POSITIVE);
-                                                    button.setOnClickListener(new View.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(View v) {
-                                                            if(accountname.getText().toString().equals("") || accountname.getText().toString().equals("Empty")){
-                                                                Toast.makeText(contexts,"Invalid Account Name",Toast.LENGTH_SHORT).show();
-                                                            }
-                                                            else {
-                                                                    if(accountbalance.getText().toString().equals("")){
-                                                                        Toast.makeText(contexts,"Account Balance default 0",Toast.LENGTH_SHORT).show();
-                                                                    }else {
-                                                                        Double difference = 0.0d;
-                                                                        Double calculateresult = 0.0d;
-                                                                        if(generator.makedouble(accountbalance.getText().toString().replace(",",""))-tempbalance!=0.0d){
-                                                                            Log.e("calculate result","not same"+ accountbalance.getText().toString() +String.valueOf(tempbalance));
-                                                                            if(generator.makedouble(accountbalance.getText().toString().replace(",",""))>tempbalance){
-                                                                                calculateresult=generator.makedouble(finalCurrent_balance.replace(",",""))+(generator.makedouble(accountbalance.getText().toString().replace(",",""))-tempbalance);
-                                                                                Log.e("calculate result",String.valueOf(calculateresult) );
-                                                                            }
-                                                                            else if(generator.makedouble(accountbalance.getText().toString().replace(",",""))<tempbalance){
-                                                                                calculateresult=generator.makedouble(finalCurrent_balance.replace(",",""))-(tempbalance-generator.makedouble(accountbalance.getText().toString().replace(",","")));
-                                                                                Log.e("calculate result",String.valueOf(calculateresult) );
-                                                                            }
-                                                                        }
-                                                                        else {
-                                                                            Log.e("calculate result","same" );
-                                                                            calculateresult = generator.makedouble(accountbalance.getText().toString().replace(",",""));
-                                                                        }
-
-                                                                        Date c = Calendar.getInstance().getTime();
-                                                                        Map<String, Object> accountsmap = new HashMap<>();
-                                                                        accountsmap.put("account_name", accountname.getText().toString());
-
-                                                                        if(accountcategory.getSelectedItem().toString().equals("Select One")){
-                                                                            accountsmap.put("account_category", "-");
-                                                                        }
-                                                                        else {
-                                                                            accountsmap.put("account_category", accountcategory.getSelectedItem().toString());
-                                                                        }
-
-
-
-                                                                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                                                        SimpleDateFormat df1 = new SimpleDateFormat("dd/MM/yyyy");
-                                                                        String formattedDate = df.format(c);
-
-                                                                        accountsmap.put("account_editdate", c);
-                                                                        accountsmap.put("account_lastused", df1.format(c));
-                                                                        accountsmap.put("account_createdate", thisaccount[0].getAccount_createdate());
-                                                                        accountsmap.put("account_balance", accountbalance.getText().toString().replace(",",""));
-                                                                        accountsmap.put("account_balance_current", String.valueOf(calculateresult));
-                                                                        accountsmap.put("account_currency", tempcurrencycode[0]);
-                                                                        accountsmap.put("account_fullcurency", currency.getText().toString());
-                                                                        accountsmap.put("account_status", holder.status);
-                                                                        accountsmap.put("username", generator.userlogin);
-
-
-
-                                                                        fdb.collection("account").document("fixing")
-                                                                                .set(accountsmap)
-                                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                    @Override
-                                                                                    public void onSuccess(Void aVoid) {
-                                                                                        Log.d("status write", "DocumentSnapshot successfully written!");
-
-                                                                                        fdb.collection("income")
-                                                                                                .whereEqualTo("income_account", finalTempword1)
-                                                                                                .get()
-                                                                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                                                    @Override
-                                                                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                                                        if (task.isSuccessful()) {
-                                                                                                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                                                                                                Map<String, Object> datasrc1 = new HashMap<>();
-                                                                                                                datasrc1.put("income_account",accountname.getText().toString());
-
-                                                                                                                fdb.collection("income").document(document.getId())
-                                                                                                                        .set(datasrc1, SetOptions.merge());
-                                                                                                            }
-                                                                                                        } else {
-                                                                                                            Log.d("data splash weeor", "Error getting documents: ", task.getException());
-                                                                                                        }
-                                                                                                    }
-                                                                                                });
-
-                                                                                        fdb.collection("transfer")
-                                                                                                .whereEqualTo("transfer_src", finalTempword1)
-                                                                                                .get()
-                                                                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                                                    @Override
-                                                                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                                                        if (task.isSuccessful()) {
-                                                                                                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                                                                                                Map<String, Object> datasrc1 = new HashMap<>();
-                                                                                                                datasrc1.put("transfer_src",accountname.getText().toString());
-
-                                                                                                                fdb.collection("transfer").document(document.getId())
-                                                                                                                        .set(datasrc1, SetOptions.merge());
-                                                                                                            }
-                                                                                                        } else {
-                                                                                                            Log.d("data tf weeor", "Error getting documents: ", task.getException());
-                                                                                                        }
-                                                                                                    }
-                                                                                                });
-                                                                                        fdb.collection("transfer")
-                                                                                                .whereEqualTo("transfer_dest", finalTempword1)
-                                                                                                .get()
-                                                                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                                                    @Override
-                                                                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                                                        if (task.isSuccessful()) {
-                                                                                                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                                                                                                Map<String, Object> datasrc1 = new HashMap<>();
-                                                                                                                datasrc1.put("transfer_dest",accountname.getText().toString());
-
-                                                                                                                fdb.collection("transfer").document(document.getId())
-                                                                                                                        .set(datasrc1, SetOptions.merge());
-                                                                                                            }
-                                                                                                        } else {
-                                                                                                            Log.d("data tf weeor", "Error getting documents: ", task.getException());
-                                                                                                        }
-                                                                                                    }
-                                                                                                });
-                                                                                        //  DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-                                                                                        // final String date = df.format(Calendar.getInstance().getTime());
-                                                                                        // editor.putString("dateprocess",date);
-                                                                                        //  editor.apply();
-                                                                                        fdb.collection("expense")
-                                                                                                .whereEqualTo("expense_account", finalTempword1)
-                                                                                                .get()
-                                                                                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                                                    @Override
-                                                                                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                                                        if (task.isSuccessful()) {
-                                                                                                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                                                                                                Map<String, Object> datasrc1 = new HashMap<>();
-                                                                                                                datasrc1.put("expense_account",accountname.getText().toString());
-
-                                                                                                                fdb.collection("expense").document(document.getId())
-                                                                                                                        .set(datasrc1, SetOptions.merge());
-                                                                                                            }
-                                                                                                        } else {
-                                                                                                            Log.d("data splash weeor", "Error getting documents: ", task.getException());
-                                                                                                        }
-                                                                                                    }
-                                                                                                });
-
-                                                                                        reloaddata();
-                                                                                        Toast.makeText(accountlist.this,thisaccount[0].getAccount_name() +" changed into " + accountname.getText().toString(),Toast.LENGTH_SHORT).show();
-                                                                                    }
-                                                                                })
-                                                                                .addOnFailureListener(new OnFailureListener() {
-                                                                                    @Override
-                                                                                    public void onFailure(@NonNull Exception e) {
-                                                                                        Log.w("data error fdb", "Error writing document", e);
-                                                                                    }
-                                                                                }); //db.updateaccount(new account(accountname.getText().toString(),accountcategory.getSelectedItem().toString(),c,Double.parseDouble(balance), generator.userlogin,1,tempcurrencycode[0].toString(),currency.getText().toString()),generator.userlogin, finalTempword);
-                                                                        dialog1.dismiss();
-                                                                        Toast.makeText(contexts, "Account Edited", Toast.LENGTH_SHORT).show();
-
-                                                                    }
-                                                            }
-                                                            db.closeDB();
-                                                        }
-                                                    });
-                                                }
-                                            });
-                                            dialog1.show();
 
                                         }
                                     });
 
-
+*/
 
                                     return true;
                                 case R.id.accountdeleteitem:
 
-                                    final String finalTempword1=holder.accountname.getText().toString();
+                                    final String finalTempword12=holder.accountname.getText().toString();
 
                                     AlertDialog.Builder alerts = new AlertDialog.Builder(contexts,R.style.AppCompatAlertDialogStyle)
                                             .setTitle("Delete " + holder.accountname.getText().toString()).setMessage("Proceed Deleting "+ holder.accountname.getText().toString() + " , Depending Account will be set to empty");
                                     alerts.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
+
+                                            dbase.deleteaccount(holder.accountname.getText().toString());
+                                            Toast.makeText(accountlist.this,"Deleted Account "+ holder.accountname.getText().toString(),Toast.LENGTH_SHORT).show();
+                                            reloaddata();
+                                            /*
+
                                             fdb.collection("account").document("fixing")
                                                     .delete()
                                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -889,7 +965,7 @@ public class accountlist extends AppCompatActivity{
 
 
                                                             fdb.collection("income")
-                                                                    .whereEqualTo("income_account", finalTempword1)
+                                                                    .whereEqualTo("income_account", finalTempword12)
                                                                     .get()
                                                                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                                         @Override
@@ -909,7 +985,7 @@ public class accountlist extends AppCompatActivity{
                                                                     });
 
                                                             fdb.collection("transfer")
-                                                                    .whereEqualTo("transfer_src", finalTempword1)
+                                                                    .whereEqualTo("transfer_src", finalTempword12)
                                                                     .get()
                                                                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                                         @Override
@@ -928,7 +1004,7 @@ public class accountlist extends AppCompatActivity{
                                                                         }
                                                                     });
                                                             fdb.collection("transfer")
-                                                                    .whereEqualTo("transfer_dest", finalTempword1)
+                                                                    .whereEqualTo("transfer_dest", finalTempword12)
                                                                     .get()
                                                                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                                         @Override
@@ -951,7 +1027,7 @@ public class accountlist extends AppCompatActivity{
                                                             // editor.putString("dateprocess",date);
                                                             //  editor.apply();
                                                             fdb.collection("expense")
-                                                                    .whereEqualTo("expense_account", finalTempword1)
+                                                                    .whereEqualTo("expense_account", finalTempword12)
                                                                     .get()
                                                                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                                                         @Override
@@ -980,7 +1056,7 @@ public class accountlist extends AppCompatActivity{
                                                             Toast.makeText(accountlist.this,"Fail Delete Account "+ holder.accountname.getText().toString(),Toast.LENGTH_SHORT).show();
                                                         }
                                                     });
-
+*/
                                         }
                                     });
                                     alerts.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -1017,12 +1093,45 @@ public class accountlist extends AppCompatActivity{
     }
 
     public void reloaddata(){
+
         alldoc.clear();
         allaccount.clear();
         if(adapter!= null){
             adapter.notifyDataSetChanged();
         }
-        db.collection("account")
+
+        List<account> total = dbase.getAllaccount();
+
+
+
+
+        for(int i=0;i<total.size();i++){
+
+            account b = new account();
+            b.setAccount_name(total.get(i).getAccount_name());
+            b.setAccount_category(total.get(i).getAccount_category());
+            b.setAccount_createdate(total.get(i).getAccount_createdate());
+            b.setAccount_balance(total.get(i).getAccount_balance());
+            b.setAccount_balance_current(total.get(i).getAccount_balance_current());
+            b.setUsername(total.get(i).getUsername());
+            b.setAccount_status(total.get(i).getAccount_status());
+            b.setAccount_currency(total.get(i).getAccount_currency());
+            b.setFullaccount_currency(total.get(i).getFullaccount_currency());
+
+            allaccount.add(b);
+
+        }
+
+        adapter.notifyDataSetChanged();
+
+
+        if(generator.adapter!=null){
+            generator.adapter.notifyDataSetChanged();
+        }
+
+
+
+       /* db.collection("account")
                 .orderBy("account_name", Query.Direction.ASCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -1051,5 +1160,6 @@ public class accountlist extends AppCompatActivity{
                         }
                     }
                 });
+                */
     }
 }

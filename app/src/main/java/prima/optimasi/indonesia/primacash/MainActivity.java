@@ -865,7 +865,7 @@ public class MainActivity extends AppCompatActivity
                                                         check.setAccount_currency(tempcurrencycode[0]);
                                                         check.setFullaccount_currency(currency.getText().toString());
                                                         check.setAccount_status(1);
-
+                                                        check.setCreateorlast(0);
                                                         dbase.createAccount(check,generator.userlogin);
 
                                                         dialog1.dismiss();
