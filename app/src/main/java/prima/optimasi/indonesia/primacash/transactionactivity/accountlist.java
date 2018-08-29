@@ -747,32 +747,30 @@ public class accountlist extends AppCompatActivity{
 
                                                             prima.optimasi.indonesia.primacash.objects.account check = dbase.getaccount(accountname.getText().toString());
 
-                                                            if(check!=null && !check.getAccount_name().equals("") && !check.getAccount_name().equals(accountname.getText().toString())){
-                                                                Toast.makeText(accountlist.this, accountname.getText().toString() + " is Already Registered", Toast.LENGTH_SHORT).show();
+                                                            if(check !=null){
+                                                                if(check.getAccount_name().equals(accountname.getText().toString())){
+                                                                    check = new prima.optimasi.indonesia.primacash.objects.account();
 
-                                                            }
-                                                            else if(check.getAccount_name().equals(accountname.getText().toString())){
-                                                                check = new prima.optimasi.indonesia.primacash.objects.account();
+                                                                    check.setAccount_name(accountname.getText().toString());
+                                                                    if(accountcategory.getSelectedItem().toString().equals("Select One")){
+                                                                        check.setAccount_category("-");
+                                                                    }
+                                                                    else {
+                                                                        check.setAccount_category(accountcategory.getSelectedItem().toString());
+                                                                    }
+                                                                    check.setAccount_balance(accountbalance.getText().toString().replace(",",""));
+                                                                    check.setAccount_balance_current(accountbalance.getText().toString().replace(",",""));
+                                                                    check.setAccount_currency(tempcurrencycode[0]);
+                                                                    check.setFullaccount_currency(currency.getText().toString());
+                                                                    check.setAccount_createdate(acc.getAccount_createdate());
+                                                                    check.setAccount_status(1);
+                                                                    check.setCreateorlast(0);
+                                                                    dbase.updateaccount(check,generator.userlogin,acc.getAccount_name());
 
-                                                                check.setAccount_name(accountname.getText().toString());
-                                                                if(accountcategory.getSelectedItem().toString().equals("Select One")){
-                                                                    check.setAccount_category("-");
+                                                                    dialog1.dismiss();
+                                                                    reloaddata();
+                                                                    Toast.makeText(accountlist.this, "New Account Edited", Toast.LENGTH_SHORT).show();
                                                                 }
-                                                                else {
-                                                                    check.setAccount_category(accountcategory.getSelectedItem().toString());
-                                                                }
-                                                                check.setAccount_balance(accountbalance.getText().toString().replace(",",""));
-                                                                check.setAccount_balance_current(accountbalance.getText().toString().replace(",",""));
-                                                                check.setAccount_currency(tempcurrencycode[0]);
-                                                                check.setFullaccount_currency(currency.getText().toString());
-                                                                check.setAccount_createdate(acc.getAccount_createdate());
-                                                                check.setAccount_status(1);
-                                                                check.setCreateorlast(0);
-                                                                dbase.updateaccount(check,generator.userlogin,acc.getAccount_name());
-
-                                                                dialog1.dismiss();
-                                                                reloaddata();
-                                                                Toast.makeText(accountlist.this, "New Account Saved", Toast.LENGTH_SHORT).show();
                                                             }
                                                             else {
                                                                 check = new prima.optimasi.indonesia.primacash.objects.account();
@@ -795,9 +793,10 @@ public class accountlist extends AppCompatActivity{
 
                                                                 dialog1.dismiss();
                                                                 reloaddata();
-                                                                Toast.makeText(accountlist.this, "New Account Saved", Toast.LENGTH_SHORT).show();
-
+                                                                Toast.makeText(accountlist.this, acc.getAccount_name() + "Edited to " + accountname.getText().toString(), Toast.LENGTH_SHORT).show();
                                                             }
+    // Toast.makeText(accountlist.this, accountname.getText().toString() + " is Already Registered or Account Name Is Empty", Toast.LENGTH_SHORT).show();
+
 
                                                             /*SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                                             SimpleDateFormat df1 = new SimpleDateFormat("dd/MM/yyyy");
