@@ -51,7 +51,6 @@ public class income extends AppCompatActivity {
 
     FirebaseFirestore db;
 
-    Button cancel,save;
 
     int positiondata;
 
@@ -89,31 +88,6 @@ public class income extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabincome);
         adapter = new SimpleFragmentPagerAdapter(this, getSupportFragmentManager());
 
-        save = (Button) findViewById(R.id.btnsaveincome);
-        cancel = findViewById(R.id.btncancelincome);
-
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(income.this,R.style.AppCompatAlertDialogStyle)
-                        .setTitle("Cancel")
-                        .setMessage("Changes made will be discarded , proceed ?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                finish();
-                            }
-                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                dialog.show();
-            }
-        });
-
         vpincome.setAdapter(adapter);
         tabLayout.setupWithViewPager(vpincome);
 
@@ -133,7 +107,7 @@ public class income extends AppCompatActivity {
 
             }
         });
-
+/*
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -220,7 +194,7 @@ public class income extends AppCompatActivity {
                     }
                 }
             }
-        });
+        });*/
 
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
             tabLayout.getTabAt(0).setIcon(R.drawable.ic_list_white_24dp);

@@ -1,24 +1,40 @@
 package prima.optimasi.indonesia.primacash.fragment_transaction;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -31,6 +47,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -41,12 +58,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import android.Manifest;
 import prima.optimasi.indonesia.primacash.R;
+import prima.optimasi.indonesia.primacash.SQLiteHelper;
 import prima.optimasi.indonesia.primacash.commaedittext;
 import prima.optimasi.indonesia.primacash.formula.calculatordialog;
 import prima.optimasi.indonesia.primacash.generator;
+import prima.optimasi.indonesia.primacash.objects.account;
+import prima.optimasi.indonesia.primacash.objects.category;
+import prima.optimasi.indonesia.primacash.transactionactivity.income;
 
 public class fragment_income extends Fragment {
 
@@ -61,10 +84,18 @@ public class fragment_income extends Fragment {
 
     long datesys;
 
+    Uri imageuri;
+
+    View child;
+
     String amountdata="",accountdata="",categorydata="",typedata="",datedata="",fromdata="",notesdata="",repeattime="",repeatperiod="",repeatcount="";
 
+    ImageButton camera,galery;
+    Button save,cancel;
     MySimpleArrayAdapter adapter;
     myaccountlisadapter adapteraccount;
+
+    SQLiteHelper dbase ;
 
     AlertDialog dialog;//category
     AlertDialog dialogaccount;
@@ -118,16 +149,21 @@ public class fragment_income extends Fragment {
         LinearLayout accountselect,categoryselect,dateselect;
         TextView changedcurrency;
 
+        dbase = new SQLiteHelper(getActivity());
+
+
+
         fdb = FirebaseFirestore.getInstance();
         valuemyobjectlist = new ArrayList<MyListObject>();
         valuemyaccountobject = new ArrayList<accountobject>();
 
-        View view = inflater.inflate(R.layout.fragment_income, container, false);
-        contain = view.findViewById(R.id.llincome);
+        child = inflater.inflate(R.layout.layout_transactionincome, container, false);
 
+        camera = child.findViewById(R.id.inctpic);
+        galery= child.findViewById(R.id.inctgal);
 
-
-        View child = inflater.inflate(R.layout.layout_transactionincome, null);
+        save = child.findViewById(R.id.btnsaveincome);
+        cancel = child.findViewById(R.id.btncancelincome);
 
         viewcat = child.findViewById(R.id.inccatpic);
         categorytext = child.findViewById(R.id.inccatname);
@@ -156,6 +192,110 @@ public class fragment_income extends Fragment {
         ImageView calc = child.findViewById(R.id.inccalc);
 
 
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                android.support.v7.app.AlertDialog.Builder dialog = new android.support.v7.app.AlertDialog.Builder(getActivity(),R.style.AppCompatAlertDialogStyle)
+                        .setTitle("Cancel")
+                        .setMessage("Changes made will be discarded , proceed ?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                getActivity().finish();
+                            }
+                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                dialog.show();
+            }
+        });
+
+        galery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    int result = getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+                    if (result == PackageManager.PERMISSION_GRANTED) {
+                        Intent i = new Intent(
+                                Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+                        startActivityForResult(i, 4);
+                    }
+                    else {
+                        try {
+                            ActivityCompat.requestPermissions((Activity) getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                    3);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            throw e;
+                        }
+                    }
+                }
+
+
+            }
+        });
+
+        camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                StrictMode.setVmPolicy(builder.build());
+                int permissionCheckStorage = ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.CAMERA);
+                if (permissionCheckStorage == PackageManager.PERMISSION_DENIED) {
+                    requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                }
+                else{
+                    Calendar cal = Calendar.getInstance();
+
+                    String filename = Environment.getExternalStorageDirectory().getPath() + "/Primacash/"+ cal.getTimeInMillis()+".jpg";
+                    imageuri = Uri.fromFile(new File(filename));
+
+// start default camera
+                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    cameraIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,
+                            imageuri);
+                    startActivityForResult (cameraIntent, 2);
+                    /*Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    Calendar cal = Calendar.getInstance();
+
+                    /*if (android.os.Build.VERSION.SDK_INT >= 24){
+                        FileProvider photo =new FileProvider();
+                    } else{
+                        // do something for phones running an SDK before lollipop
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        int result = getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+                        if (result == PackageManager.PERMISSION_GRANTED){
+                            File photo = new File(Environment.getExternalStorageDirectory(),  "Primacash/images/"+cal.getTimeInMillis()+".jpg");
+                            intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                    Uri.fromFile(photo));
+                            imageuri = Uri.fromFile(photo);
+                            startActivityForResult(intent, 2);
+                        }
+                        else {
+                            try {
+                                ActivityCompat.requestPermissions((Activity) getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                        3);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                throw e;
+                            }
+                        }
+                    }
+
+
+*/
+                }
+            }
+        });
 
         calc.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,12 +326,8 @@ public class fragment_income extends Fragment {
             }
         });
 
-
-
-        contain.addView(child);
-
         // Inflate the layout for this fragment
-        return view;
+        return child;
     }
 
     public void calculatebalance(){
@@ -326,38 +462,25 @@ public class fragment_income extends Fragment {
 
                 dialog1.setView(a);
 
-                fdb.collection("category")
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                valuemyobjectlist.clear();
 
-                                if (task.isSuccessful()) {
-                                    valuemyobjectlist.clear();
-                                    for (DocumentSnapshot document : task.getResult()) {
-                                        if(document.getId()==null){
-                                            break;
-                                        }
-                                        Log.e("getting data", document.getId() + " => " + document.getData());
-                                        MyListObject b = new MyListObject();
-                                        b.setCategoryname(document.getData().get("category_name").toString());
-                                        b.setImage(Integer.parseInt(document.getData().get("category_image").toString()));
-                                        b.setHiddendata(document.getId());
-                                        b.setCreatedate(document.getData().get("category_createdate"));
-                                        valuemyobjectlist.add(b);
-                                    }
+                List<category> allcat = dbase.getAllcategory();
+                for (int z=0;z<allcat.size();z++){
+                    MyListObject b = new MyListObject();
+                    b.setCategoryname(allcat.get(z).getCategory_name());
+                    b.setImage(allcat.get(z).getCategory_image());
+                    //b.setHiddendata(document.getId());
+                    //b.setCreatedate(document.getData().get("category_createdate"));
+                    valuemyobjectlist.add(b);
+                }
 
-                                } else {
-                                    Log.e("", "Error getting documents.", task.getException());
-                                }
-                                adapter = new MySimpleArrayAdapter(getActivity(), R.layout.row_layout_category, valuemyobjectlist);
-                                adapter.notifyDataSetChanged();
-                                if (list.getAdapter()==null){
-                                    list.setAdapter(adapter);
-                                }
+                adapter = new MySimpleArrayAdapter(getActivity(), R.layout.row_layout_category, valuemyobjectlist);
+                adapter.notifyDataSetChanged();
+                if (list.getAdapter()==null){
+                    list.setAdapter(adapter);
+                }
 
-                            }
-                        });
+
                 dialog1.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -371,7 +494,7 @@ public class fragment_income extends Fragment {
         account.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getActivity(), "Loading Accounts..", Toast.LENGTH_SHORT).show();
+
 
                 AlertDialog.Builder build = new AlertDialog.Builder(getActivity(),R.style.AppCompatAlertDialogStyle);
                 build.setTitle("Select Account");
@@ -392,45 +515,25 @@ public class fragment_income extends Fragment {
 
                 build.setView(back);
 
+                allaccount.clear();
+
+                List<account> total = dbase.getAllaccount();
+
+                for(int i=0;i<total.size();i++){
+
+                    accountobject object = new accountobject();
+                    object.setAccountfullcurrency(total.get(i).getFullaccount_currency());
+                    object.setAccountname(total.get(i).getAccount_name());
+                    object.setAccountcategory(total.get(i).getAccount_category());
+                    object.setAccountbalance(total.get(i).getAccount_balance_current());
+                    allaccount.add(object);
 
 
-                fdb.collection("account")
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
+                }
 
-                                    allaccount.clear();
-                                    for (DocumentSnapshot document : task.getResult()) {
-                                        if(document.getId()==null){
-                                            break;
-                                        }
-                                        Date c=null;
-                                        Object dtStart = document.getData().get("account_createdate");
-                                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                        if(document.getData().get("account_status").toString().equals("1")) {
-                                            accountobject object = new accountobject();
-                                            object.setAccountdocument(document.getId());
-                                            object.setAccountfullcurrency(document.getData().get("account_fullcurency").toString());
-                                            object.setAccountname(document.getData().get("account_name").toString());
-                                            object.setAccountcategory(document.getData().get("account_category").toString());
-                                            object.setAccountbalance(document.getData().get("account_balance_current").toString());
-                                            allaccount.add(object);
-                                        }
-                                        else {
-
-                                        }
-                                        Log.d("Get data account", document.getId() + " => " + document.getData());
-                                    }
-                                    adapteraccount = new myaccountlisadapter(getActivity(),R.layout.row_layout_account,allaccount,changecurrency);
-                                    accountlist.setAdapter(adapteraccount);
-                                    dialogaccount=build.show();
-                                } else {
-                                    Log.w("Get account error", "Error getting documents.", task.getException());
-                                }
-                            }
-                        });
+                adapteraccount = new myaccountlisadapter(getActivity(),R.layout.row_layout_account,allaccount,changecurrency);
+                accountlist.setAdapter(adapteraccount);
+                dialogaccount=build.show();
 
             }
         });
@@ -716,6 +819,54 @@ public class fragment_income extends Fragment {
                 generator.incbalanceleft = "";
         }catch (Exception e){
             Log.e("Error clear",e.getMessage());
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case 2:
+                if (resultCode == Activity.RESULT_OK) {
+                    /*Uri selectedImage = imageuri;
+                    getActivity().getContentResolver().notifyChange(selectedImage, null);
+                    ImageView imageView = (ImageView) child.findViewById(R.id.incimgdata);
+                    ContentResolver cr = getActivity().getContentResolver();
+                    Bitmap bitmap;
+                    try {
+                        bitmap = android.provider.MediaStore.Images.Media
+                                .getBitmap(cr, selectedImage);
+
+                        imageView.setImageBitmap(bitmap);
+                        Toast.makeText(getActivity(), selectedImage.toString(),
+                                Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        Toast.makeText(getActivity(), "Failed to load", Toast.LENGTH_SHORT)
+                                .show();
+                        Log.e("Camera", e.toString());
+                    }*/
+                    ImageView imageView = (ImageView) child.findViewById(R.id.incimgdata);
+                    Bitmap photo = (Bitmap) data.getExtras().get("data");
+                    imageView.setImageBitmap(photo);
+                }
+                break;
+            case 4:
+                if (resultCode == Activity.RESULT_OK) {
+                    Uri selectedImage = data.getData();
+                    String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+                    Cursor cursor = getActivity().getContentResolver().query(selectedImage,
+                            filePathColumn, null, null, null);
+                    cursor.moveToFirst();
+
+                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                    String picturePath = cursor.getString(columnIndex);
+                    cursor.close();
+
+                    ImageView imageView = (ImageView) child.findViewById(R.id.incimgdata);
+                    imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+                }
+                break;
         }
     }
 

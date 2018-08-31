@@ -12,13 +12,14 @@ public class income implements Comparable<income>  {
     String income_account,income_type,income_from,income_notes,income_id,username,income_category;
     int income_image;
     String income_date,income_createdate;
+    byte[] income_imagechosen;
     double income_amount;
     String incomedoc;
 
 
     public income(){}
 
-    public income(String iacc,String itype,String ifr,String inot,String iid,String idat,String icdat,double imon,int image,String icat,String user){
+    public income(String iacc,String itype,String ifr,String inot,String iid,String idat,String icdat,double imon,int image,byte[] imaeb,String icat,String user){
         username=user;
         income_account=iacc;
         income_amount=imon;
@@ -29,10 +30,15 @@ public class income implements Comparable<income>  {
         income_notes=inot;
         income_id=iid;
         income_image= image;
+        income_imagechosen = imaeb;
     }
 
     //setter
 
+
+    public void setIncome_imagechosen(byte[] income_imagechosen) {
+        this.income_imagechosen = income_imagechosen;
+    }
 
     public void setIncome_category(String income_category) {
         this.income_category = income_category;
@@ -89,6 +95,10 @@ public class income implements Comparable<income>  {
 
     public String getUsername() {
         return username;
+    }
+
+    public byte[] getIncome_imagechosen() {
+        return income_imagechosen;
     }
 
     public int getIncome_image() {

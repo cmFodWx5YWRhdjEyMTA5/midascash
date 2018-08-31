@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import prima.optimasi.indonesia.primacash.objects.account;
 import prima.optimasi.indonesia.primacash.objects.category;
@@ -575,26 +576,22 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_INCOME_ACCOUNT, accs.getIncome_account());
-        values.put(KEY_INCOME_AMOUNT, accs.getIncome_amount());
+        values.put(KEY_INCOME_TYPE, accs.getIncome_type());
         values.put(KEY_INCOME_FROM, accs.getIncome_from());
         values.put(KEY_INCOME_NOTES, accs.getIncome_notes());
+        values.put(KEY_INCOME_ID,random());
+        values.put(KEY_INCOME_CATEGORY, accs.getIncome_category());
+        values.put(KEY_INCOME_IMAGE,accs.getIncome_image());
+
+        values.put(KEY_INCOME_DATE,accs.getIncome_date());
 
         Date c = Calendar.getInstance().getTime();
         System.out.println("Current time => " + c);
 
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String formattedDate = df.format(c);
+        values.put(KEY_INCOME_CREATEDATE, Calendar.getInstance().getTimeInMillis());
 
-        values.put(KEY_INCOME_CREATEDATE, formattedDate);
+        values.put(KEY_INCOME_AMOUNT, accs.getIncome_amount());
 
-        DateFormat dated = new SimpleDateFormat("dd/MM/yyyy");
-
-// Get the date today using Calendar object.
-// Using DateFormat format method we can create a string
-// representation of a date with the defined format.
-
-        values.put(KEY_INCOME_IMAGE,accs.getIncome_image());
-        values.put(KEY_INCOME_ID,this.getincomeCount()+1);
         values.put(KEY_USERNAME,user);
 
         // insert row
@@ -606,48 +603,46 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public income getincome(String incomeid) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String selectQuery = "SELECT  * FROM " + TABLE_INCOME + " WHERE "
+        String selectQuery = "SELECT  * FROM " + TABLE_INCOME+ " WHERE "
                 + KEY_INCOME_ID + " = '" + incomeid+"'";
 
         Log.e(LOG, selectQuery);
 
         Cursor c = db.rawQuery(selectQuery, null);
 
-        if (c != null)
-            c.moveToFirst();
+        if( c != null && c.moveToFirst() ){
 
-        income td = new income();
-        td.setIncome_account(c.getString(c.getColumnIndex(KEY_INCOME_ACCOUNT)));
-        td.setIncome_amount(c.getInt(c.getColumnIndex(KEY_INCOME_AMOUNT)));
+            income td = new income();
+            td.setIncome_account(c.getString(c.getColumnIndex(KEY_INCOME_ACCOUNT)));
+            td.setIncome_date(c.getString(c.getColumnIndex(KEY_INCOME_DATE)));
+            td.setIncome_id(c.getString(c.getColumnIndex(KEY_INCOME_ID)));
+            td.setIncome_type(c.getString(c.getColumnIndex(KEY_INCOME_TYPE)));
+            td.setIncome_from(c.getString(c.getColumnIndex(KEY_INCOME_FROM)));
+            td.setIncome_notes(c.getString(c.getColumnIndex(KEY_INCOME_NOTES)));
+            td.setIncome_category(c.getString(c.getColumnIndex(KEY_INCOME_CATEGORY)));
+            td.setUsername(c.getString(c.getColumnIndex(KEY_USERNAME)));
+            td.setIncome_image(c.getInt(c.getColumnIndex(KEY_INCOME_IMAGE)));
+            td.setIncome_amount(c.getDouble(c.getColumnIndex(KEY_INCOME_AMOUNT)));
 
-        Date date=null;
-        String dtStart = c.getString(c.getColumnIndex(KEY_INCOME_CREATEDATE));
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
-            date = format.parse(dtStart);
-            System.out.println(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
+            String income_account,income_type,income_from,income_notes,income_id,username,income_category;
+            int income_image;
+            String income_date,income_createdate;
+            double income_amount;
+            String incomedoc;
+
+
+            Date date=null;
+            cal.setTimeInMillis(c.getColumnIndex(KEY_INCOME_CREATEDATE));
+            DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+
+            date = cal.getTime();
+            td.setIncome_createdate(format.format(date));
+
+            return  td;
         }
-
-        Date date1=null;
-        String dtStart1 = c.getString(c.getColumnIndex(KEY_INCOME_CREATEDATE));
-        SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
-        try {
-            date = format1.parse(dtStart1);
-            System.out.println(date1);
-        } catch (ParseException e) {
-            e.printStackTrace();
+        else {
+            return null;
         }
-
-        td.setIncome_from(c.getString(c.getColumnIndex(KEY_INCOME_FROM)));
-        td.setIncome_id(c.getString(c.getColumnIndex(KEY_INCOME_ID)));
-
-        td.setIncome_image(c.getInt(c.getColumnIndex(KEY_INCOME_IMAGE)));
-        td.setIncome_notes(c.getString(c.getColumnIndex(KEY_INCOME_NOTES)));
-        td.setIncome_type(c.getString(c.getColumnIndex(KEY_INCOME_TYPE)));
-
-        return td;
     }
 
     public List<income> getAllincome() {
@@ -755,5 +750,17 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_CATEGORY, KEY_CATEGORY_NAME + " = ?",
                 new String[] {  accs});
+    }
+
+    public static String random() {
+        Random generator = new Random();
+        StringBuilder randomStringBuilder = new StringBuilder();
+        int randomLength = generator.nextInt(1000);
+        char tempChar;
+        for (int i = 0; i < randomLength; i++){
+            tempChar = (char) (generator.nextInt(96) + 32);
+            randomStringBuilder.append(tempChar);
+        }
+        return randomStringBuilder.toString();
     }
 }
