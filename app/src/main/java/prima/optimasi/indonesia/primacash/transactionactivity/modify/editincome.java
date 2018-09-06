@@ -1,5 +1,7 @@
 package prima.optimasi.indonesia.primacash.transactionactivity.modify;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -11,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +42,7 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import prima.optimasi.indonesia.primacash.R;
+import prima.optimasi.indonesia.primacash.SQLiteHelper;
 import prima.optimasi.indonesia.primacash.commaedittext;
 import prima.optimasi.indonesia.primacash.generator;
 import prima.optimasi.indonesia.primacash.objects.income;
@@ -49,6 +53,11 @@ public class editincome extends AppCompatActivity {
     View layoutitems;
     Button save,cancel;
 
+    ImageView imagechosen ;
+
+    income recorderincome;
+
+    SQLiteHelper dbase;
 
     Double calculate=0.0d,comparer=0.0d,result=0.0d;
 
@@ -70,6 +79,10 @@ public class editincome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_income_edit);
 
+
+
+        dbase = new SQLiteHelper(this);
+
         generator.incdatesys=0;
 
         data = new ArrayList<>();
@@ -80,6 +93,16 @@ public class editincome extends AppCompatActivity {
         final int[] isdone = {4};
 
         layoutitems = findViewById(R.id.viewpagerexpense);
+
+        Button notsave = layoutitems.findViewById(R.id.btnsaveincome);
+        Button notcancel = layoutitems.findViewById(R.id.btncancelincome);
+
+        imagechosen = layoutitems.findViewById(R.id.incimgdata);
+
+
+        notsave.setVisibility(View.GONE);
+        notcancel.setVisibility(View.GONE);
+
 
         categoryselect = layoutitems.findViewById(R.id.inccattap);
         accountselect = layoutitems.findViewById(R.id.incacctap);
@@ -303,71 +326,45 @@ public class editincome extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        DocumentReference docRef = fdb.collection("income").document(getIntent().getStringExtra("document"));
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d("Documentdata", "DocumentSnapshot data: " + document.getData());
-                        income values = new income();
-                        values.setIncomedoc(document.getId());
+        income values = dbase.getincome(getIntent().getStringExtra("incomeid"));
 
-                        isdone[0] = Integer.parseInt(document.getData().get("income_isdone").toString());
+        isdone[0] = values.getIncome_isdone();
 
-                        values.setIncome_account(document.getData().get("income_account").toString());
+        Bitmap bmp = BitmapFactory.decodeByteArray(values.getIncome_imagechosen(), 0, values.getIncome_imagechosen().length);
 
-                        selectedaccount.setText(document.getData().get("income_account").toString());
+        imagechosen.setImageBitmap(Bitmap.createScaledBitmap(bmp, bmp.getWidth(),
+                bmp.getHeight(), false));
 
-                        values.setIncome_amount(Double.parseDouble(document.getData().get("income_amount").toString()));
+        values.setIncome_account(values.getIncome_account());
 
-                        comparer = generator.makedouble(document.getData().get("income_amount").toString());
+        selectedaccount.setText(values.getIncome_account());
 
-                        String temp =formatter.format(Double.parseDouble(document.getData().get("income_amount").toString()));
-                        inputvalue.setText(temp);
-                        fdb.collection("category")
-                                .whereEqualTo("category_name", document.getData().get("income_category").toString())
-                                .get()
-                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                        if (task.isSuccessful()) {
-                                            for (QueryDocumentSnapshot document1 : task.getResult()) {
-                                                Log.d("Documentdata", document1.getId() + " => " + document.getData());
-                                                Drawable resImg = editincome.this.getResources().getDrawable(generator.images[Integer.parseInt(document1.getData().get("category_image").toString())-1]);
-                                                chosenimage.setImageDrawable(resImg);
-                                                values.setIncome_category(document.getData().get("income_category").toString());
-                                            }
-                                        } else {
-                                            Log.d("Documentdata", "Error getting documents: ", task.getException());
-                                        }
-                                    }
-                                });
-                        
-                        selectedcategory.setText(document.getData().get("income_category").toString());
+        values.setIncome_amount(values.getIncome_amount());
 
-                        values.setIncome_date(document.getData().get("income_date").toString());
-                        selectedate.setText(document.getData().get("income_date").toString());
+        comparer = values.getIncome_amount();
 
-                        values.setIncome_type("D");
+        String temp =formatter.format(values.getIncome_amount());
+        inputvalue.setText(temp);
 
-                        values.setIncome_notes(document.getData().get("income_notes").toString());
+        Drawable resImg = editincome.this.getResources().getDrawable(generator.images[values.getIncome_image()-1]);
+        chosenimage.setImageDrawable(resImg);
+        values.setIncome_category(values.getIncome_category());
 
-                        incnote.setText(document.getData().get("income_notes").toString());
+        selectedcategory.setText(values.getIncome_category());
 
-                        values.setIncome_from(document.getData().get("income_from").toString());
+        values.setIncome_date(values.getIncome_date());
+        selectedate.setText(values.getIncome_date());
 
-                        incfrom.setText(document.getData().get("income_from").toString());
+        values.setIncome_type(values.getIncome_type());
 
-                    } else {
-                        Log.d("Documentdata", "No such document");
-                    }
-                } else {
-                    Log.d("Documentdata", "get failed with ", task.getException());
-                }
-            }
-        });
+        values.setIncome_notes(values.getIncome_notes());
+
+        incnote.setText(values.getIncome_notes());
+
+        values.setIncome_from(values.getIncome_from());
+
+        incfrom.setText(values.getIncome_from());
+
     }
 
     @Override

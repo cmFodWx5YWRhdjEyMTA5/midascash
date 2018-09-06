@@ -15,8 +15,9 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         app:srcCompat="@drawable/personresized" />
 
@@ -24,8 +25,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/usernamelogin"
+        android:textSize="8pt"
+        android:shadowColor="@color/colorAccentBlack"
+        android:textAlignment="center"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Guest"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
 </LinearLayout>

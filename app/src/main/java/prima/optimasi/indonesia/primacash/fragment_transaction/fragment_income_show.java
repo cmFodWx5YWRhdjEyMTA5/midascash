@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -23,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -57,6 +59,7 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import prima.optimasi.indonesia.primacash.R;
+import prima.optimasi.indonesia.primacash.SQLiteHelper;
 import prima.optimasi.indonesia.primacash.formula.calculatordialog;
 import prima.optimasi.indonesia.primacash.generator;
 import prima.optimasi.indonesia.primacash.objects.income;
@@ -67,6 +70,10 @@ public class fragment_income_show extends Fragment {
 
     LayoutInflater inflater;
     FirebaseFirestore fdb;
+
+    SQLiteHelper dbase;
+
+
 
     listitemincome incadapter;
 
@@ -89,15 +96,56 @@ public class fragment_income_show extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        dbase = new SQLiteHelper(getActivity());
         fdb = FirebaseFirestore.getInstance();
 
-        datainc = new ArrayList<>();
+        datainc = dbase.getAllincome();
 
         View view = inflater.inflate(R.layout.row_activity_fragment_income_layout, container, false);
 
         recycler = view.findViewById(R.id.incomelistdata);
 
-        fdb.collection("income")
+        Log.e("test category", "onCreateView: "+ datainc.get(0).getIncome_category() );
+
+
+
+        /*List<income> tempinc =
+
+        for(int i=0;i<tempinc.size();i++){
+            income a = new income();
+
+            a.setIncome_count(tempinc.get(i).getIncome_count());
+            a.setIncome_period(tempinc.get(i).getIncome_period());
+            a.setIncome_times(tempinc.get(i).getIncome_times());
+            a.setIncome_isdated(tempinc.get(i).getIncome_isdated());
+            a.setIncome_image(tempinc.get(i).getIncome_image());
+            a.setIncome_imagechosen(tempinc.get(i).getIncome_imagechosen());
+            a.setIncome_category(tempinc.get(i).getIncome_category());
+            a.setIncome_account(tempinc.get(i).getIncome_account());
+            a.setIncome_from(tempinc.get(i).getIncome_from());
+            a.setIncome_id(tempinc.get(i).getIncome_id());
+            a.setIncome_type(tempinc.get(i).getIncome_type());
+            a.setUsername(tempinc.get(i).getUsername());
+            a.setIncome_notes(tempinc.get(i).getIncome_notes());
+            a.setIncome_date(tempinc.get(i).getIncome_date());
+*/
+
+            Collections.sort(datainc);
+            Collections.reverse(datainc);
+
+
+
+        if(incadapter!=null){
+            incadapter.notifyDataSetChanged();
+        }
+
+        incadapter = new listitemincome(getActivity(),datainc,false);
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 1);
+        recycler.setLayoutManager(mLayoutManager);
+        recycler.setItemAnimator(new DefaultItemAnimator());
+        recycler.setAdapter(incadapter);
+
+        /*fdb.collection("income")
                 .whereEqualTo("income_isdated", "0")
                 .orderBy("income_datesys", Query.Direction.DESCENDING)
                 .get()
@@ -151,12 +199,7 @@ public class fragment_income_show extends Fragment {
                                         });
 
                             }
-                            incadapter = new listitemincome(getActivity(),datainc,false);
-                            incadapter.notifyDataSetChanged();
-                            RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 1);
-                            recycler.setLayoutManager(mLayoutManager);
-                            recycler.setItemAnimator(new DefaultItemAnimator());
-                            recycler.setAdapter(incadapter);
+
                         } else {
                             Log.w("data", "Error getting documents.", task.getException());
                         }
@@ -164,6 +207,7 @@ public class fragment_income_show extends Fragment {
                 });
 
         // Inflate the layout for this fragment
+        */
         return view;
     }
 
@@ -202,8 +246,6 @@ public class fragment_income_show extends Fragment {
             else {
                 resImg = context.getResources().getDrawable(generator.images[incomes.getIncome_image()-1]);
             }
-
-            holder.documenref = incomes.getIncomedoc();
             holder.image.setImageDrawable(resImg);
             holder.image.setTag(incomes.getIncome_image());
             holder.incomevalue.setText(formatter.format(incomes.getIncome_amount()));
@@ -226,13 +268,17 @@ public class fragment_income_show extends Fragment {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()) {
+                                case R.id.incviewitem:
+
+
+
+                                    return true;
                                 case R.id.incedititem:
                                     Intent editincomes = new Intent(context,editincome.class);
-                                    editincomes.putExtra("document",holder.documenref);
+                                    editincomes.putExtra("incomeid",incomes.getIncome_id());
                                     generator.showadapterincome=null;
                                     generator.showdataincome=null;
                                     generator.showadapterincome=incadapter;
-                                    generator.showdataincome=datainc;
                                     startActivity(editincomes);
                                     return true;
                                 case R.id.incdeleteitem:
@@ -243,7 +289,11 @@ public class fragment_income_show extends Fragment {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
 
-                                            DocumentReference docRef = fdb.collection("income").document(holder.documenref);
+                                            dbase.deleteincome(incomes.getIncome_id());
+                                            reloaddata();
+                                            datainc.clear();
+
+                                            /*DocumentReference docRef = fdb.collection("income").document(holder.documenref);
                                             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -323,7 +373,7 @@ public class fragment_income_show extends Fragment {
                                                         Log.d("Documentdata", "get failed with ", task.getException());
                                                     }
                                                 }
-                                            });
+                                            });*/
                                         }
                                     });
 
@@ -357,12 +407,12 @@ public class fragment_income_show extends Fragment {
             String documenref="";
             public CircleImageView image;
             View color;
-            public LinearLayout items;
+            public CardView items;
             public TextView incomecategory, incomefrom, incomevalue ,incomeaccount,incomedate,incomenote;
 
             public MyViewHolder(View view) {
                 super(view);
-                items = view.findViewById(R.id.Linearitemsincome);
+                items = view.findViewById(R.id.card_view);
                 image = view.findViewById(R.id.incimagelistdata);
                 color= view.findViewById(R.id.colortype);
                 incomecategory = view.findViewById(R.id.inccatdata);
@@ -376,6 +426,9 @@ public class fragment_income_show extends Fragment {
     }
 
     public void reloaddata(){
+
+
+
         fdb.collection("income")
                 .whereEqualTo("income_isdated", "0")
                 .orderBy("income_datesys", Query.Direction.DESCENDING)

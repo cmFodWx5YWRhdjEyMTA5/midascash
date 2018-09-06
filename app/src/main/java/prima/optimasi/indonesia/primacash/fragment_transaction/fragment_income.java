@@ -12,7 +12,10 @@ import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapRegionDecoder;
 import android.graphics.Color;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -21,6 +24,7 @@ import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -47,9 +51,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -76,9 +83,7 @@ public class fragment_income extends Fragment {
     LayoutInflater inflater;
     LinearLayout contain;
 
-    TextView datetext;
-
-    EditText fromtxt,notestxt;
+    EditText fromtxt, notestxt;
 
     Calendar myCalendar = Calendar.getInstance();
 
@@ -88,14 +93,17 @@ public class fragment_income extends Fragment {
 
     View child;
 
-    String amountdata="",accountdata="",categorydata="",typedata="",datedata="",fromdata="",notesdata="",repeattime="",repeatperiod="",repeatcount="";
+    String amountdata = "", accountdata = "", categorydata = "", typedata = "", datedata = "", fromdata = "", notesdata = "", repeattime = "", repeatperiod = "", repeatcount = "";
 
-    ImageButton camera,galery;
-    Button save,cancel;
+    EditText input,note,from;
+    TextView datetext,categorytext,accounttext;
+
+    ImageButton camera, galery;
+    Button save, cancel;
     MySimpleArrayAdapter adapter;
     myaccountlisadapter adapteraccount;
 
-    SQLiteHelper dbase ;
+    SQLiteHelper dbase;
 
     AlertDialog dialog;//category
     AlertDialog dialogaccount;
@@ -103,35 +111,37 @@ public class fragment_income extends Fragment {
     FirebaseFirestore fdb;
 
     ImageView viewcat;
-    TextView categorytext,accounttext;
 
     List<MyListObject> valuemyobjectlist;
     List<accountobject> valuemyaccountobject;
 
-    Map<String,Object> mapdata = new HashMap<>();
+    Map<String, Object> mapdata = new HashMap<>();
 
-    LinearLayout accountchoice,categorychoice,datechoice;
+    LinearLayout accountchoice, categorychoice, datechoice;
 
     List<String> documents = new ArrayList<>();
 
     TextInputLayout editformcat;
 
-    EditText editfrom;
-
     calculatordialog calculatorchoice;
 
+    Double balance;
 
-    public void check(Context con){
-        amountdata="";
-        accountdata="";
-        categorydata="";
-        typedata="";
-        datedata="";
-        datesys=0L;
-        fromdata="";
-        notesdata="";
-    }
-    public fragment_income(){
+    byte[] imagedata;
+
+    int categoryimage;
+    /*public void check(Context con) {
+        amountdata = "";
+        accountdata = "";
+        categorydata = "";
+        typedata = "";
+        datedata = "";
+        datesys = 0L;
+        fromdata = "";
+        notesdata = "";
+    }*/
+
+    public fragment_income() {
 
     }
 
@@ -145,12 +155,10 @@ public class fragment_income extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        clearvalues();
-        LinearLayout accountselect,categoryselect,dateselect;
+        LinearLayout accountselect, categoryselect, dateselect;
         TextView changedcurrency;
 
         dbase = new SQLiteHelper(getActivity());
-
 
 
         fdb = FirebaseFirestore.getInstance();
@@ -160,7 +168,7 @@ public class fragment_income extends Fragment {
         child = inflater.inflate(R.layout.layout_transactionincome, container, false);
 
         camera = child.findViewById(R.id.inctpic);
-        galery= child.findViewById(R.id.inctgal);
+        galery = child.findViewById(R.id.inctgal);
 
         save = child.findViewById(R.id.btnsaveincome);
         cancel = child.findViewById(R.id.btncancelincome);
@@ -170,20 +178,21 @@ public class fragment_income extends Fragment {
 
         accounttext = child.findViewById(R.id.incacctxt);
 
-        generator.incfrom = child.findViewById(R.id.incfromtxt);
-        generator.incnote = child.findViewById(R.id.incnotetxt);
+        from = child.findViewById(R.id.incfromtxt);
+        note = child.findViewById(R.id.incnotetxt);
 
         changedcurrency = child.findViewById(R.id.allcurrency);
-        categoryselect=child.findViewById(R.id.inccattap);
+        categoryselect = child.findViewById(R.id.inccattap);
         accountselect = child.findViewById(R.id.incacctap);
         dateselect = child.findViewById(R.id.incdatetap);
 
-        invokelistenerforlinears(changedcurrency,categoryselect,accountselect,dateselect);
 
-        generator.incamount = child.findViewById(R.id.input_value);
-        generator.incamount.setSelected(false);
+        invokelistenerforlinears(changedcurrency, categoryselect, accountselect, dateselect);
 
-        generator.incamount.addTextChangedListener(new commaedittext(generator.incamount));
+        input = child.findViewById(R.id.input_value);
+        input.setSelected(false);
+
+        input.addTextChangedListener(new commaedittext(input));
 
         editformcat = child.findViewById(R.id.input_valuecatch);
         editformcat.setSelected(false);
@@ -192,11 +201,10 @@ public class fragment_income extends Fragment {
         ImageView calc = child.findViewById(R.id.inccalc);
 
 
-
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                android.support.v7.app.AlertDialog.Builder dialog = new android.support.v7.app.AlertDialog.Builder(getActivity(),R.style.AppCompatAlertDialogStyle)
+                android.support.v7.app.AlertDialog.Builder dialog = new android.support.v7.app.AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle)
                         .setTitle("Cancel")
                         .setMessage("Changes made will be discarded , proceed ?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -214,6 +222,199 @@ public class fragment_income extends Fragment {
             }
         });
 
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context con = getActivity();
+
+                if (accountdata == null) {
+                    accountdata = "";
+                }
+                if (categorydata == null) {
+                    categorydata = "";
+                }
+                if (!input.getText().toString().replace(",","").equals("") && !input.getText().toString().replace(",","").equals("0")) {
+                    if (!categorytext.getText().toString().equals("Category Selection")) {
+                        if (!accounttext.getText().toString().equals("Account Selection")) {
+                            if (!datetext.getText().toString().equals("")) {
+                                //saveincome
+
+                                int isdone = 0;
+                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                                Date strDate = null;
+                                try {
+                                    strDate = sdf.parse(datetext.getText().toString());
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                                if (new Date().after(strDate) || new Date().equals(strDate)) {
+                                    isdone = 1;
+                                    balance = balance + Double.parseDouble(input.getText().toString().replace(",", ""));
+
+                                    account acc = dbase.getaccount(accounttext.getText().toString());
+
+                                    acc.setAccount_balance_current(String.valueOf(balance));
+
+                                    dbase.updateaccount(acc,generator.userlogin,accounttext.getText().toString());
+
+                                } else {
+
+                                }
+
+                                prima.optimasi.indonesia.primacash.objects.income newincome = new prima.optimasi.indonesia.primacash.objects.income();
+
+                                newincome.setIncome_amount(generator.makedouble(input.getText().toString().replace(",", "")));
+                                newincome.setIncome_account(accounttext.getText().toString());
+                                newincome.setIncome_isdone(isdone);
+                                newincome.setIncome_date(datetext.getText().toString());
+
+                                newincome.setIncome_isdated(0);
+                                newincome.setIncome_times(0);
+                                newincome.setIncome_period("");
+                                newincome.setIncome_count(0);
+
+                                newincome.setIncome_category(categorytext.getText().toString());
+                                newincome.setIncome_notes(note.getText().toString());
+                                newincome.setIncome_from(from.getText().toString());
+                                newincome.setIncome_image(categoryimage);
+
+                                if(imagedata == null){
+
+                                }
+                                else {
+                                    newincome.setIncome_imagechosen(imagedata);
+                                }
+
+                                dbase.createincome(newincome, generator.userlogin);
+
+                                getActivity().finish();
+
+                                Toast.makeText(con,"New Income Saved",Toast.LENGTH_SHORT).show();
+                                    /*Date c = Calendar.getInstance().getTime();
+                                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                    String formattedDate = df.format(c);
+
+                                    if (typedata.equals("") || typedata == null) {
+                                        typedata = "D";
+                                    }
+
+                                    datedata = generator.incdate;
+
+                                    datesys = generator.incdatesys;
+
+                                    notesdata = generator.incnote.getText().toString();
+
+                                    fromdata = generator.incfrom.getText().toString();
+                                    amountdata = generator.incamount.getText().toString().replace(",", "");
+                                    accountdata = generator.incaccount;
+                                    categorydata = generator.incategory;
+
+                                    mapdata.put("income_createdate", c);
+                                    mapdata.put("income_amount", amountdata);
+                                    mapdata.put("income_account", accountdata);
+                                    mapdata.put("income_type", typedata);
+                                    mapdata.put("income_category", categorydata);
+                                    mapdata.put("income_notes", notesdata);
+                                    mapdata.put("income_date", datedata);
+                                    mapdata.put("income_isdated", "0");
+                                    mapdata.put("income_datesys", datesys);
+                                    mapdata.put("income_from", fromdata);
+                                    mapdata.put("income_repeat_time", repeattime);
+                                    mapdata.put("income_repeat_period", repeatperiod);
+                                    mapdata.put("income_repeat_count", repeatcount);
+                                    mapdata.put("income_isdone", generator.isdone);
+                                    mapdata.put("username", generator.userlogin);
+*/
+                                //save income
+
+                            } else {
+                                Snackbar.make(getActivity().findViewById(R.id.cordinatorinc),"Please Select Date",Snackbar.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Snackbar.make(getActivity().findViewById(R.id.cordinatorinc),"Please Select Account",Snackbar.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Snackbar.make(getActivity().findViewById(R.id.cordinatorinc),"Please Select Category",Snackbar.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Snackbar.make(getActivity().findViewById(R.id.cordinatorinc),"Value Field Required",Snackbar.LENGTH_SHORT).show();
+                }
+
+
+                /*
+
+                Context con = getActivity();
+
+                if (accountdata == null) {
+                    accountdata = "";
+                }
+                if (categorydata == null) {
+                    categorydata = "";
+                }
+                if (!input.getText().toString().replace(",","").equals("") && !input.getText().toString().replace(",","").equals("0")) {
+                    if (!categorytext.getText().toString().equals("Category Selection")) {
+                        if (!accounttext.getText().toString().equals("Account Selection")) {
+                            if (!datetext.getText().toString().equals("")) {
+                                if (!accountdata.equals("")) {
+                                    //saveincome
+                                    generator.incbalanceleft = String.valueOf(Double.parseDouble(generator.incbalanceleft.replace(",", "")) + Double.parseDouble(generator.incamount.getText().toString().replace(",", "")));
+
+                                    /*Date c = Calendar.getInstance().getTime();
+                                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                    String formattedDate = df.format(c);
+
+                                    if (typedata.equals("") || typedata == null) {
+                                        typedata = "D";
+                                    }
+
+                                    datedata = generator.incdate;
+
+                                    datesys = generator.incdatesys;
+
+                                    notesdata = generator.incnote.getText().toString();
+
+                                    fromdata = generator.incfrom.getText().toString();
+                                    amountdata = generator.incamount.getText().toString().replace(",", "");
+                                    accountdata = generator.incaccount;
+                                    categorydata = generator.incategory;
+
+                                    mapdata.put("income_createdate", c);
+                                    mapdata.put("income_amount", amountdata);
+                                    mapdata.put("income_account", accountdata);
+                                    mapdata.put("income_type", typedata);
+                                    mapdata.put("income_category", categorydata);
+                                    mapdata.put("income_notes", notesdata);
+                                    mapdata.put("income_date", datedata);
+                                    mapdata.put("income_isdated", "0");
+                                    mapdata.put("income_datesys", datesys);
+                                    mapdata.put("income_from", fromdata);
+                                    mapdata.put("income_repeat_time", repeattime);
+                                    mapdata.put("income_repeat_period", repeatperiod);
+                                    mapdata.put("income_repeat_count", repeatcount);
+                                    mapdata.put("income_isdone", generator.isdone);
+                                    mapdata.put("username", generator.userlogin);
+                                    } else {
+                                        Snackbar.make(getActivity().findViewById(R.id.cordinatorinc),"Please Select Account",Snackbar.LENGTH_SHORT).show();
+                                    }
+                                } else {
+                                    Snackbar.make(getActivity().findViewById(R.id.cordinatorinc),"Please Select Date",Snackbar.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Snackbar.make(getActivity().findViewById(R.id.cordinatorinc),"Type Error",Snackbar.LENGTH_SHORT).show();
+                            }
+                        } else {
+                        Snackbar.make(getActivity().findViewById(R.id.cordinatorinc),"Please Select Category",Snackbar.LENGTH_SHORT).show();
+                    }
+                } else {
+                Snackbar.make(getActivity().findViewById(R.id.cordinatorinc),"Value Field Required",Snackbar.LENGTH_SHORT).show();
+                }
+
+
+                */
+
+            }
+        });
+
         galery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -226,8 +427,7 @@ public class fragment_income extends Fragment {
                                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
                         startActivityForResult(i, 4);
-                    }
-                    else {
+                    } else {
                         try {
                             ActivityCompat.requestPermissions((Activity) getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                                     3);
@@ -251,48 +451,9 @@ public class fragment_income extends Fragment {
                         Manifest.permission.CAMERA);
                 if (permissionCheckStorage == PackageManager.PERMISSION_DENIED) {
                     requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-                }
-                else{
-                    Calendar cal = Calendar.getInstance();
-
-                    String filename = Environment.getExternalStorageDirectory().getPath() + "/Primacash/"+ cal.getTimeInMillis()+".jpg";
-                    imageuri = Uri.fromFile(new File(filename));
-
-// start default camera
+                } else {
                     Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    cameraIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,
-                            imageuri);
-                    startActivityForResult (cameraIntent, 2);
-                    /*Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    Calendar cal = Calendar.getInstance();
-
-                    /*if (android.os.Build.VERSION.SDK_INT >= 24){
-                        FileProvider photo =new FileProvider();
-                    } else{
-                        // do something for phones running an SDK before lollipop
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        int result = getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
-                        if (result == PackageManager.PERMISSION_GRANTED){
-                            File photo = new File(Environment.getExternalStorageDirectory(),  "Primacash/images/"+cal.getTimeInMillis()+".jpg");
-                            intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                    Uri.fromFile(photo));
-                            imageuri = Uri.fromFile(photo);
-                            startActivityForResult(intent, 2);
-                        }
-                        else {
-                            try {
-                                ActivityCompat.requestPermissions((Activity) getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                                        3);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                throw e;
-                            }
-                        }
-                    }
-
-
-*/
+                    startActivityForResult(cameraIntent, 1004);
                 }
             }
         });
@@ -305,14 +466,14 @@ public class fragment_income extends Fragment {
                 getActivity().getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
                 int color = typedValue.data;
 
-                int[][] states = new int[][] {
-                        new int[] { android.R.attr.state_enabled}, // enabled
-                        new int[] {-android.R.attr.state_enabled}, // disabled
-                        new int[] {-android.R.attr.state_checked}, // unchecked
-                        new int[] { android.R.attr.state_pressed}  // pressed
+                int[][] states = new int[][]{
+                        new int[]{android.R.attr.state_enabled}, // enabled
+                        new int[]{-android.R.attr.state_enabled}, // disabled
+                        new int[]{-android.R.attr.state_checked}, // unchecked
+                        new int[]{android.R.attr.state_pressed}  // pressed
                 };
 
-                int[] colors = new int[] {
+                int[] colors = new int[]{
                         color,
                         Color.WHITE,
                         Color.GREEN,
@@ -321,7 +482,7 @@ public class fragment_income extends Fragment {
 
                 ColorStateList myList = new ColorStateList(states, colors);
 
-                calculatorchoice = new calculatordialog(getActivity(),generator.incamount,myList);
+                calculatorchoice = new calculatordialog(getActivity(), input, myList);
                 calculatorchoice.showcalculatordialog();
             }
         });
@@ -330,94 +491,15 @@ public class fragment_income extends Fragment {
         return child;
     }
 
-    public void calculatebalance(){
-        generator.incbalanceleft=String.valueOf(Double.parseDouble(generator.incbalanceleft.replace(",",""))+Double.parseDouble(generator.incamount.getText().toString().replace(",","")));
-    }
 
-    public Boolean issaveable(Context con){
-        if(accountdata==null){
-            accountdata="";
-        }
-        if(categorydata==null){
-            categorydata="";
-        }
-            if (!amountdata.equals("")){
-                if(!categorydata.equals("")){
-                    if(!typedata.equals("")){
-                        if(!datedata.equals("")){
-                            if( !accountdata.equals("")) {
-                                return true;
-                            }     else {
-                                Toast.makeText(con, "Please Select Account", Toast.LENGTH_SHORT).show();
-                                return false;
-                            }
-                        }    else {
-                            Toast.makeText(con, "Please Select date", Toast.LENGTH_SHORT).show();
-                            return false;
-                        }
-                    }     else {
-                        Toast.makeText(con, "Type error", Toast.LENGTH_SHORT).show();
-                        return false;
-                    }
-                }  else {
-                    Toast.makeText(con, "Please Select Category", Toast.LENGTH_SHORT).show();
-                    return false;
-                }
-            }else {
-                Toast.makeText(con, "Value Field Required", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-    }
-    public void writeobjects(){
-        Date c = Calendar.getInstance().getTime();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String formattedDate = df.format(c);
 
-        if(typedata.equals("")|| typedata==null) {
-            typedata = "D";
-        }
-
-        datedata=generator.incdate;
-
-        datesys=generator.incdatesys;
-
-        notesdata=generator.incnote.getText().toString();
-
-        fromdata=generator.incfrom.getText().toString();
-        amountdata = generator.incamount.getText().toString().replace(",","");
-        accountdata=generator.incaccount;
-        categorydata=generator.incategory;
-
-        mapdata.put("income_createdate",c);
-        mapdata.put("income_amount",amountdata);
-        mapdata.put("income_account",accountdata);
-        mapdata.put("income_type",typedata);
-        mapdata.put("income_category",categorydata);
-        mapdata.put("income_notes",notesdata);
-        mapdata.put("income_date",datedata);
-        mapdata.put("income_isdated","0");
-        mapdata.put("income_datesys",datesys);
-        mapdata.put("income_from",fromdata);
-        mapdata.put("income_repeat_time",repeattime);
-        mapdata.put("income_repeat_period",repeatperiod);
-        mapdata.put("income_repeat_count",repeatcount);
-        mapdata.put("income_isdone",generator.isdone);
-        mapdata.put("username", generator.userlogin);
-    }
-
-    public Map<String,Object> getthemap(){
-        return mapdata;
-    }
-
-    private void invokelistenerforlinears(TextView changecurrency,LinearLayout categorylist,LinearLayout account,LinearLayout dateselect){
+    private void invokelistenerforlinears(TextView changecurrency, LinearLayout categorylist, LinearLayout account, LinearLayout dateselect) {
 
         datetext = dateselect.findViewById(R.id.incdateselect);
 
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         final String date = df.format(Calendar.getInstance().getTime());
 
-        generator.incdate= date;
-        generator.incdatesys= Calendar.getInstance().getTimeInMillis();
 
         datetext.setText(date);
 
@@ -435,11 +517,9 @@ public class fragment_income extends Fragment {
 
         dateselect.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                new DatePickerDialog(getActivity(),R.style.datepickergreen, date1, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                new DatePickerDialog(getActivity(), R.style.datepickergreen, date1, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
-
-
 
 
         categorylist.setOnClickListener(new View.OnClickListener() {
@@ -448,11 +528,11 @@ public class fragment_income extends Fragment {
 
                 Toast.makeText(getActivity(), "Loading Category..", Toast.LENGTH_SHORT).show();
 
-                AlertDialog.Builder dialog1 = new AlertDialog.Builder(getActivity(),R.style.AppCompatAlertDialogStyle)
+                AlertDialog.Builder dialog1 = new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle)
                         .setTitle("Select Category");
 
                 inflater = getActivity().getLayoutInflater();
-                View a = inflater.inflate(R.layout.dialog_search_data,null);
+                View a = inflater.inflate(R.layout.dialog_search_data, null);
 
                 ListView list = a.findViewById(R.id.lvsnf);
 
@@ -465,7 +545,7 @@ public class fragment_income extends Fragment {
                 valuemyobjectlist.clear();
 
                 List<category> allcat = dbase.getAllcategory();
-                for (int z=0;z<allcat.size();z++){
+                for (int z = 0; z < allcat.size(); z++) {
                     MyListObject b = new MyListObject();
                     b.setCategoryname(allcat.get(z).getCategory_name());
                     b.setImage(allcat.get(z).getCategory_image());
@@ -476,7 +556,7 @@ public class fragment_income extends Fragment {
 
                 adapter = new MySimpleArrayAdapter(getActivity(), R.layout.row_layout_category, valuemyobjectlist);
                 adapter.notifyDataSetChanged();
-                if (list.getAdapter()==null){
+                if (list.getAdapter() == null) {
                     list.setAdapter(adapter);
                 }
 
@@ -496,7 +576,7 @@ public class fragment_income extends Fragment {
             public void onClick(View view) {
 
 
-                AlertDialog.Builder build = new AlertDialog.Builder(getActivity(),R.style.AppCompatAlertDialogStyle);
+                AlertDialog.Builder build = new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
                 build.setTitle("Select Account");
 
                 build.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -505,9 +585,9 @@ public class fragment_income extends Fragment {
 
                     }
                 });
-                List<accountobject> allaccount=new ArrayList<accountobject>();
+                List<accountobject> allaccount = new ArrayList<accountobject>();
                 inflater = getActivity().getLayoutInflater();
-                View back = inflater.inflate(R.layout.dialog_search_data,null);
+                View back = inflater.inflate(R.layout.dialog_search_data, null);
 
                 ListView accountlist = back.findViewById(R.id.lvsnf);
 
@@ -519,7 +599,7 @@ public class fragment_income extends Fragment {
 
                 List<account> total = dbase.getAllaccount();
 
-                for(int i=0;i<total.size();i++){
+                for (int i = 0; i < total.size(); i++) {
 
                     accountobject object = new accountobject();
                     object.setAccountfullcurrency(total.get(i).getFullaccount_currency());
@@ -531,9 +611,9 @@ public class fragment_income extends Fragment {
 
                 }
 
-                adapteraccount = new myaccountlisadapter(getActivity(),R.layout.row_layout_account,allaccount,changecurrency);
+                adapteraccount = new myaccountlisadapter(getActivity(), R.layout.row_layout_account, allaccount, changecurrency);
                 accountlist.setAdapter(adapteraccount);
-                dialogaccount=build.show();
+                dialogaccount = build.show();
 
             }
         });
@@ -572,14 +652,14 @@ public class fragment_income extends Fragment {
             }
             holder = new MySimpleArrayAdapter.ViewHolder();
             holder.textView = (TextView) convertView.findViewById(R.id.categorynameitem);
-            holder.imageView =  convertView.findViewById(R.id.categoryitemimage);
-            holder.hiddentextView =  convertView.findViewById(R.id.categorydatadocument);
+            holder.imageView = convertView.findViewById(R.id.categoryitemimage);
+            holder.hiddentextView = convertView.findViewById(R.id.categorydatadocument);
             holder.categorycreatedate = rowItem.getCreatedate();
 
 
             holder.textView.setText(rowItem.getCategoryitem());
-            Log.e("image id",String.valueOf(rowItem.getImage()));
-            Drawable resImg = context.getResources().getDrawable(generator.images[rowItem.getImage()-1]);
+            Log.e("image id", String.valueOf(rowItem.getImage()));
+            Drawable resImg = context.getResources().getDrawable(generator.images[rowItem.getImage() - 1]);
             holder.imageView.setImageDrawable(resImg);
             holder.imageView.setTag(rowItem.getImage());
             holder.hiddentextView.setText(rowItem.getHiddendata());
@@ -592,7 +672,7 @@ public class fragment_income extends Fragment {
                 public void onClick(View v) {
                     viewcat.setImageDrawable(finalHolder2.imageView.getDrawable());
                     categorytext.setText(finalHolder2.textView.getText().toString());
-                    generator.incategory=categorytext.getText().toString();
+                    categoryimage = rowItem.getImage();
                     dialog.dismiss();
                 }
             });
@@ -657,12 +737,12 @@ public class fragment_income extends Fragment {
 
     private class myaccountlisadapter extends ArrayAdapter<accountobject> {
         private final Context context;
-        private AlertDialog alert=null;
+        private AlertDialog alert = null;
         private TextView currencies;
         private final List<accountobject> values;
         DecimalFormat formatter = new DecimalFormat("###,###,###.00");
 
-        public myaccountlisadapter(Context context, int resourceID, List<accountobject> value,TextView currencychange) {
+        public myaccountlisadapter(Context context, int resourceID, List<accountobject> value, TextView currencychange) {
             super(context, resourceID, value);
             this.context = context;
             currencies = currencychange;
@@ -692,7 +772,7 @@ public class fragment_income extends Fragment {
             }
             holder = new myaccountlisadapter.ViewHolder();
             holder.accountname = (TextView) convertView.findViewById(R.id.accnamchoice);
-            holder.accountcategory =  convertView.findViewById(R.id.acccatnamchoice);
+            holder.accountcategory = convertView.findViewById(R.id.acccatnamchoice);
             holder.accountbalance = convertView.findViewById(R.id.accbalval);
 
 
@@ -703,15 +783,14 @@ public class fragment_income extends Fragment {
             String part2 = parts[1]; // 034556
             holder.document = rowItem.getAccountdocument();
 
-            holder.accountbalance.setText(formatter.format(Double.parseDouble(rowItem.getAccountbalance())) +" "+ parts[0].trim());
-            holder.balance=rowItem.getAccountbalance();
-            if(Double.parseDouble(holder.balance)>=0){
+            holder.accountbalance.setText(formatter.format(Double.parseDouble(rowItem.getAccountbalance())) + " " + parts[0].trim());
+            holder.balance = rowItem.getAccountbalance();
+            if (Double.parseDouble(holder.balance) >= 0) {
                 holder.accountbalance.setTextColor(generator.green);
-            }
-            else {
+            } else {
                 holder.accountbalance.setTextColor(generator.red);
             }
-            holder.accountcategory.setText("Category : "+ rowItem.getAccountcategory());
+            holder.accountcategory.setText("Category : " + rowItem.getAccountcategory());
 
 
             ViewHolder finalHolder2 = holder;
@@ -720,9 +799,7 @@ public class fragment_income extends Fragment {
                 public void onClick(View v) {
                     currencies.setText(part2);
                     accounttext.setText(finalHolder2.accountname.getText().toString());
-                    generator.incaccount=accounttext.getText().toString();
-                    generator.incdocument=finalHolder2.document;
-                    generator.incbalanceleft=finalHolder2.balance;
+                    balance = Double.parseDouble(rowItem.getAccountbalance());
                     dialogaccount.dismiss();
                 }
             });
@@ -745,7 +822,7 @@ public class fragment_income extends Fragment {
         private String accountfullcurrency;
         private String accountdocument;
 
-        private accountobject(){
+        private accountobject() {
         }
 
         public String getAccountdocument() {
@@ -795,79 +872,51 @@ public class fragment_income extends Fragment {
         String myFormat = "dd/MM/yyyy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
         datetext.setText(sdf.format(myCalendar.getTime()));
-        generator.incdate=sdf.format(myCalendar.getTime());
-        generator.incdatesys=myCalendar.getTimeInMillis();
+        datesys = myCalendar.getTimeInMillis();
     }
 
-    public void clearvalues(){
-        try {
-            if (generator.incfrom.getText().toString() != null)
-                generator.incfrom.setText("");
-            if (generator.incamount.getText().toString() != null)
-                generator.incamount.setText("");
-            if (generator.incnote.getText().toString() != null)
-                generator.incnote.setText("");
-            if (generator.incaccount != null)
-                generator.incaccount = "";
-            if (generator.incategory != null)
-                generator.incategory = "";
-            if (generator.incdate != null)
-                generator.incdate = "";
-            if (generator.incdatesys != 0L)
-                generator.incdatesys = 0L;
-            if (generator.incbalanceleft != null)
-                generator.incbalanceleft = "";
-        }catch (Exception e){
-            Log.e("Error clear",e.getMessage());
-        }
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case 2:
-                if (resultCode == Activity.RESULT_OK) {
-                    /*Uri selectedImage = imageuri;
-                    getActivity().getContentResolver().notifyChange(selectedImage, null);
-                    ImageView imageView = (ImageView) child.findViewById(R.id.incimgdata);
-                    ContentResolver cr = getActivity().getContentResolver();
-                    Bitmap bitmap;
-                    try {
-                        bitmap = android.provider.MediaStore.Images.Media
-                                .getBitmap(cr, selectedImage);
 
-                        imageView.setImageBitmap(bitmap);
-                        Toast.makeText(getActivity(), selectedImage.toString(),
-                                Toast.LENGTH_LONG).show();
-                    } catch (Exception e) {
-                        Toast.makeText(getActivity(), "Failed to load", Toast.LENGTH_SHORT)
-                                .show();
-                        Log.e("Camera", e.toString());
-                    }*/
-                    ImageView imageView = (ImageView) child.findViewById(R.id.incimgdata);
-                    Bitmap photo = (Bitmap) data.getExtras().get("data");
-                    imageView.setImageBitmap(photo);
-                }
-                break;
-            case 4:
-                if (resultCode == Activity.RESULT_OK) {
-                    Uri selectedImage = data.getData();
-                    String[] filePathColumn = { MediaStore.Images.Media.DATA };
+        if (requestCode == 1004 && resultCode == Activity.RESULT_OK) {
 
-                    Cursor cursor = getActivity().getContentResolver().query(selectedImage,
-                            filePathColumn, null, null, null);
-                    cursor.moveToFirst();
+            Log.e("camera sucessful",requestCode + " ");
+            /*ImageView imageView = (ImageView) child.findViewById(R.id.incimgdata);
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            imageView.setImageBitmap(photo);*/
 
-                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    String picturePath = cursor.getString(columnIndex);
-                    cursor.close();
+            ImageView imageView = (ImageView) child.findViewById(R.id.incimgdata);
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            imageView.setImageBitmap(photo);
 
-                    ImageView imageView = (ImageView) child.findViewById(R.id.incimgdata);
-                    imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
-                }
-                break;
+            Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            imagedata = baos.toByteArray();
+        }
+        else if(requestCode == 4 && resultCode == Activity.RESULT_OK){
+            Log.e("galery sucessful",requestCode + " ");
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+            Cursor cursor = getActivity().getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String picturePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            ImageView imageView = (ImageView) child.findViewById(R.id.incimgdata);
+            imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+
+            Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            imagedata = baos.toByteArray();
         }
     }
-
 }
+

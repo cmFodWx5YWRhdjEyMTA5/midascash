@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -288,13 +289,13 @@ public class fragment_income_show_scheduled extends Fragment {
         public class MyViewHolder extends RecyclerView.ViewHolder {
             String documenref;
             View color;
-            LinearLayout items;
+            CardView items;
             public CircleImageView image;
             public TextView incomecategory, incomefrom, incomevalue ,incomeaccount,incomedate,incomenote;
 
             public MyViewHolder(View view) {
                 super(view);
-                items = view.findViewById(R.id.Linearitemsincome);
+                items = view.findViewById(R.id.card_view);
                 image = view.findViewById(R.id.incimagelistdata);
                 color = view.findViewById(R.id.colortype);
                 incomecategory = view.findViewById(R.id.inccatdata);

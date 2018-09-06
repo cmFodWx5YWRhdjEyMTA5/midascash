@@ -123,6 +123,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         dbase = new SQLiteHelper(this);
 
         account = GoogleSignIn.getLastSignedInAccount(this);
@@ -138,6 +140,9 @@ public class MainActivity extends AppCompatActivity
         generator.mainmenurefresh = 1;
 
         prefs = getSharedPreferences("primacash", MODE_PRIVATE);
+
+
+
         editor = getSharedPreferences("primacash", MODE_PRIVATE).edit();
 
         syncdata();
@@ -195,20 +200,40 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
 
+        View linear = navigationView.getHeaderView(0);
+
 
         Menu nav_Menu1 = navigationView.getMenu();
 
         nav_Menu1.findItem(R.id.nav_supervisor).setVisible(false);
 
-        if(!prefs.getString("username","").equals("")){
-            nav_Menu1.findItem(R.id.nav_signin).setVisible(false);
-            TextView username = (TextView) findViewById(R.id.usernamelogin);
-            username.setText(prefs.getString("username",""));
+        if(prefs.getString("username","").equals("")){
+            prefs.edit().putString("username","guest"+SQLiteHelper.random()).commit();
+            TextView username = linear.findViewById(R.id.usernamelogin);
+            username.setText("Guest");
+            generator.userlogin = prefs.getString("username","");
+            if(generator.issignedin==1){
+                nav_Menu1.findItem(R.id.nav_signin).setVisible(false);
+            }
+            else
+            {
+                nav_Menu1.findItem(R.id.nav_signin).setVisible(true);
+            }
         }
-        else
-        {
-            nav_Menu1.findItem(R.id.nav_signin).setVisible(true);
+        else {
+            TextView username = linear.findViewById(R.id.usernamelogin);
+            username.setText("Guest");
+            generator.userlogin = prefs.getString("username","");
+            if(generator.issignedin==1){
+                nav_Menu1.findItem(R.id.nav_signin).setVisible(false);
+            }
+            else
+            {
+                nav_Menu1.findItem(R.id.nav_signin).setVisible(true);
+            }
         }
+
+
 
 
 

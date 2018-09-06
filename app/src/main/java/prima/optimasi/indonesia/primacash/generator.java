@@ -79,6 +79,8 @@ import prima.optimasi.indonesia.primacash.fragment_transaction.fragment_income_s
 import prima.optimasi.indonesia.primacash.fragment_transaction.fragment_income_show_scheduled;
 import prima.optimasi.indonesia.primacash.listview.accountlistview;
 import prima.optimasi.indonesia.primacash.listview.categorylistview;
+import prima.optimasi.indonesia.primacash.objects.account;
+import prima.optimasi.indonesia.primacash.objects.category;
 import prima.optimasi.indonesia.primacash.objects.expense;
 import prima.optimasi.indonesia.primacash.objects.income;
 import prima.optimasi.indonesia.primacash.recycleview.mainactivityviews;
@@ -333,7 +335,7 @@ public class generator {
 
             }
         });
-        List<accountobject> allaccount=new ArrayList<accountobject>();
+        List<account> allaccount=new ArrayList<>();
         LayoutInflater inflater = LayoutInflater.from(context);
         View back = inflater.inflate(R.layout.dialog_search_data,null);
 
@@ -345,43 +347,16 @@ public class generator {
 
         FirebaseFirestore fdb = FirebaseFirestore.getInstance();
 
-        fdb.collection("account")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
+        SQLiteHelper dbase = new SQLiteHelper(context);
 
-                            allaccount.clear();
-                            for (DocumentSnapshot document : task.getResult()) {
-                                if(document.getId()==null){
-                                    break;
-                                }
-                                Date c=null;
-                                Object dtStart = document.getData().get("account_createdate");
-                                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                if(document.getData().get("account_status").toString().equals("1")) {
-                                    accountobject object = new accountobject();
-                                    object.setAccountdocument(document.getId());
-                                    object.setAccountfullcurrency(document.getData().get("account_fullcurency").toString());
-                                    object.setAccountname(document.getData().get("account_name").toString());
-                                    object.setAccountcategory(document.getData().get("account_category").toString());
-                                    object.setAccountbalance(document.getData().get("account_balance_current").toString());
-                                    allaccount.add(object);
-                                }
-                                else {
+        allaccount.clear();
 
-                                }
-                                Log.d("Get data account", document.getId() + " => " + document.getData());
-                            }
-                            myaccountlisadapter adapteraccount = new myaccountlisadapter(context,R.layout.row_layout_account,allaccount,changecurrency,selectedacc);
-                            accountlist.setAdapter(adapteraccount);
-                            dialogaccount=build.show();
-                        } else {
-                            Log.w("Get account error", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
+        allaccount = dbase.getAllaccount();
+
+
+        myaccountlisadapter adapteraccount = new myaccountlisadapter(context,R.layout.row_layout_account,allaccount,changecurrency,selectedacc);
+        accountlist.setAdapter(adapteraccount);
+        dialogaccount=build.show();
 
     }
 
@@ -397,7 +372,7 @@ public class generator {
 
             }
         });
-        List<accountobject> allaccount=new ArrayList<accountobject>();
+        List<account> allaccount=new ArrayList<account>();
         LayoutInflater inflater = LayoutInflater.from(context);
         View back = inflater.inflate(R.layout.dialog_search_data,null);
 
@@ -409,43 +384,15 @@ public class generator {
 
         FirebaseFirestore fdb = FirebaseFirestore.getInstance();
 
-        fdb.collection("account")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
+        SQLiteHelper dbase = new SQLiteHelper(context);
 
-                            allaccount.clear();
-                            for (DocumentSnapshot document : task.getResult()) {
-                                if(document.getId()==null){
-                                    break;
-                                }
-                                Date c=null;
-                                Object dtStart = document.getData().get("account_createdate");
-                                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                                if(document.getData().get("account_status").toString().equals("1")) {
-                                    accountobject object = new accountobject();
-                                    object.setAccountdocument(document.getId());
-                                    object.setAccountfullcurrency(document.getData().get("account_fullcurency").toString());
-                                    object.setAccountname(document.getData().get("account_name").toString());
-                                    object.setAccountcategory(document.getData().get("account_category").toString());
-                                    object.setAccountbalance(document.getData().get("account_balance_current").toString());
-                                    allaccount.add(object);
-                                }
-                                else {
+        allaccount.clear();
 
-                                }
-                                Log.d("Get data account", document.getId() + " => " + document.getData());
-                            }
-                            myaccountlisadapter adapteraccount = new myaccountlisadapter(context,R.layout.row_layout_account,allaccount,changecurrency,selectedacc,changecurrency1);
-                            accountlist.setAdapter(adapteraccount);
-                            dialogaccount=build.show();
-                        } else {
-                            Log.w("Get account error", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
+        allaccount = dbase.getAllaccount();
+
+        myaccountlisadapter adapteraccount = new myaccountlisadapter(context,R.layout.row_layout_account,allaccount,changecurrency,selectedacc,changecurrency1);
+        accountlist.setAdapter(adapteraccount);
+        dialogaccount=build.show();
 
     }
 
@@ -454,7 +401,7 @@ public class generator {
 
         final MySimpleArrayAdapter[] adapter = new MySimpleArrayAdapter[1];
 
-        List<MyListObject> valuemyobjectlist = new ArrayList<>();
+        List<category> valuemyobjectlist = new ArrayList<>();
         Toast.makeText(context, "Loading Category..", Toast.LENGTH_SHORT).show();
 
         AlertDialog.Builder dialog1 = new AlertDialog.Builder(context,R.style.AppCompatAlertDialogStyle)
@@ -473,38 +420,17 @@ public class generator {
 
         FirebaseFirestore fdb = FirebaseFirestore.getInstance();
 
-        fdb.collection("category")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+        SQLiteHelper dbase = new SQLiteHelper(context);
 
-                        if (task.isSuccessful()) {
-                            valuemyobjectlist.clear();
-                            for (DocumentSnapshot document : task.getResult()) {
-                                if(document.getId()==null){
-                                    break;
-                                }
-                                Log.e("getting data", document.getId() + " => " + document.getData());
-                                MyListObject b = new MyListObject();
-                                b.setCategoryname(document.getData().get("category_name").toString());
-                                b.setImage(Integer.parseInt(document.getData().get("category_image").toString()));
-                                b.setHiddendata(document.getId());
-                                b.setCreatedate(document.getData().get("category_createdate"));
-                                valuemyobjectlist.add(b);
-                            }
+        valuemyobjectlist.clear();
+        valuemyobjectlist = dbase.getAllcategory();
 
-                        } else {
-                            Log.e("", "Error getting documents.", task.getException());
-                        }
-                        adapter[0] = new MySimpleArrayAdapter(context, R.layout.row_layout_category, valuemyobjectlist,passedtextview,image);
-                        adapter[0].notifyDataSetChanged();
-                        if (list.getAdapter()==null){
-                            list.setAdapter(adapter[0]);
-                        }
+        adapter[0] = new MySimpleArrayAdapter(context, R.layout.row_layout_category, valuemyobjectlist,passedtextview,image);
+        adapter[0].notifyDataSetChanged();
+        if (list.getAdapter()==null){
+            list.setAdapter(adapter[0]);
+        }
 
-                    }
-                });
         dialog1.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -515,13 +441,13 @@ public class generator {
     
     }
 
-    private static class MySimpleArrayAdapter extends ArrayAdapter<MyListObject> {
+    private static class MySimpleArrayAdapter extends ArrayAdapter<category> {
         private final Context context;
         private CircleImageView image;
-        private final List<MyListObject> values;
+        private final List<category> values;
         private TextView text;
 
-        public MySimpleArrayAdapter(Context context, int resourceID, List<MyListObject> values,TextView passedtext,CircleImageView image) {
+        public MySimpleArrayAdapter(Context context, int resourceID, List<category> values,TextView passedtext,CircleImageView image) {
             super(context, resourceID, values);
             this.context = context;
             this.values = values;
@@ -539,7 +465,7 @@ public class generator {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             MySimpleArrayAdapter.ViewHolder holder;
-            MyListObject rowItem = getItem(position);
+           category rowItem = getItem(position);
 
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             if (convertView == null) {
@@ -553,15 +479,14 @@ public class generator {
             holder.textView = (TextView) convertView.findViewById(R.id.categorynameitem);
             holder.imageView =  convertView.findViewById(R.id.categoryitemimage);
             holder.hiddentextView =  convertView.findViewById(R.id.categorydatadocument);
-            holder.categorycreatedate = rowItem.getCreatedate();
+            holder.categorycreatedate = rowItem.getCategory_createdate();
 
 
-            holder.textView.setText(rowItem.getCategoryitem());
-            Log.e("image id",String.valueOf(rowItem.getImage()));
-            Drawable resImg = context.getResources().getDrawable(images[rowItem.getImage()-1]);
+            holder.textView.setText(rowItem.getCategory_name());
+            Log.e("image id",String.valueOf(rowItem.getCategory_image()));
+            Drawable resImg = context.getResources().getDrawable(images[rowItem.getCategory_image()-1]);
             holder.imageView.setImageDrawable(resImg);
-            holder.imageView.setTag(rowItem.getImage());
-            holder.hiddentextView.setText(rowItem.getHiddendata());
+            holder.imageView.setTag(rowItem.getCategory_image());
 
             final MySimpleArrayAdapter.ViewHolder finalHolder = holder;
             MySimpleArrayAdapter.ViewHolder finalHolder1 = holder;
@@ -581,7 +506,7 @@ public class generator {
         }
 
         @Override
-        public MyListObject getItem(int position) {
+        public category getItem(int position) {
             return values.get(position);
         }
 
@@ -634,21 +559,21 @@ public class generator {
         }
     }
 
-    private static class myaccountlisadapter extends ArrayAdapter<accountobject> {
+    private static class myaccountlisadapter extends ArrayAdapter<account> {
         private final Context context;
         private AlertDialog alert=null;
         private TextView currencies,chosentext,chosentext1;
-        private final List<accountobject> values;
+        private final List<account> values;
         DecimalFormat formatter = new DecimalFormat("###,###,###.00");
 
-        public myaccountlisadapter(Context context, int resourceID, List<accountobject> value,TextView currencychange,TextView chosentext) {
+        public myaccountlisadapter(Context context, int resourceID, List<account> value,TextView currencychange,TextView chosentext) {
             super(context, resourceID, value);
             this.context = context;
             currencies = currencychange;
             this.values = value;
             this.chosentext=chosentext;
         }
-        public myaccountlisadapter(Context context, int resourceID, List<accountobject> value,TextView currencychange,TextView chosentext,TextView chose) {
+        public myaccountlisadapter(Context context, int resourceID, List<account> value,TextView currencychange,TextView chosentext,TextView chose) {
             super(context, resourceID, value);
             this.context = context;
             currencies = currencychange;
@@ -658,7 +583,7 @@ public class generator {
         }
 
         private class ViewHolder {
-            String document;
+            String incomeid;
             String balance;
             TextView accountname;
             TextView accountcategory;
@@ -668,7 +593,7 @@ public class generator {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             myaccountlisadapter.ViewHolder holder;
-            accountobject rowItem = getItem(position);
+            account rowItem = getItem(position);
 
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             if (convertView == null) {
@@ -684,22 +609,21 @@ public class generator {
             holder.accountbalance = convertView.findViewById(R.id.accbalval);
 
 
-            holder.accountname.setText(rowItem.getAccountname());
-            String string = rowItem.getAccountfullcurrency();
+            holder.accountname.setText(rowItem.getAccount_name());
+            String string = rowItem.getFullaccount_currency();
             String[] parts = string.split("-");
             String part1 = parts[0]; // 004
             String part2 = parts[1]; // 034556
-            holder.document = rowItem.getAccountdocument();
 
-            holder.accountbalance.setText(formatter.format(Double.parseDouble(rowItem.getAccountbalance())) +" "+ parts[0].trim());
-            holder.balance=rowItem.getAccountbalance();
+            holder.accountbalance.setText(formatter.format(Double.parseDouble(rowItem.getAccount_balance())) +" "+ parts[0].trim());
+            holder.balance=rowItem.getAccount_balance();
             if(Double.parseDouble(holder.balance)>=0){
                 holder.accountbalance.setTextColor(generator.green);
             }
             else {
                 holder.accountbalance.setTextColor(generator.red);
             }
-            holder.accountcategory.setText("Category : "+ rowItem.getAccountcategory());
+            holder.accountcategory.setText("Category : "+ rowItem.getAccount_category());
 
 
             ViewHolder finalHolder2 = holder;
@@ -712,7 +636,6 @@ public class generator {
                     currencies.setText(part2);
                     chosentext.setText(finalHolder2.accountname.getText().toString());
                     generator.incaccount=chosentext.getText().toString();
-                    generator.incdocument=finalHolder2.document;
                     generator.incbalanceleft=finalHolder2.balance;
                     dialogaccount.dismiss();
                 }
@@ -723,7 +646,7 @@ public class generator {
         }
 
         @Override
-        public accountobject getItem(int position) {
+        public account getItem(int position) {
             return values.get(position);
         }
 

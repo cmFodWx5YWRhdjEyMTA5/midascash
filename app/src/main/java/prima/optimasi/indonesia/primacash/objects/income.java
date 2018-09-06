@@ -10,31 +10,40 @@ import java.util.Locale;
 
 public class income implements Comparable<income>  {
     String income_account,income_type,income_from,income_notes,income_id,username,income_category;
-    int income_image;
+    int income_image,income_isdone;
     String income_date,income_createdate;
     byte[] income_imagechosen;
     double income_amount;
+    Integer income_isdated,income_count,income_times;
+    String income_period;
     String incomedoc;
 
 
-    public income(){}
-
-    public income(String iacc,String itype,String ifr,String inot,String iid,String idat,String icdat,double imon,int image,byte[] imaeb,String icat,String user){
-        username=user;
-        income_account=iacc;
-        income_amount=imon;
-        income_createdate=icdat;
-        income_from=ifr;
-        income_date=idat;
-        income_type=itype;
-        income_notes=inot;
-        income_id=iid;
-        income_image= image;
-        income_imagechosen = imaeb;
+    public income(){
     }
 
     //setter
 
+
+    public void setIncome_isdone(int income_isdone) {
+        this.income_isdone = income_isdone;
+    }
+
+    public void setIncome_times(Integer income_times) {
+        this.income_times = income_times;
+    }
+
+    public void setIncome_count(Integer income_count) {
+        this.income_count = income_count;
+    }
+
+    public void setIncome_isdated(Integer income_isdated) {
+        this.income_isdated = income_isdated;
+    }
+
+    public void setIncome_period(String income_period) {
+        this.income_period = income_period;
+    }
 
     public void setIncome_imagechosen(byte[] income_imagechosen) {
         this.income_imagechosen = income_imagechosen;
@@ -89,6 +98,21 @@ public class income implements Comparable<income>  {
     //getter
 
 
+    public Integer getIncome_times() {
+        return income_times;
+    }
+
+    public Integer getIncome_count() {
+        return income_count;
+    }
+
+    public Integer getIncome_isdated() {
+        return income_isdated;
+    }
+
+    public String getIncome_period() {
+        return income_period;
+    }
     public String getIncome_category() {
         return income_category;
     }
@@ -106,6 +130,9 @@ public class income implements Comparable<income>  {
     }
 
 
+    public int getIncome_isdone() {
+        return income_isdone;
+    }
 
     public String getIncome_account(){
         return income_account;

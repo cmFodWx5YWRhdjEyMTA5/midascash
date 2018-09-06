@@ -47,17 +47,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     // account
 
-    String account_name;
-    String account_category;
-    String account_currency;
-    String fullaccount_currency;
-    Object account_createdate;
-    String account_balance;
-    String account_balance_current;
-    String username;
-    int account_status;
-    int createorlast;
-
     private static final String KEY_ACCOUNT_NAME = "account_name";
     private static final String KEY_ACCOUNT_CATEGORY = "account_category";
     private static final String KEY_ACCOUNT_CREATEDATE = "account_createdate";
@@ -97,6 +86,12 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String KEY_EXPENSE_NOTES = "expense_notes";
     private static final String KEY_EXPENSE_AMOUNT = "expense_amount";
     private static final String KEY_EXPENSE_CATEGORY = "expense_category";
+    private static final String KEY_EXPENSE_TIMES = "expense_times";
+    private static final String KEY_EXPENSE_IMAGECHOSEN = "expense_imagechosen";
+    private static final String KEY_EXPENSE_ISDONE = "expense_isdone";
+    private static final String KEY_EXPENSE_ISDATED = "expense_isdated";
+    private static final String KEY_EXPENSE_PERIOD = "expense_period";
+    private static final String KEY_EXPENSE_COUNT = "expense_count";
 
 
     //transfer
@@ -116,12 +111,18 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String KEY_INCOME_FROM = "income_from";
     private static final String KEY_INCOME_CREATEDATE = "income_createdate";
     private static final String KEY_INCOME_IMAGE = "income_image";
+    private static final String KEY_INCOME_IMAGECHOSEN = "income_imagechosen";
+    private static final String KEY_INCOME_ISDONE = "income_isdone";
+    private static final String KEY_INCOME_ISDATED = "income_isdated";
+    private static final String KEY_INCOME_TIMES = "income_times";
+    private static final String KEY_INCOME_PERIOD = "income_period";
+    private static final String KEY_INCOME_COUNT = "income_count";
     private static final String KEY_INCOME_DATE = "income_date";
     private static final String KEY_INCOME_ID = "income_id";
     private static final String KEY_INCOME_TYPE = "income_type";
     private static final String KEY_INCOME_NOTES = "income_notes";
     private static final String KEY_INCOME_AMOUNT = "income_amount";
-    private static final String KEY_INCOME_CATEGORY = "expense_category";
+    private static final String KEY_INCOME_CATEGORY = "income_category";
 
     //log
 
@@ -158,8 +159,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             + " INTEGER,"+ KEY_COST_IMAGE + " TEXT" +")";
 
     private static final String CREATE_TABLE_EXPENSE="CREATE TABLE "
-            + TABLE_EXPENSE + "(" + KEY_USERNAME + " TEXT," + KEY_EXPENSE_CATEGORY + " TEXT,"
-            + KEY_EXPENSE_CREATEDATE+ " DATETIME," + KEY_EXPENSE_AMOUNT + " TEXT,"
+            + TABLE_EXPENSE + "(" + KEY_USERNAME + " TEXT," + KEY_EXPENSE_CATEGORY + " TEXT," + KEY_EXPENSE_ISDONE + " INTEGER," + KEY_EXPENSE_IMAGECHOSEN + " BLOB,"
+            + KEY_EXPENSE_CREATEDATE+ " DATETIME," + KEY_EXPENSE_AMOUNT + " TEXT," + KEY_EXPENSE_ISDATED + " INTEGER,"
+            + KEY_EXPENSE_PERIOD + " TEXT," + KEY_EXPENSE_COUNT + " INTEGER," + KEY_EXPENSE_TIMES + " INTEGER,"
             + KEY_EXPENSE_ID + " TEXT," + KEY_EXPENSE_NOTES + " TEXT," +KEY_EXPENSE_TYPE+ " TEXT,"+ KEY_EXPENSE_DATE
             + " DATETIME,"+ KEY_EXPENSE_IMAGE + " TEXT," + KEY_EXPENSE_TO + " TEXT," + KEY_EXPENSE_ACCOUNT + " TEXT" +")";
 
@@ -170,8 +172,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             + " DATETIME,"+ KEY_TRANSFER_RATE + " REAL," + KEY_TRANSFER_CATEGORY + " TEXT)";
 
     private static final String CREATE_TABLE_INCOME="CREATE TABLE "
-            + TABLE_INCOME + "(" + KEY_USERNAME + " TEXT," + KEY_INCOME_CATEGORY + " TEXT,"
-            + KEY_INCOME_CREATEDATE+ " DATETIME," + KEY_INCOME_AMOUNT + " TEXT,"
+            + TABLE_INCOME + "(" + KEY_USERNAME + " TEXT," + KEY_INCOME_CATEGORY + " TEXT," + KEY_INCOME_ISDONE + " INTEGER," + KEY_INCOME_IMAGECHOSEN + " BLOB,"
+            + KEY_INCOME_CREATEDATE+ " DATETIME," + KEY_INCOME_AMOUNT + " TEXT," + KEY_INCOME_ISDATED + " INTEGER,"
+            + KEY_INCOME_PERIOD + " TEXT," + KEY_INCOME_COUNT + " INTEGER," + KEY_INCOME_TIMES + " INTEGER,"
             + KEY_INCOME_ID + " TEXT," + KEY_INCOME_NOTES + " TEXT," +KEY_INCOME_TYPE
             + " TEXT,"+ KEY_INCOME_DATE + " DATETIME,"+ KEY_INCOME_IMAGE + " TEXT,"
             + KEY_INCOME_FROM + " TEXT," + KEY_INCOME_ACCOUNT + " TEXT" +")";
@@ -579,6 +582,19 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         values.put(KEY_INCOME_TYPE, accs.getIncome_type());
         values.put(KEY_INCOME_FROM, accs.getIncome_from());
         values.put(KEY_INCOME_NOTES, accs.getIncome_notes());
+        values.put(KEY_INCOME_ISDONE, accs.getIncome_isdone());
+
+        values.put(KEY_INCOME_ISDATED, accs.getIncome_isdated());
+        values.put(KEY_INCOME_TIMES, accs.getIncome_times());
+        values.put(KEY_INCOME_PERIOD, accs.getIncome_period());
+        values.put(KEY_INCOME_COUNT, accs.getIncome_count());
+
+        if(accs.getIncome_imagechosen()==null){
+
+        }
+        else {
+            values.put(KEY_INCOME_IMAGECHOSEN, accs.getIncome_imagechosen());
+        }
         values.put(KEY_INCOME_ID,random());
         values.put(KEY_INCOME_CATEGORY, accs.getIncome_category());
         values.put(KEY_INCOME_IMAGE,accs.getIncome_image());
@@ -613,22 +629,27 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         if( c != null && c.moveToFirst() ){
 
             income td = new income();
-            td.setIncome_account(c.getString(c.getColumnIndex(KEY_INCOME_ACCOUNT)));
-            td.setIncome_date(c.getString(c.getColumnIndex(KEY_INCOME_DATE)));
-            td.setIncome_id(c.getString(c.getColumnIndex(KEY_INCOME_ID)));
-            td.setIncome_type(c.getString(c.getColumnIndex(KEY_INCOME_TYPE)));
-            td.setIncome_from(c.getString(c.getColumnIndex(KEY_INCOME_FROM)));
-            td.setIncome_notes(c.getString(c.getColumnIndex(KEY_INCOME_NOTES)));
             td.setIncome_category(c.getString(c.getColumnIndex(KEY_INCOME_CATEGORY)));
-            td.setUsername(c.getString(c.getColumnIndex(KEY_USERNAME)));
-            td.setIncome_image(c.getInt(c.getColumnIndex(KEY_INCOME_IMAGE)));
-            td.setIncome_amount(c.getDouble(c.getColumnIndex(KEY_INCOME_AMOUNT)));
+            td.setIncome_account(c.getString(c.getColumnIndex(KEY_INCOME_ACCOUNT)));
+            td.setIncome_amount(c.getInt(c.getColumnIndex(KEY_INCOME_AMOUNT)));
+            td.setIncome_date(c.getString(c.getColumnIndex(KEY_INCOME_DATE)));
+            td.setIncome_isdone(c.getInt(c.getColumnIndex(KEY_INCOME_ISDONE)));
+            td.setIncome_isdated(c.getInt(c.getColumnIndex(KEY_INCOME_ISDATED)));
 
-            String income_account,income_type,income_from,income_notes,income_id,username,income_category;
-            int income_image;
-            String income_date,income_createdate;
-            double income_amount;
-            String incomedoc;
+            if(c.getInt(c.getColumnIndex(KEY_INCOME_ISDATED))==1){
+                td.setIncome_count(c.getInt(c.getColumnIndex(KEY_INCOME_COUNT)));
+                td.setIncome_period(c.getString(c.getColumnIndex(KEY_INCOME_PERIOD)));
+                td.setIncome_times(c.getInt(c.getColumnIndex(KEY_INCOME_TIMES)));
+            }
+
+            td.setIncome_type(c.getString(c.getColumnIndex(KEY_INCOME_TYPE)));
+            td.setIncome_id(c.getString(c.getColumnIndex(KEY_INCOME_ID)));
+            td.setIncome_notes(c.getString(c.getColumnIndex(KEY_INCOME_NOTES)));
+            td.setIncome_from(c.getString(c.getColumnIndex(KEY_INCOME_FROM)));
+            td.setUsername(c.getString(c.getColumnIndex(KEY_USERNAME)));
+
+            td.setIncome_imagechosen(c.getBlob(c.getColumnIndex(KEY_INCOME_IMAGECHOSEN)));
+            td.setIncome_image(c.getInt(c.getColumnIndex(KEY_INCOME_IMAGE)));
 
 
             Date date=null;
@@ -647,7 +668,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     public List<income> getAllincome() {
         List<income> todos = new ArrayList<income>();
-        String selectQuery = "SELECT  * FROM " + TABLE_CATEGORY;
+        String selectQuery = "SELECT  * FROM " + TABLE_INCOME;
 
         Log.e(LOG, selectQuery);
 
@@ -655,38 +676,37 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(selectQuery, null);
 
         // looping through all rows and adding to list
-        if (c.moveToFirst()) {
+        if( c != null && c.moveToFirst()){
             do {
                 income td = new income();
+                td.setIncome_category(c.getString(c.getColumnIndex(KEY_INCOME_CATEGORY)));
                 td.setIncome_account(c.getString(c.getColumnIndex(KEY_INCOME_ACCOUNT)));
                 td.setIncome_amount(c.getInt(c.getColumnIndex(KEY_INCOME_AMOUNT)));
+                td.setIncome_date(c.getString(c.getColumnIndex(KEY_INCOME_DATE)));
+                td.setIncome_isdone(c.getInt(c.getColumnIndex(KEY_INCOME_ISDONE)));
+                td.setIncome_isdated(c.getInt(c.getColumnIndex(KEY_INCOME_ISDATED)));
+
+                if(c.getInt(c.getColumnIndex(KEY_INCOME_ISDATED))==1){
+                    td.setIncome_count(c.getInt(c.getColumnIndex(KEY_INCOME_COUNT)));
+                    td.setIncome_period(c.getString(c.getColumnIndex(KEY_INCOME_PERIOD)));
+                    td.setIncome_times(c.getInt(c.getColumnIndex(KEY_INCOME_TIMES)));
+                }
+
+                td.setIncome_type(c.getString(c.getColumnIndex(KEY_INCOME_TYPE)));
+                td.setIncome_id(c.getString(c.getColumnIndex(KEY_INCOME_ID)));
+                td.setIncome_notes(c.getString(c.getColumnIndex(KEY_INCOME_NOTES)));
+                td.setIncome_from(c.getString(c.getColumnIndex(KEY_INCOME_FROM)));
+                td.setUsername(c.getString(c.getColumnIndex(KEY_USERNAME)));
+
+                td.setIncome_imagechosen(c.getBlob(c.getColumnIndex(KEY_INCOME_IMAGECHOSEN)));
+                td.setIncome_image(c.getInt(c.getColumnIndex(KEY_INCOME_IMAGE)));
 
                 Date date=null;
-                String dtStart = c.getString(c.getColumnIndex(KEY_INCOME_CREATEDATE));
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                try {
-                    date = format.parse(dtStart);
-                    System.out.println(date);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                cal.setTimeInMillis(c.getColumnIndex(KEY_INCOME_CREATEDATE));
+                DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
-                Date date1=null;
-                String dtStart1 = c.getString(c.getColumnIndex(KEY_INCOME_CREATEDATE));
-                SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
-                try {
-                    date = format1.parse(dtStart1);
-                    System.out.println(date1);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
-                td.setIncome_from(c.getString(c.getColumnIndex(KEY_INCOME_FROM)));
-                td.setIncome_id(c.getString(c.getColumnIndex(KEY_INCOME_ID)));
-
-                td.setIncome_image(c.getInt(c.getColumnIndex(KEY_INCOME_IMAGE)));
-                td.setIncome_notes(c.getString(c.getColumnIndex(KEY_INCOME_NOTES)));
-                td.setIncome_type(c.getString(c.getColumnIndex(KEY_INCOME_TYPE)));
+                date = cal.getTime();
+                td.setIncome_createdate(format.format(date));
 
                 todos.add(td);
                 // adding to todo list
@@ -711,7 +731,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     /**
      * Updating a todo
      */
-    public int updateincome(income accs,String catname,String user) {
+    public int updateincome(income accs,String incname,String user) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -739,28 +759,24 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         values.put(KEY_USERNAME,user);
 
         // updating row
-        return db.update(TABLE_CATEGORY, values, KEY_CATEGORY_NAME + " = ?",
-                new String[] { catname });
+        return db.update(TABLE_INCOME, values, KEY_INCOME_ID + " = ?",
+                new String[] { incname });
     }
 
     /**
      * Deleting a todo
      */
-    public void deleteincome(String accs) {
+    public void deleteincome(String incs) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_CATEGORY, KEY_CATEGORY_NAME + " = ?",
-                new String[] {  accs});
+        db.delete(TABLE_INCOME, KEY_INCOME_ID + " = ?",
+                new String[] {  incs});
     }
 
     public static String random() {
-        Random generator = new Random();
-        StringBuilder randomStringBuilder = new StringBuilder();
-        int randomLength = generator.nextInt(1000);
-        char tempChar;
-        for (int i = 0; i < randomLength; i++){
-            tempChar = (char) (generator.nextInt(96) + 32);
-            randomStringBuilder.append(tempChar);
-        }
-        return randomStringBuilder.toString();
+        Calendar cal = Calendar.getInstance();
+        String rand = "";
+        rand = cal.getTimeInMillis()+"";
+
+        return rand;
     }
 }
