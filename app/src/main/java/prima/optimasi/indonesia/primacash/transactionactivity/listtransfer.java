@@ -88,6 +88,7 @@ public class listtransfer extends AppCompatActivity{
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setElevation(0);
 
         recycler = findViewById(R.id.recyclertransfer);
         datatransfer = new ArrayList<>();

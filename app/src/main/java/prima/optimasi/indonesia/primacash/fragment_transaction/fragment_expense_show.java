@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -58,9 +60,12 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import prima.optimasi.indonesia.primacash.R;
+import prima.optimasi.indonesia.primacash.SQLiteHelper;
 import prima.optimasi.indonesia.primacash.formula.calculatordialog;
 import prima.optimasi.indonesia.primacash.generator;
+import prima.optimasi.indonesia.primacash.objects.account;
 import prima.optimasi.indonesia.primacash.objects.expense;
+import prima.optimasi.indonesia.primacash.objects.income;
 import prima.optimasi.indonesia.primacash.transactionactivity.modify.editexpense;
 
 public class fragment_expense_show extends Fragment {
@@ -72,6 +77,8 @@ public class fragment_expense_show extends Fragment {
     FirebaseFirestore fdb;
 
     listitemexpense expadapter;
+
+    SQLiteHelper dbase;
 
     RecyclerView recycler;
 
@@ -98,6 +105,8 @@ public class fragment_expense_show extends Fragment {
 
         fdb = FirebaseFirestore.getInstance();
 
+        dbase = new SQLiteHelper(getActivity());
+
         View view = inflater.inflate(R.layout.row_activity_fragment_expense_layout, container, false);
         contain = view.findViewById(R.id.llexpense);
 
@@ -105,7 +114,13 @@ public class fragment_expense_show extends Fragment {
 
         dataexp = new ArrayList<>();
 
-        fdb.collection("expense")
+        dataexp = dbase.getAllexpense();
+
+        if(dataexp.size()!=0){
+            Log.e("test category", "onCreateView: "+ dataexp.get(0).getexpense_category() );
+        }
+
+        /*fdb.collection("expense")
                 .whereEqualTo("expense_isdated", "0")
                 .orderBy("expense_datesys", Query.Direction.DESCENDING )
                 .get()
@@ -158,67 +173,38 @@ public class fragment_expense_show extends Fragment {
                                             }
                                         });
                             }
-                            expadapter = new listitemexpense(getActivity(),dataexp,false);
-                            expadapter.notifyDataSetChanged();
-                            RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 1);
-                            recycler.setLayoutManager(mLayoutManager);
-                            recycler.setItemAnimator(new DefaultItemAnimator());
-                            recycler.setAdapter(expadapter);
+
                         } else {
                             Log.w("data", "Error getting documents.", task.getException());
                         }
                     }
-                });
+                });*/
+
+        expadapter = new listitemexpense(getActivity(),dataexp,false);
+        expadapter.notifyDataSetChanged();
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 1);
+        recycler.setLayoutManager(mLayoutManager);
+        recycler.setItemAnimator(new DefaultItemAnimator());
+        recycler.setAdapter(expadapter);
 
         return view;
     }
 
     public void reloaddata(){
-        fdb.collection("expense")
-                .whereEqualTo("expense_isdated", "0")
-                .orderBy("expense_datesys", Query.Direction.DESCENDING)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                expense values = new expense();
-                                values.setexpensedoc(document.getId());
-                                values.setexpense_account(document.getData().get("expense_account").toString());
-                                values.setexpense_amount(Double.parseDouble(document.getData().get("expense_amount").toString()));
-                                values.setexpense_category(document.getData().get("expense_category").toString());
-                                values.setexpense_date(document.getData().get("expense_date").toString());
-                                values.setexpense_type("K");
-                                values.setexpense_notes(document.getData().get("expense_notes").toString());
-                                values.setexpense_to(document.getData().get("expense_to").toString());
-                                fdb.collection("category")
-                                        .whereEqualTo("category_name", document.getData().get("expense_category").toString())
-                                        .get()
-                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task1) {
-                                                if (task.isSuccessful()) {
-                                                    for (QueryDocumentSnapshot document1 : task1.getResult()) {
-                                                        Log.e("category datas", document1.getId() + " => " + document1.getData());
-                                                        values.setexpense_image(Integer.parseInt(document1.getData().get("category_image").toString()));
-                                                        dataexp.add(values);
-                                                        expadapter.notifyDataSetChanged();
-                                                        Collections.sort(dataexp);
-                                                        Collections.reverse(dataexp);
-                                                    }
+        dataexp.clear();
+        List<expense> datainctemp = dbase.getAllexpense();
 
-                                                } else {
-                                                    Log.d("data", "Error getting documents: ", task.getException());
-                                                }
-                                            }
-                                        });
-                            }
-                        } else {
-                            Log.w("data", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
+        for(int i = 0 ; i < datainctemp.size();i++){
+            dataexp.add(datainctemp.get(i));
+            Collections.sort(dataexp);
+            Collections.reverse(dataexp);
+        }
+
+
+
+        if(expadapter!=null){
+            expadapter.notifyDataSetChanged();
+        }
     }
 
     public class listitemexpense extends RecyclerView.Adapter<listitemexpense.MyViewHolder>{
@@ -282,24 +268,120 @@ public class fragment_expense_show extends Fragment {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()) {
+                                case R.id.incviewitem:
+                                    AlertDialog.Builder dialog = new AlertDialog.Builder(context,R.style.AppCompatAlertDialogStyle);
+
+                                    View v = LayoutInflater.from(context).inflate(R.layout.layout_display_expense,null);
+
+                                    int checkimage = 0;
+
+                                    TextView dates,categories,accounts,amoount,currency,notes,from,notice;
+                                    ImageView imagechosen;
+                                    CircleImageView circle;
+
+                                    currency = v.findViewById(R.id.allcurrency);
+                                    amoount = v.findViewById(R.id.expamountview);
+                                    categories =v.findViewById(R.id.expcatname);
+                                    circle = v.findViewById(R.id.expcatpic);
+                                    accounts = v.findViewById(R.id.expacctxt);
+                                    dates = v.findViewById(R.id.expdateselect);
+
+                                    notice = v.findViewById(R.id.expimagenote);
+                                    notice.setVisibility(View.GONE);
+
+                                    notes = v.findViewById(R.id.expnotetxt);
+                                    from = v.findViewById(R.id.expfromtxt);
+
+                                    imagechosen = v.findViewById(R.id.expimgdata);
+
+                                    try {
+                                        if (expenses.getexpense_imagechosen() == null) {
+                                            checkimage = 0;
+                                        } else {
+                                            Bitmap bmp = BitmapFactory.decodeByteArray(expenses.getexpense_imagechosen(), 0, expenses.getexpense_imagechosen().length);
+                                            imagechosen.setImageBitmap(Bitmap.createScaledBitmap(bmp, bmp.getWidth(),
+                                                    bmp.getHeight(), false));
+                                            checkimage = 1;
+                                        }
+                                    }catch (NullPointerException e){
+                                        checkimage = 0 ;
+                                    }
+
+                                    if(checkimage == 1){
+                                        notice.setVisibility(View.GONE);
+                                        imagechosen.setVisibility(View.VISIBLE);
+                                    }
+                                    else {
+                                        notice.setVisibility(View.VISIBLE);
+                                        imagechosen.setVisibility(View.GONE);
+                                    }
+
+
+                                    accounts.setText(expenses.getexpense_account());
+
+                                    String temp =formatter.format(expenses.getexpense_amount());
+                                    amoount.setText(temp);
+
+                                    Drawable resImg = context.getResources().getDrawable(generator.images[expenses.getexpense_image()-1]);
+                                    circle.setImageDrawable(resImg);
+
+                                    categories.setText(expenses.getexpense_category());
+                                    dates.setText(expenses.getexpense_date());
+                                    notes.setText(expenses.getexpense_notes());
+                                    from.setText(expenses.getexpense_to());
+
+
+
+                                    dialog.setView(v);
+                                    dialog.setTitle("ID : " + expenses.getexpense_id());
+                                    dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+
+                                    dialog.show();
+
+
+
+
+                                    return true;
                                 case R.id.incedititem:
-                                    Intent editincomes = new Intent(context,editexpense.class);
-                                    editincomes.putExtra("document",holder.documenref);
+                                    Intent editexpenses = new Intent(context,editexpense.class);
+                                    editexpenses.putExtra("expenseid",expenses.getexpense_id());
                                     generator.showadapterexpense=null;
                                     generator.showdataexpensesch=null;
                                     generator.showadapterexpense=expadapter;
                                     generator.showdataexpense=dataexp;
-                                    startActivity(editincomes);
+                                    startActivity(editexpenses);
                                     return true;
                                 case R.id.incdeleteitem:
                                     android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context,R.style.AppCompatAlertDialogStyle);
                                     builder.setTitle("Confirm");
-                                    builder.setMessage("Are you sure to delete Income on "+expenses.getexpense_date()+" with "+formatter.format(expenses.getexpense_amount())+" amount and uses "+expenses.getexpense_account()+" and categorized as "+expenses.getexpense_category()+" ?");
+                                    builder.setMessage("Are you sure to delete expense on "+expenses.getexpense_date()+" with "+formatter.format(expenses.getexpense_amount())+" amount and uses "+expenses.getexpense_account()+" and categorized as "+expenses.getexpense_category()+" ?");
                                     builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
 
-                                            DocumentReference docRef = fdb.collection("expense").document(holder.documenref);
+                                            expense exp = dbase.getexpense(expenses.getexpense_id());
+
+                                            if(exp.getexpense_isdone()==1){
+                                                account acc = dbase.getaccount(expenses.getexpense_account());
+
+                                                acc.setAccount_balance_current(String.valueOf(generator.makedouble(acc.getAccount_balance().replace("",""))+expenses.getexpense_amount()));
+
+                                                dbase.updateaccount(acc,acc.getUsername(),acc.getAccount_name());
+
+                                                dbase.deleteexpense(expenses.getexpense_id());
+                                                reloaddata();
+                                            }
+                                            else {
+                                                dbase.deleteexpense(expenses.getexpense_id());
+                                                reloaddata();
+                                            }
+
+                                            /*DocumentReference docRef = fdb.collection("expense").document(holder.documenref);
                                             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -379,7 +461,7 @@ public class fragment_expense_show extends Fragment {
                                                         Log.d("Documentdata", "get failed with ", task.getException());
                                                     }
                                                 }
-                                            });
+                                            });*/
 
 
                                         }
@@ -432,4 +514,5 @@ public class fragment_expense_show extends Fragment {
             }
         }
     }
+
 }

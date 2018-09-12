@@ -18,6 +18,7 @@ import java.util.Random;
 
 import prima.optimasi.indonesia.primacash.objects.account;
 import prima.optimasi.indonesia.primacash.objects.category;
+import prima.optimasi.indonesia.primacash.objects.expense;
 import prima.optimasi.indonesia.primacash.objects.income;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
@@ -95,7 +96,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
 
     //transfer
-
+    private static final String KEY_TRANSFER_IMAGECHOSEN = "transfer_imagechosen";
     private static final String KEY_TRANSFER_SRC = "transfer_src";
     private static final String KEY_TRANSFER_DEST = "transfer_dest";
     private static final String KEY_TRANSFER_CREATEDATE = "transfer_createdate";
@@ -167,7 +168,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_TRANSFER ="CREATE TABLE "
             + TABLE_TRANSFER + "(" + KEY_USERNAME + " TEXT,"
-            + KEY_TRANSFER_CREATEDATE+ " DATETIME," + KEY_TRANSFER_AMOUNT + " TEXT,"
+            + KEY_TRANSFER_CREATEDATE+ " DATETIME," + KEY_TRANSFER_AMOUNT + " TEXT," + KEY_TRANSFER_IMAGECHOSEN + " BLOB,"
             + KEY_TRANSFER_DEST + " TEXT," + KEY_TRANSFER_NOTES + " TEXT," +KEY_TRANSFER_SRC+ " TEXT,"+ KEY_TRANSFER_DATE
             + " DATETIME,"+ KEY_TRANSFER_RATE + " REAL," + KEY_TRANSFER_CATEGORY + " TEXT)";
 
@@ -731,36 +732,45 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     /**
      * Updating a todo
      */
-    public int updateincome(income accs,String incname,String user) {
+    public int updateincome(income accs,String incid,String user) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_INCOME_ACCOUNT, accs.getIncome_account());
-        values.put(KEY_INCOME_AMOUNT, accs.getIncome_amount());
+        values.put(KEY_INCOME_TYPE, accs.getIncome_type());
         values.put(KEY_INCOME_FROM, accs.getIncome_from());
         values.put(KEY_INCOME_NOTES, accs.getIncome_notes());
+        values.put(KEY_INCOME_ISDONE, accs.getIncome_isdone());
+
+        values.put(KEY_INCOME_ISDATED, accs.getIncome_isdated());
+        values.put(KEY_INCOME_TIMES, accs.getIncome_times());
+        values.put(KEY_INCOME_PERIOD, accs.getIncome_period());
+        values.put(KEY_INCOME_COUNT, accs.getIncome_count());
+
+        if(accs.getIncome_imagechosen()==null){
+
+        }
+        else {
+            values.put(KEY_INCOME_IMAGECHOSEN, accs.getIncome_imagechosen());
+        }
+        values.put(KEY_INCOME_ID,random());
+        values.put(KEY_INCOME_CATEGORY, accs.getIncome_category());
+        values.put(KEY_INCOME_IMAGE,accs.getIncome_image());
+
+        values.put(KEY_INCOME_DATE,accs.getIncome_date());
 
         Date c = Calendar.getInstance().getTime();
         System.out.println("Current time => " + c);
 
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String formattedDate = df.format(c);
+        values.put(KEY_INCOME_CREATEDATE, Calendar.getInstance().getTimeInMillis());
 
-        values.put(KEY_INCOME_CREATEDATE, formattedDate);
+        values.put(KEY_INCOME_AMOUNT, accs.getIncome_amount());
 
-        DateFormat dated = new SimpleDateFormat("dd/MM/yyyy");
-
-// Get the date today using Calendar object.
-// Using DateFormat format method we can create a string
-// representation of a date with the defined format.
-
-        values.put(KEY_INCOME_IMAGE,accs.getIncome_image());
-        values.put(KEY_INCOME_ID,this.getincomeCount()+1);
         values.put(KEY_USERNAME,user);
 
         // updating row
         return db.update(TABLE_INCOME, values, KEY_INCOME_ID + " = ?",
-                new String[] { incname });
+                new String[] { incid });
     }
 
     /**
@@ -769,6 +779,216 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public void deleteincome(String incs) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_INCOME, KEY_INCOME_ID + " = ?",
+                new String[] {  incs});
+    }
+
+    //------------------------- expense methods ------------------------//
+
+
+    public long createexpense(expense accs, String user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_EXPENSE_ACCOUNT, accs.getexpense_account());
+        values.put(KEY_EXPENSE_TYPE, accs.getexpense_type());
+        values.put(KEY_EXPENSE_TO, accs.getexpense_to());
+        values.put(KEY_EXPENSE_NOTES, accs.getexpense_notes());
+        values.put(KEY_EXPENSE_ISDONE, accs.getexpense_isdone());
+
+        values.put(KEY_EXPENSE_ISDATED, accs.getexpense_isdated());
+        values.put(KEY_EXPENSE_TIMES, accs.getexpense_times());
+        values.put(KEY_EXPENSE_PERIOD, accs.getexpense_period());
+        values.put(KEY_EXPENSE_COUNT, accs.getexpense_count());
+
+        if(accs.getexpense_imagechosen()==null){
+
+        }
+        else {
+            values.put(KEY_EXPENSE_IMAGECHOSEN, accs.getexpense_imagechosen());
+        }
+        values.put(KEY_EXPENSE_ID,random());
+        values.put(KEY_EXPENSE_CATEGORY, accs.getexpense_category());
+        values.put(KEY_EXPENSE_IMAGE,accs.getexpense_image());
+
+        values.put(KEY_EXPENSE_DATE,accs.getexpense_date());
+
+        Date c = Calendar.getInstance().getTime();
+        System.out.println("Current time => " + c);
+
+        values.put(KEY_EXPENSE_CREATEDATE, Calendar.getInstance().getTimeInMillis());
+
+        values.put(KEY_EXPENSE_AMOUNT, accs.getexpense_amount());
+
+        values.put(KEY_USERNAME,user);
+
+        // insert row
+        long todo_id = db.insert(TABLE_EXPENSE, null, values);
+
+        return todo_id;
+    }
+
+    public expense getexpense(String expenseid) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectQuery = "SELECT  * FROM " + TABLE_EXPENSE+ " WHERE "
+                + KEY_EXPENSE_ID + " = '" + expenseid+"'";
+
+        Log.e(LOG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if( c != null && c.moveToFirst() ){
+
+            expense td = new expense();
+            td.setexpense_category(c.getString(c.getColumnIndex(KEY_EXPENSE_CATEGORY)));
+            td.setexpense_account(c.getString(c.getColumnIndex(KEY_EXPENSE_ACCOUNT)));
+            td.setexpense_amount(c.getInt(c.getColumnIndex(KEY_EXPENSE_AMOUNT)));
+            td.setexpense_date(c.getString(c.getColumnIndex(KEY_EXPENSE_DATE)));
+            td.setexpense_isdone(c.getInt(c.getColumnIndex(KEY_EXPENSE_ISDONE)));
+            td.setexpense_isdated(c.getInt(c.getColumnIndex(KEY_EXPENSE_ISDATED)));
+
+            if(c.getInt(c.getColumnIndex(KEY_EXPENSE_ISDATED))==1){
+                td.setexpense_count(c.getInt(c.getColumnIndex(KEY_EXPENSE_COUNT)));
+                td.setexpense_period(c.getString(c.getColumnIndex(KEY_EXPENSE_PERIOD)));
+                td.setexpense_times(c.getInt(c.getColumnIndex(KEY_EXPENSE_TIMES)));
+            }
+
+            td.setexpense_type(c.getString(c.getColumnIndex(KEY_EXPENSE_TYPE)));
+            td.setexpense_id(c.getString(c.getColumnIndex(KEY_EXPENSE_ID)));
+            td.setexpense_notes(c.getString(c.getColumnIndex(KEY_EXPENSE_NOTES)));
+            td.setexpense_to(c.getString(c.getColumnIndex(KEY_EXPENSE_TO)));
+            td.setUsername(c.getString(c.getColumnIndex(KEY_USERNAME)));
+
+            td.setexpense_imagechosen(c.getBlob(c.getColumnIndex(KEY_EXPENSE_IMAGECHOSEN)));
+            td.setexpense_image(c.getInt(c.getColumnIndex(KEY_EXPENSE_IMAGE)));
+
+
+            Date date=null;
+            cal.setTimeInMillis(c.getColumnIndex(KEY_EXPENSE_CREATEDATE));
+            DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+
+            date = cal.getTime();
+            td.setexpense_createdate(format.format(date));
+
+            return  td;
+        }
+        else {
+            return null;
+        }
+    }
+
+    public List<expense> getAllexpense() {
+        List<expense> todos = new ArrayList<expense>();
+        String selectQuery = "SELECT  * FROM " + TABLE_EXPENSE;
+
+        Log.e(LOG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if( c != null && c.moveToFirst()){
+            do {
+                expense td = new expense();
+                td.setexpense_category(c.getString(c.getColumnIndex(KEY_EXPENSE_CATEGORY)));
+                td.setexpense_account(c.getString(c.getColumnIndex(KEY_EXPENSE_ACCOUNT)));
+                td.setexpense_amount(c.getInt(c.getColumnIndex(KEY_EXPENSE_AMOUNT)));
+                td.setexpense_date(c.getString(c.getColumnIndex(KEY_EXPENSE_DATE)));
+                td.setexpense_isdone(c.getInt(c.getColumnIndex(KEY_EXPENSE_ISDONE)));
+                td.setexpense_isdated(c.getInt(c.getColumnIndex(KEY_EXPENSE_ISDATED)));
+
+                if(c.getInt(c.getColumnIndex(KEY_EXPENSE_ISDATED))==1){
+                    td.setexpense_count(c.getInt(c.getColumnIndex(KEY_EXPENSE_COUNT)));
+                    td.setexpense_period(c.getString(c.getColumnIndex(KEY_EXPENSE_PERIOD)));
+                    td.setexpense_times(c.getInt(c.getColumnIndex(KEY_EXPENSE_TIMES)));
+                }
+
+                td.setexpense_type(c.getString(c.getColumnIndex(KEY_EXPENSE_TYPE)));
+                td.setexpense_id(c.getString(c.getColumnIndex(KEY_EXPENSE_ID)));
+                td.setexpense_notes(c.getString(c.getColumnIndex(KEY_EXPENSE_NOTES)));
+                td.setexpense_to(c.getString(c.getColumnIndex(KEY_EXPENSE_TO)));
+                td.setUsername(c.getString(c.getColumnIndex(KEY_USERNAME)));
+
+                td.setexpense_imagechosen(c.getBlob(c.getColumnIndex(KEY_EXPENSE_IMAGECHOSEN)));
+                td.setexpense_image(c.getInt(c.getColumnIndex(KEY_EXPENSE_IMAGE)));
+
+                Date date=null;
+                cal.setTimeInMillis(c.getColumnIndex(KEY_EXPENSE_CREATEDATE));
+                DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+
+                date = cal.getTime();
+                td.setexpense_createdate(format.format(date));
+
+                todos.add(td);
+                // adding to todo list
+            } while (c.moveToNext());
+        }
+
+        return todos;
+    }
+
+    public int getexpenseCount() {
+        String countQuery = "SELECT  * FROM " + TABLE_CATEGORY;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+
+        int count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
+    }
+
+    /**
+     * Updating a todo
+     */
+    public int updateexpense(expense accs,String incid,String user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_EXPENSE_ACCOUNT, accs.getexpense_account());
+        values.put(KEY_EXPENSE_TYPE, accs.getexpense_type());
+        values.put(KEY_EXPENSE_TO, accs.getexpense_to());
+        values.put(KEY_EXPENSE_NOTES, accs.getexpense_notes());
+        values.put(KEY_EXPENSE_ISDONE, accs.getexpense_isdone());
+
+        values.put(KEY_EXPENSE_ISDATED, accs.getexpense_isdated());
+        values.put(KEY_EXPENSE_TIMES, accs.getexpense_times());
+        values.put(KEY_EXPENSE_PERIOD, accs.getexpense_period());
+        values.put(KEY_EXPENSE_COUNT, accs.getexpense_count());
+
+        if(accs.getexpense_imagechosen()==null){
+
+        }
+        else {
+            values.put(KEY_EXPENSE_IMAGECHOSEN, accs.getexpense_imagechosen());
+        }
+        values.put(KEY_EXPENSE_ID,random());
+        values.put(KEY_EXPENSE_CATEGORY, accs.getexpense_category());
+        values.put(KEY_EXPENSE_IMAGE,accs.getexpense_image());
+
+        values.put(KEY_EXPENSE_DATE,accs.getexpense_date());
+
+        Date c = Calendar.getInstance().getTime();
+        System.out.println("Current time => " + c);
+
+        values.put(KEY_EXPENSE_CREATEDATE, Calendar.getInstance().getTimeInMillis());
+
+        values.put(KEY_EXPENSE_AMOUNT, accs.getexpense_amount());
+
+        values.put(KEY_USERNAME,user);
+
+        // updating row
+        return db.update(TABLE_EXPENSE, values, KEY_EXPENSE_ID + " = ?",
+                new String[] { incid });
+    }
+
+    /**
+     * Deleting a todo
+     */
+    public void deleteexpense(String incs) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_EXPENSE, KEY_EXPENSE_ID + " = ?",
                 new String[] {  incs});
     }
 

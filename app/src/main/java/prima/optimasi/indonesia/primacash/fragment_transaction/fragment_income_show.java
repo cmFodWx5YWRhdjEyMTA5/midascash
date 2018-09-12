@@ -6,9 +6,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -62,6 +66,7 @@ import prima.optimasi.indonesia.primacash.R;
 import prima.optimasi.indonesia.primacash.SQLiteHelper;
 import prima.optimasi.indonesia.primacash.formula.calculatordialog;
 import prima.optimasi.indonesia.primacash.generator;
+import prima.optimasi.indonesia.primacash.objects.account;
 import prima.optimasi.indonesia.primacash.objects.income;
 import prima.optimasi.indonesia.primacash.transactionactivity.listincome;
 import prima.optimasi.indonesia.primacash.transactionactivity.modify.editincome;
@@ -105,7 +110,9 @@ public class fragment_income_show extends Fragment {
 
         recycler = view.findViewById(R.id.incomelistdata);
 
-        Log.e("test category", "onCreateView: "+ datainc.get(0).getIncome_category() );
+        if(datainc.size()!=0){
+            Log.e("test category", "onCreateView: "+ datainc.get(0).getIncome_category() );
+        }
 
 
 
@@ -269,6 +276,80 @@ public class fragment_income_show extends Fragment {
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()) {
                                 case R.id.incviewitem:
+                                    AlertDialog.Builder dialog = new AlertDialog.Builder(context,R.style.AppCompatAlertDialogStyle);
+
+                                    View v = LayoutInflater.from(context).inflate(R.layout.layout_display_income,null);
+
+                                    int checkimage = 0;
+
+                                    TextView dates,categories,accounts,amoount,currency,notes,from,notice;
+                                    ImageView imagechosen;
+                                    CircleImageView circle;
+
+                                    currency = v.findViewById(R.id.allcurrency);
+                                    amoount = v.findViewById(R.id.incamountview);
+                                    categories =v.findViewById(R.id.inccatname);
+                                    circle = v.findViewById(R.id.inccatpic);
+                                    accounts = v.findViewById(R.id.incacctxt);
+                                    dates = v.findViewById(R.id.incdateselect);
+
+                                    notice = v.findViewById(R.id.incimagenote);
+                                    notice.setVisibility(View.GONE);
+
+                                    notes = v.findViewById(R.id.incnotetxt);
+                                    from = v.findViewById(R.id.incfromtxt);
+
+                                    imagechosen = v.findViewById(R.id.incimgdata);
+
+                                    try {
+                                        if (incomes.getIncome_imagechosen() == null) {
+                                            checkimage = 0;
+                                        } else {
+                                            Bitmap bmp = BitmapFactory.decodeByteArray(incomes.getIncome_imagechosen(), 0, incomes.getIncome_imagechosen().length);
+                                            imagechosen.setImageBitmap(Bitmap.createScaledBitmap(bmp, bmp.getWidth(),
+                                                    bmp.getHeight(), false));
+                                            checkimage = 1;
+                                        }
+                                    }catch (NullPointerException e){
+                                        checkimage = 0 ;
+                                    }
+
+                                    if(checkimage == 1){
+                                        notice.setVisibility(View.GONE);
+                                        imagechosen.setVisibility(View.VISIBLE);
+                                    }
+                                    else {
+                                        notice.setVisibility(View.VISIBLE);
+                                        imagechosen.setVisibility(View.GONE);
+                                    }
+
+
+                                    accounts.setText(incomes.getIncome_account());
+
+                                    String temp =formatter.format(incomes.getIncome_amount());
+                                    amoount.setText(temp);
+
+                                    Drawable resImg = context.getResources().getDrawable(generator.images[incomes.getIncome_image()-1]);
+                                    circle.setImageDrawable(resImg);
+
+                                    categories.setText(incomes.getIncome_category());
+                                    dates.setText(incomes.getIncome_date());
+                                    notes.setText(incomes.getIncome_notes());
+                                    from.setText(incomes.getIncome_from());
+
+
+
+                                    dialog.setView(v);
+                                    dialog.setTitle("ID : " + incomes.getIncome_id());
+                                    dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+
+                                    dialog.show();
+
 
 
 
@@ -279,6 +360,7 @@ public class fragment_income_show extends Fragment {
                                     generator.showadapterincome=null;
                                     generator.showdataincome=null;
                                     generator.showadapterincome=incadapter;
+                                    generator.showdataincome=datainc;
                                     startActivity(editincomes);
                                     return true;
                                 case R.id.incdeleteitem:
@@ -289,9 +371,25 @@ public class fragment_income_show extends Fragment {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
 
-                                            dbase.deleteincome(incomes.getIncome_id());
-                                            reloaddata();
-                                            datainc.clear();
+                                            income inc = dbase.getincome(incomes.getIncome_id());
+
+                                            if(inc.getIncome_isdone()==1){
+                                                account acc = dbase.getaccount(incomes.getIncome_account());
+
+                                                acc.setAccount_balance_current(String.valueOf(generator.makedouble(acc.getAccount_balance().replace("",""))-incomes.getIncome_amount()));
+
+                                                dbase.updateaccount(acc,acc.getUsername(),acc.getAccount_name());
+
+                                                dbase.deleteincome(incomes.getIncome_id());
+                                                reloaddata();
+                                            }
+                                            else {
+                                                dbase.deleteincome(incomes.getIncome_id());
+                                                reloaddata();
+                                            }
+
+
+
 
                                             /*DocumentReference docRef = fdb.collection("income").document(holder.documenref);
                                             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -427,9 +525,21 @@ public class fragment_income_show extends Fragment {
 
     public void reloaddata(){
 
+        datainc.clear();
+        List<income> datainctemp = dbase.getAllincome();
+
+        for(int i = 0 ; i < datainctemp.size();i++){
+            datainc.add(datainctemp.get(i));
+            Collections.sort(datainc);
+            Collections.reverse(datainc);
+        }
 
 
-        fdb.collection("income")
+
+        if(incadapter!=null){
+            incadapter.notifyDataSetChanged();
+        }
+        /*fdb.collection("income")
                 .whereEqualTo("income_isdated", "0")
                 .orderBy("income_datesys", Query.Direction.DESCENDING)
                 .get()
@@ -475,6 +585,6 @@ public class fragment_income_show extends Fragment {
                             Log.w("data", "Error getting documents.", task.getException());
                         }
                     }
-                });
+                });*/
     }
 }

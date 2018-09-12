@@ -615,7 +615,7 @@ public class generator {
             String part1 = parts[0]; // 004
             String part2 = parts[1]; // 034556
 
-            holder.accountbalance.setText(formatter.format(Double.parseDouble(rowItem.getAccount_balance())) +" "+ parts[0].trim());
+            holder.accountbalance.setText(formatter.format(Double.parseDouble(rowItem.getAccount_balance_current())) +" "+ parts[0].trim());
             holder.balance=rowItem.getAccount_balance();
             if(Double.parseDouble(holder.balance)>=0){
                 holder.accountbalance.setTextColor(generator.green);

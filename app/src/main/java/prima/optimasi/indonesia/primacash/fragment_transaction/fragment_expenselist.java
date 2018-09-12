@@ -140,10 +140,13 @@ public class fragment_expenselist extends Fragment {
         generator.expto1 = child.findViewById(R.id.expto);
         generator.expnote1 = child.findViewById(R.id.expnote);
 
+        datetext = child.findViewById(R.id.expdat);
+
         changedcurrency = child.findViewById(R.id.allcurrency);
         categoryselect=child.findViewById(R.id.linearcattap);
         accountselect = child.findViewById(R.id.linearacctap);
         dateselect = child.findViewById(R.id.linearaccdat);
+
 
         invokelistenerforlinears(changedcurrency,categoryselect,accountselect,dateselect);
 
@@ -311,7 +314,7 @@ public class fragment_expenselist extends Fragment {
 
     private void invokelistenerforlinears(TextView changecurrency, LinearLayout categorylist, LinearLayout account, LinearLayout dateselect){
 
-        datetext = dateselect.findViewById(R.id.expdat);
+
 
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         final String date = df.format(Calendar.getInstance().getTime());

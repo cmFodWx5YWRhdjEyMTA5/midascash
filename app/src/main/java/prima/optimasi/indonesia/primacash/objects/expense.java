@@ -13,9 +13,12 @@ import java.util.Locale;
 
 public class expense implements Comparable<expense> {
     String expense_account,expense_type,expense_to,expense_notes,expense_id,username,expense_category;
-    int expense_image;
+    int expense_image,expense_isdone;
     String expense_date,expense_createdate;
     double expense_amount;
+    byte[] expense_imagechosen;
+    Integer expense_isdated,expense_count,expense_times;
+    String expense_period;
     String expensedoc;
 
     public expense(){}
@@ -40,6 +43,9 @@ public class expense implements Comparable<expense> {
         this.expense_category = expense_category;
     }
 
+    public void setexpense_imagechosen(byte[] expense_imagechosen) {
+        this.expense_imagechosen = expense_imagechosen;
+    }
 
     public void setexpense_account(String iacc){
         expense_account=iacc;
@@ -79,8 +85,31 @@ public class expense implements Comparable<expense> {
         expense_amount=imon;
     }
 
+    public void setexpense_isdone(int expense_isdone) {
+        this.expense_isdone = expense_isdone;
+    }
+
+    public void setexpense_isdated(Integer expense_isdated) {
+        this.expense_isdated = expense_isdated;
+    }
+
+    public void setexpense_count(Integer expense_count) {
+        this.expense_count = expense_count;
+    }
+
+    public void setexpense_period(String expense_period) {
+        this.expense_period = expense_period;
+    }
+
+    public void setexpense_times(Integer expense_times) {
+        this.expense_times = expense_times;
+    }
     //getter
 
+
+    public byte[] getexpense_imagechosen() {
+        return expense_imagechosen;
+    }
 
     public String getexpense_category() {
         return expense_category;
@@ -121,6 +150,26 @@ public class expense implements Comparable<expense> {
     }
     public String getexpense_createdate(){
         return expense_createdate;
+    }
+
+    public String getexpense_period() {
+        return expense_period;
+    }
+
+    public Integer getexpense_times() {
+        return expense_times;
+    }
+
+    public Integer getexpense_count() {
+        return expense_count;
+    }
+
+    public int getexpense_isdone() {
+        return expense_isdone;
+    }
+
+    public Integer getexpense_isdated() {
+        return expense_isdated;
     }
 
     public String getexpensedoc() {

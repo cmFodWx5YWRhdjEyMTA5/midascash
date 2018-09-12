@@ -5,19 +5,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tabexpense"
-        app:tabTextColor="@color/colorAccent"
-        app:tabIndicatorColor="@color/colorAccent"
-        app:tabSelectedTextColor="@color/colorAccent"
-        android:background="@color/colorPrimaryRed"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabMode="fixed" />
 
     <include layout="@layout/layout_transactionexpense"
         android:id="@+id/viewpagerexpense"
         android:layout_width="match_parent"
+        android:layout_margin="10sp"
         android:layout_height="match_parent"
         android:layout_below="@+id/tabexpense"
         android:layout_above="@+id/llincome1"/>

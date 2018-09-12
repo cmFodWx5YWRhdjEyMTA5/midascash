@@ -1,18 +1,31 @@
 package prima.optimasi.indonesia.primacash.transactionactivity.modify;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,6 +42,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
+import java.io.ByteArrayOutputStream;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -45,6 +59,7 @@ import prima.optimasi.indonesia.primacash.R;
 import prima.optimasi.indonesia.primacash.SQLiteHelper;
 import prima.optimasi.indonesia.primacash.commaedittext;
 import prima.optimasi.indonesia.primacash.generator;
+import prima.optimasi.indonesia.primacash.objects.account;
 import prima.optimasi.indonesia.primacash.objects.income;
 
 public class editincome extends AppCompatActivity {
@@ -58,12 +73,16 @@ public class editincome extends AppCompatActivity {
     income recorderincome;
 
     SQLiteHelper dbase;
+    
+    String incomeid="";
 
     Double calculate=0.0d,comparer=0.0d,result=0.0d;
 
     DecimalFormat formatter = new DecimalFormat("###,###,###.00");
 
     TextView incnote,incfrom;
+
+    byte[] dataimg;
 
     EditText inputvalue;
 
@@ -82,6 +101,8 @@ public class editincome extends AppCompatActivity {
 
 
         dbase = new SQLiteHelper(this);
+        
+        incomeid = getIntent().getStringExtra("incomeid");
 
         generator.incdatesys=0;
 
@@ -96,6 +117,54 @@ public class editincome extends AppCompatActivity {
 
         Button notsave = layoutitems.findViewById(R.id.btnsaveincome);
         Button notcancel = layoutitems.findViewById(R.id.btncancelincome);
+
+        ImageButton camera = layoutitems.findViewById(R.id.inctpic);
+        ImageButton galery = layoutitems.findViewById(R.id.inctgal);
+
+        galery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    int result = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+                    if (result == PackageManager.PERMISSION_GRANTED) {
+                        Intent i = new Intent(
+                                Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+                        startActivityForResult(i, 4);
+                    } else {
+                        try {
+                            ActivityCompat.requestPermissions(editincome.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                    3);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            throw e;
+                        }
+                    }
+                }
+
+
+            }
+        });
+
+        camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+                StrictMode.setVmPolicy(builder.build());
+                int permissionCheckStorage = ContextCompat.checkSelfPermission(editincome.this,
+                        Manifest.permission.CAMERA);
+                if (permissionCheckStorage == PackageManager.PERMISSION_DENIED) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                    }
+                } else {
+                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    startActivityForResult(cameraIntent, 1004);
+                }
+            }
+        });
 
         imagechosen = layoutitems.findViewById(R.id.incimgdata);
 
@@ -160,154 +229,132 @@ public class editincome extends AppCompatActivity {
                     Toast.makeText(editincome.this, "Value Required", Toast.LENGTH_SHORT).show();
                 }else {
 
+                    accdoc[0] = incomeid;
+                    
+                    income datanow = dbase.getincome(accdoc[0]);
+                    
+                    account acc = dbase.getaccount(selectedaccount.getText().toString());
+                    
+                    calculate = generator.makedouble(acc.getAccount_balance_current());
 
-                    fdb.collection("account")
-                            .whereEqualTo("account_name", selectedaccount.getText().toString())
-                            .get()
-                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        for (QueryDocumentSnapshot document1 : task.getResult()) {
-                                            Log.d("Documentdata", document1.getId() + " => " + document1.getData());
-                                            accdoc[0] = document1.getId();
-                                            calculate = generator.makedouble(document1.getData().get("account_balance_current").toString());
+                    Date date = Calendar.getInstance().getTime();
 
-                                            Date date = Calendar.getInstance().getTime();
+                    Date today = new Date();
+                    SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+                    Date chosendated=null;
+                    try {
+                        chosendated = format.parse(selectedate.getText().toString());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
 
-                                            Date today = new Date();
-                                            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-                                            Date chosendated=null;
-                                            try {
-                                                chosendated = format.parse(selectedate.getText().toString());
-                                            } catch (ParseException e) {
-                                                e.printStackTrace();
-                                            }
+                    String temp="1";
 
-                                            String temp="1";
+                    if(isdone[0]==1){
 
-                                            if(isdone[0]==1){
+                        if(chosendated.after(date)) {
+                            temp = "0";
+                            if(generator.makedouble(inputvalue.getText().toString().replace(",",""))>comparer){
 
-                                                if(chosendated.after(date)) {
-                                                    temp = "0";
-                                                    if(generator.makedouble(inputvalue.getText().toString().replace(",",""))>comparer){
-                                                        Map<String, Object> data = new HashMap<>();
-                                                        result=generator.makedouble(inputvalue.getText().toString().replace(",",""))-comparer;
-                                                        data.put("account_balance_current", String.valueOf(calculate-result+comparer) );
+                                result=generator.makedouble(inputvalue.getText().toString().replace(",",""))-comparer;
+                                acc.setAccount_balance_current(String.valueOf(calculate-result+comparer));
+                                dbase.updateaccount(acc,acc.getUsername(),acc.getAccount_name());
 
-                                                        fdb.collection("account").document(accdoc[0])
-                                                                .set(data, SetOptions.merge());
-
-
-
-                                                    }
-                                                    else if(generator.makedouble(inputvalue.getText().toString().replace(",",""))<comparer){
-                                                        Map<String, Object> data = new HashMap<>();
-                                                        result=comparer-generator.makedouble(inputvalue.getText().toString().replace(",",""));
-                                                        data.put("account_balance_current", String.valueOf(calculate-result+comparer));
-
-                                                        fdb.collection("account").document(accdoc[0])
-                                                                .set(data, SetOptions.merge());
+                            }
+                            else if(generator.makedouble(inputvalue.getText().toString().replace(",",""))<comparer){
+                                
+                                result=comparer-generator.makedouble(inputvalue.getText().toString().replace(",",""));
+                                acc.setAccount_balance_current(String.valueOf(calculate-result+comparer));
+                                dbase.updateaccount(acc,acc.getUsername(),acc.getAccount_name());
 
 
-                                                    }
-                                                    else {
-                                                        Map<String, Object> data = new HashMap<>();
-                                                        data.put("account_balance_current", String.valueOf(calculate-generator.makedouble(inputvalue.getText().toString().replace(",",""))));
-                                                        fdb.collection("account").document(accdoc[0])
-                                                                .set(data, SetOptions.merge());
-                                                    }
-                                                }
-                                                else {
-                                                    temp="1";
-                                                    if(generator.makedouble(inputvalue.getText().toString().replace(",",""))>comparer){
-                                                        Map<String, Object> data = new HashMap<>();
-                                                        result=generator.makedouble(inputvalue.getText().toString().replace(",",""))-comparer;
-                                                        Log.e("balance current", String.valueOf(calculate+result) );
-                                                        data.put("account_balance_current",String.valueOf(calculate+result)  );
+                            }
+                            else {
+                                acc.setAccount_balance_current(String.valueOf(calculate-generator.makedouble(inputvalue.getText().toString().replace(",",""))));
+                                dbase.updateaccount(acc,acc.getUsername(),acc.getAccount_name());
+                            }
+                        }
+                        else {
+                            temp="1";
+                            if(generator.makedouble(inputvalue.getText().toString().replace(",",""))>comparer){
+                                result=generator.makedouble(inputvalue.getText().toString().replace(",",""))-comparer;
+                                acc.setAccount_balance_current(String.valueOf(calculate+result));
+                                dbase.updateaccount(acc,acc.getUsername(),acc.getAccount_name());
+                            }
+                            else if(generator.makedouble(inputvalue.getText().toString().replace(",",""))<comparer){
+                                
+                                result=comparer-generator.makedouble(inputvalue.getText().toString().replace(",",""));
+                                acc.setAccount_balance_current(String.valueOf(calculate-result));
+                                dbase.updateaccount(acc,acc.getUsername(),acc.getAccount_name());
+                            }
+                            else {
 
-                                                        fdb.collection("account").document(accdoc[0])
-                                                                .set(data, SetOptions.merge());
-                                                    }
-                                                    else if(generator.makedouble(inputvalue.getText().toString().replace(",",""))<comparer){
-                                                        Map<String, Object> data = new HashMap<>();
-                                                        result=comparer-generator.makedouble(inputvalue.getText().toString().replace(",",""));
-                                                        data.put("account_balance_current", String.valueOf(calculate-result) );
+                            }
+                        }
+                        isdone[0]=4;
+                    }
+                    else {
+                        temp = "0";
 
-                                                        fdb.collection("account").document(accdoc[0])
-                                                                .set(data, SetOptions.merge());
-                                                    }
-                                                    else {
+                        if(chosendated.after(date)) {
 
-                                                    }
-                                                }
-                                                isdone[0]=4;
-                                            }
-                                            else {
-                                                temp = "0";
-
-                                                if(chosendated.after(date)) {
-
-                                                }else {
-                                                    temp = "1";
-                                                    if(generator.makedouble(inputvalue.getText().toString().replace(",",""))>comparer){
-                                                        Map<String, Object> data = new HashMap<>();
-                                                        result=generator.makedouble(inputvalue.getText().toString().replace(",",""))-comparer;
-                                                        data.put("account_balance_current", String.valueOf(calculate+result+comparer) );
-
-                                                        fdb.collection("account").document(accdoc[0])
-                                                                .set(data, SetOptions.merge());
+                        }else {
+                            temp = "1";
+                            if(generator.makedouble(inputvalue.getText().toString().replace(",",""))>comparer){
+                                
+                                result=generator.makedouble(inputvalue.getText().toString().replace(",",""))-comparer;
+                                acc.setAccount_balance_current(String.valueOf(calculate+result+comparer));
+                                dbase.updateaccount(acc,acc.getUsername(),acc.getAccount_name());
 
 
 
-                                                    }
-                                                    else if(generator.makedouble(inputvalue.getText().toString().replace(",",""))<comparer){
-                                                        Map<String, Object> data = new HashMap<>();
-                                                        result=comparer-generator.makedouble(inputvalue.getText().toString().replace(",",""));
-                                                        data.put("account_balance_current", String.valueOf(calculate+result));
-
-                                                        fdb.collection("account").document(accdoc[0])
-                                                                .set(data, SetOptions.merge());
+                            }
+                            else if(generator.makedouble(inputvalue.getText().toString().replace(",",""))<comparer){
+                                
+                                result=comparer-generator.makedouble(inputvalue.getText().toString().replace(",",""));
+                                acc.setAccount_balance_current(String.valueOf(calculate+result));
+                                dbase.updateaccount(acc,acc.getUsername(),acc.getAccount_name());
 
 
-                                                    }
-                                                    else {
-                                                        Map<String, Object> data = new HashMap<>();
-                                                        data.put("account_balance_current", String.valueOf(calculate+comparer));
-                                                        fdb.collection("account").document(accdoc[0])
-                                                                .set(data, SetOptions.merge());
-                                                    }
-                                                }
-                                            }
+                            }
+                            else {
+                                acc.setAccount_balance_current(String.valueOf(calculate+comparer));
+                                dbase.updateaccount(acc,acc.getUsername(),acc.getAccount_name());
+                            }
+                        }
+                    }
 
-                                            Toast.makeText(editincome.this, "Income Edited", Toast.LENGTH_SHORT).show();
-                                            reloaddata();
-                                            if(generator.adapter!=null){
-                                                generator.adapter.notifyDataSetChanged();
-                                            }
 
-                                            Map<String, Object> mapdata = new HashMap<>();
-                                            mapdata.put("income_amount",inputvalue.getText().toString().replace(",",""));
-                                            mapdata.put("income_account",selectedaccount.getText().toString());
-                                            mapdata.put("income_category",selectedcategory.getText().toString());
-                                            mapdata.put("income_notes", incnote.getText().toString());
-                                            mapdata.put("income_isdone", temp);
-                                            mapdata.put("income_date",selectedate.getText().toString());
-                                            mapdata.put("income_datesys",generator.incdatesys);
-                                            mapdata.put("income_from",incfrom.getText().toString());
-                                            mapdata.put("income_lastedit", Calendar.getInstance().getTimeInMillis());
 
-                                            fdb.collection("income").document(getIntent().getStringExtra("document"))
-                                                    .set(mapdata, SetOptions.merge());
+                    datanow.setIncome_amount(generator.makedouble(inputvalue.getText().toString().replace(",","")));
+                    datanow.setIncome_account(selectedaccount.getText().toString());
+                    datanow.setIncome_category(selectedcategory.getText().toString());
+                    datanow.setIncome_notes(incnote.getText().toString());
+                    datanow.setIncome_isdone(Integer.parseInt(temp));
+                    datanow.setIncome_date(selectedate.getText().toString());
+                    datanow.setIncome_from(incfrom.getText().toString());
+                    datanow.setIncome_imagechosen(dataimg);
 
-                                            generator.incdatesys=0;
-                                            finish();
-                                        }
-                                    } else {
-                                        Log.d("Documentdata", "Error getting documents: ", task.getException());
-                                    }
-                                }
-                            });
+                    dbase.updateincome(datanow,incomeid,datanow.getUsername());
+
+                    Toast.makeText(editincome.this, "Income Edited", Toast.LENGTH_SHORT).show();
+                    reloaddata();
+                    if(generator.adapter!=null){
+                        generator.adapter.notifyDataSetChanged();
+                    }
+
+                    /*mapdata.put("income_amount",inputvalue.getText().toString().replace(",",""));
+                    mapdata.put("income_account",selectedaccount.getText().toString());
+                    mapdata.put("income_category",selectedcategory.getText().toString());
+                    mapdata.put("income_notes", incnote.getText().toString());
+                    mapdata.put("income_isdone", temp);
+                    mapdata.put("income_date",selectedate.getText().toString());
+                    mapdata.put("income_datesys",generator.incdatesys);
+                    mapdata.put("income_from",incfrom.getText().toString());
+                    mapdata.put("income_lastedit", Calendar.getInstance().getTimeInMillis());*/
+
+                    generator.incdatesys=0;
+                    finish();
 
 
                 }
@@ -330,39 +377,25 @@ public class editincome extends AppCompatActivity {
 
         isdone[0] = values.getIncome_isdone();
 
-        Bitmap bmp = BitmapFactory.decodeByteArray(values.getIncome_imagechosen(), 0, values.getIncome_imagechosen().length);
+        try {
+            Bitmap bmp = BitmapFactory.decodeByteArray(values.getIncome_imagechosen(), 0, values.getIncome_imagechosen().length);
 
-        imagechosen.setImageBitmap(Bitmap.createScaledBitmap(bmp, bmp.getWidth(),
-                bmp.getHeight(), false));
-
-        values.setIncome_account(values.getIncome_account());
-
+            imagechosen.setImageBitmap(Bitmap.createScaledBitmap(bmp, bmp.getWidth(),
+                    bmp.getHeight(), false));
+        }
+        catch (NullPointerException e){
+            Log.e("Null occured", "No image available " );
+        }
         selectedaccount.setText(values.getIncome_account());
-
-        values.setIncome_amount(values.getIncome_amount());
-
         comparer = values.getIncome_amount();
-
         String temp =formatter.format(values.getIncome_amount());
         inputvalue.setText(temp);
 
         Drawable resImg = editincome.this.getResources().getDrawable(generator.images[values.getIncome_image()-1]);
         chosenimage.setImageDrawable(resImg);
-        values.setIncome_category(values.getIncome_category());
-
         selectedcategory.setText(values.getIncome_category());
-
-        values.setIncome_date(values.getIncome_date());
         selectedate.setText(values.getIncome_date());
-
-        values.setIncome_type(values.getIncome_type());
-
-        values.setIncome_notes(values.getIncome_notes());
-
         incnote.setText(values.getIncome_notes());
-
-        values.setIncome_from(values.getIncome_from());
-
         incfrom.setText(values.getIncome_from());
 
     }
@@ -382,7 +415,22 @@ public class editincome extends AppCompatActivity {
     }
 
     public void reloaddata(){
-        fdb.collection("income")
+
+        generator.showdataincome.clear();
+
+        List<income> datainctemp = dbase.getAllincome();
+
+        for(int i = 0 ; i < datainctemp.size();i++){
+            generator.showdataincome.add(datainctemp.get(i));
+            Collections.sort(generator.showdataincome);
+            Collections.reverse(generator.showdataincome);
+        }
+
+        if(generator.showadapterincome!=null){
+            generator.showadapterincome.notifyDataSetChanged();
+        }
+
+        /*fdb.collection("income")
                 .whereEqualTo("income_isdated", "0")
                 .orderBy("income_datesys", Query.Direction.DESCENDING)
                 .get()
@@ -430,6 +478,48 @@ public class editincome extends AppCompatActivity {
                             Log.w("data", "Error getting documents.", task.getException());
                         }
                     }
-                });
+                });*/
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1004 && resultCode == Activity.RESULT_OK) {
+
+            Log.e("camera sucessful",requestCode + " ");
+            /*ImageView imageView = (ImageView) child.findViewById(R.id.incimgdata);
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            imageView.setImageBitmap(photo);*/
+
+            ImageView imageView = (ImageView) findViewById(R.id.incimgdata);
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            imageView.setImageBitmap(photo);
+
+            Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            dataimg = baos.toByteArray();
+        }
+        else if(requestCode == 4 && resultCode == Activity.RESULT_OK){
+            Log.e("galery sucessful",requestCode + " ");
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+            Cursor cursor = getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String picturePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            ImageView imageView = (ImageView) findViewById(R.id.incimgdata);
+            imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+
+            Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            dataimg = baos.toByteArray();
+        }
     }
 }

@@ -83,6 +83,7 @@ public class income extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setElevation(0);
 
         vpincome = (ViewPager) findViewById(R.id.viewpagerincome);
         tabLayout = (TabLayout) findViewById(R.id.tabincome);

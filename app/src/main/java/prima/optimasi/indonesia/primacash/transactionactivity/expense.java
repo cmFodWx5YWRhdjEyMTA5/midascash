@@ -82,6 +82,7 @@ public class expense extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setElevation(0);
 
         vpexpense = (ViewPager) findViewById(R.id.viewpagerexpense);
         tabLayout = (TabLayout) findViewById(R.id.tabexpense);
@@ -89,31 +90,6 @@ public class expense extends AppCompatActivity {
 
         adapter = new SimpleFragmentPagerAdapter(this, getSupportFragmentManager());
 
-        save = (Button) findViewById(R.id.btnsaveexpense);
-        cancel = findViewById(R.id.btncancelexpense);
-
-
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(expense.this,R.style.AppCompatAlertDialogStyle)
-                        .setTitle("Cancel")
-                        .setMessage("Changes made will be discarded , proceed ?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                finish();
-                            }
-                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                dialog.show();
-            }
-        });
 
         vpexpense.setAdapter(adapter);
         tabLayout.setupWithViewPager(vpexpense);
@@ -135,7 +111,7 @@ public class expense extends AppCompatActivity {
             }
         });
 
-        save.setOnClickListener(new View.OnClickListener() {
+        /*save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(positiondata==0){
@@ -219,7 +195,7 @@ public class expense extends AppCompatActivity {
             }
         });
 
-
+*/
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
             tabLayout.getTabAt(0).setIcon(R.drawable.ic_list_white_24dp);
             tabLayout.getTabAt(1).setIcon(R.drawable.ic_restore_white_24dp);
