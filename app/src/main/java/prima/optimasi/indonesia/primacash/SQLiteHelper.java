@@ -57,6 +57,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String KEY_ACCOUNT_STATUS = "account_status";
     private static final String KEY_ACCOUNT_CURRENCY = "account_currency";
     private static final String KEY_ACCOUNT_FULLCURRENCY = "fullaccount_curency";
+    private static final String KEY_ACCOUNT_LASTUSED = "account_lastused";
 
     //category
 
@@ -143,7 +144,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     //Create table query
 
     private static final String CREATE_TABLE_ACCOUNT="CREATE TABLE "
-            + TABLE_ACCOUNT + "(" + KEY_USERNAME + " TEXT," + KEY_ACCOUNT_CREATEORLAST + " INTEGER,"
+            + TABLE_ACCOUNT + "(" + KEY_USERNAME + " TEXT," + KEY_ACCOUNT_CREATEORLAST + " INTEGER,"+KEY_ACCOUNT_LASTUSED+ " DATETIME,"
             + KEY_ACCOUNT_CREATEDATE+ " DATETIME," + KEY_ACCOUNT_BALANCE + " TEXT,"+ KEY_ACCOUNT_BALANCE_CURRENT + " TEXT,"
             + KEY_ACCOUNT_CATEGORY + " TEXT," + KEY_ACCOUNT_NAME + " TEXT," +KEY_ACCOUNT_STATUS+ " INTEGER," +KEY_ACCOUNT_CURRENCY
             + " TEXT," +KEY_ACCOUNT_FULLCURRENCY+ " TEXT ,"+KEY_ACCOUNT_CREATEORLAST + "INTEGER)";
@@ -999,4 +1000,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         return rand;
     }
+
+
+
 }

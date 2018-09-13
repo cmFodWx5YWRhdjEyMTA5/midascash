@@ -45,6 +45,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.joda.time.LocalDate;
+
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -58,11 +60,14 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.realm.RealmResults;
 import prima.optimasi.indonesia.primacash.R;
+import prima.optimasi.indonesia.primacash.SQLiteHelper;
 import prima.optimasi.indonesia.primacash.formula.MyDividerItemDecoration;
 import prima.optimasi.indonesia.primacash.generator;
 import prima.optimasi.indonesia.primacash.objects.account;
 import prima.optimasi.indonesia.primacash.objects.dataexpset;
 import prima.optimasi.indonesia.primacash.objects.dataincset;
+import prima.optimasi.indonesia.primacash.objects.expense;
+import prima.optimasi.indonesia.primacash.objects.income;
 import prima.optimasi.indonesia.primacash.objects.incomeexpense;
 import prima.optimasi.indonesia.primacash.transactionactivity.listexpense;
 import prima.optimasi.indonesia.primacash.transactionactivity.listincome;
@@ -73,6 +78,7 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
     Context contexts;
     LayoutInflater inflater;
     FirebaseFirestore fdb;
+    SQLiteHelper dbase;
     Calendar c;
     List<String> titles;
 
@@ -145,6 +151,9 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
     }
 
     public mainactivityviews(Context context,List<String> titles) {
+
+        dbase = new SQLiteHelper(context);
+
         c = Calendar.getInstance();
         fdb = FirebaseFirestore.getInstance();
         contexts=context;
@@ -180,103 +189,119 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
             // NOTE: The order of the entries when being added to the entries array determines their position around the center of
             // the chart.
 
+            Double inctotal=0.0d;
+            Double exptotal=0.0d;
 
-            fdb.collection("income")
-                    .whereEqualTo("income_isdated", "0")
-                    .whereEqualTo("income_isdone","1")
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                Double inctotal=0.0d;
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    inctotal=inctotal+Double.parseDouble(document.getData().get("income_amount").toString());
-                                }
-                                totaling[0] = totaling[0] +inctotal;
-                                inc.setText(formatter.format(inctotal));
-                                Double finalInctotal = inctotal;
-                                Double finalInctotal1 = inctotal;
-                                fdb.collection("expense")
-                                        .whereEqualTo("expense_isdated", "0")
-                                        .whereEqualTo("expense_isdone","1")
-                                        .get()
-                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                if (task.isSuccessful()) {
-                                                    Double exptotal=0.0d;
-                                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                                        exptotal=exptotal+Double.parseDouble(document.getData().get("expense_amount").toString());
-                                                    }
+            LocalDate todaydate = LocalDate.now();
 
+            Calendar now = Calendar.getInstance();
 
+            String startdate = now.get(Calendar.YEAR)+"-"+(now.get(Calendar.MONTH)+1)+"-1";
+            String enddate = now.get(Calendar.YEAR)+"-"+(now.get(Calendar.MONTH)+1)+"-"+now.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-                                                    totaling[0] = totaling[0] - exptotal;
-                                                    Float total1 = exptotal.floatValue()+ finalInctotal1.floatValue();
-                                                    float inc = exptotal.floatValue()/total1;
-                                                    float exps = finalInctotal1.floatValue()/total1;
+            Log.e("onBindViewHolder: ",startdate+" "+enddate );
 
-                                                    if(totaling[0]==0.0d){
-                                                        entries.add(new PieEntry(0.5f, "E"));
-                                                        entries.add(new PieEntry(0.5f, "I"));
-                                                    }
-                                                    else{
-                                                        entries.add(new PieEntry(inc, "E"));
-                                                        entries.add(new PieEntry(exps, "I"));
-                                                    }
-                                                    exp.setText(formatter.format(exptotal));
+            List<income> incomes = dbase.getAllincome();
 
-                                                    total.setText(formatter.format(totaling[0]));
-                                                    if(totaling[0]>=0){
-                                                        total.setTextColor(generator.green);
-                                                    }
-                                                    else {
-                                                        total.setTextColor(generator.red);
-                                                    }
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-M-d");
+            SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
 
+            Date dt1=null;
+            Date dt2= null;
+            try {
+                dt1 = format.parse(startdate);
+                dt2 = format.parse(enddate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
-
-                                                    PieChart mChart;
-                                                    mChart = summary.findViewById(R.id.chartsummary);
-
-                                                    mChart.setUsePercentValues(true);
-                                                    mChart.getDescription().setEnabled(false);
-
-                                                    mChart.setDragDecelerationFrictionCoef(0.95f);
-
-                                                    mChart.setRotationAngle(0);
-                                                    mChart.setDrawHoleEnabled(false);
-                                                    // enable rotation of the chart by touch
-                                                    mChart.setRotationEnabled(true);
-                                                    mChart.setHighlightPerTapEnabled(true);
-
-                                                    // mChart.setUnit(" €");
-                                                    // mChart.setDrawUnitsInChart(true);
-
-                                                    // add a selection listener
-
-                                                    setData(2, 100,mChart,entries);
-
-                                                    mChart.animateY(1400, Easing.EasingOption.EaseInOutElastic);
-                                                    // mChart.spin(2000, 0, 360);
-
-                                                    Legend l = mChart.getLegend();
-                                                    l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-                                                    l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-                                                    l.setOrientation(Legend.LegendOrientation.VERTICAL);
-                                                    l.setDrawInside(false);
-                                                    l.setEnabled(false);
-                                                } else {
-                                                    Log.w("data", "Error getting documents.", task.getException());
-                                                }
-                                            }
-                                        });
-                            } else {
-                                Log.w("data", "Error getting documents.", task.getException());
-                            }
+            for(int i = 0 ; i<incomes.size();i++) {
+                if (incomes.get(i).getIncome_isdone() ==1  && incomes.get(i).getIncome_isdated()==0) {
+                    try {
+                        if(format1.parse(incomes.get(i).getIncome_date()).after(dt1) && format1.parse(incomes.get(i).getIncome_date()).before(dt2)){
+                            Log.e("onBindViewHolder: ",format1.parse(incomes.get(i).getIncome_date())+"dt1"+dt1+"dt2"+dt2 );
+                            inctotal = inctotal + incomes.get(i).getIncome_amount();
                         }
-                    });
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            totaling[0] = totaling[0] +inctotal;
+            inc.setText(formatter.format(inctotal));
+            Double finalInctotal = inctotal;
+            Double finalInctotal1 = inctotal;
+
+            List<expense> expenses = dbase.getAllexpense();
+
+            for(int i = 0 ; i<expenses.size();i++) {
+                if (expenses.get(i).getexpense_isdone() ==1  && expenses.get(i).getexpense_isdated()==0) {
+                    try {
+                        if(format1.parse(expenses.get(i).getexpense_date()).after(dt1) && format1.parse(expenses.get(i).getexpense_date()).before(dt2)){
+                            exptotal=exptotal+expenses.get(i).getexpense_amount();
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            totaling[0] = totaling[0] - exptotal;
+            Float total1 = exptotal.floatValue()+ finalInctotal1.floatValue();
+            float incs = exptotal.floatValue()/total1;
+            float exps = finalInctotal1.floatValue()/total1;
+
+            if(totaling[0]==0.0d){
+                entries.add(new PieEntry(0.5f, "E"));
+                entries.add(new PieEntry(0.5f, "I"));
+            }
+            else{
+                entries.add(new PieEntry(incs, "E"));
+                entries.add(new PieEntry(exps, "I"));
+            }
+            exp.setText(formatter.format(exptotal));
+
+            total.setText(formatter.format(totaling[0]));
+            if(totaling[0]>=0){
+                total.setTextColor(generator.green);
+            }
+            else {
+                total.setTextColor(generator.red);
+            }
+
+
+
+            PieChart mChart;
+            mChart = summary.findViewById(R.id.chartsummary);
+
+            mChart.setUsePercentValues(true);
+            mChart.getDescription().setEnabled(false);
+
+            mChart.setDragDecelerationFrictionCoef(0.95f);
+
+            mChart.setRotationAngle(0);
+            mChart.setDrawHoleEnabled(false);
+            // enable rotation of the chart by touch
+            mChart.setRotationEnabled(true);
+            mChart.setHighlightPerTapEnabled(true);
+
+            // mChart.setUnit(" €");
+            // mChart.setDrawUnitsInChart(true);
+
+            // add a selection listener
+
+            setData(2, 100,mChart,entries);
+
+            mChart.animateY(1400, Easing.EasingOption.EaseInOutElastic);
+            // mChart.spin(2000, 0, 360);
+
+            Legend l = mChart.getLegend();
+            l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+            l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+            l.setOrientation(Legend.LegendOrientation.VERTICAL);
+            l.setDrawInside(false);
+            l.setEnabled(false);
+
 
             holder.buttonviewoption.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -318,55 +343,29 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
 
             View nothing = account.findViewById(R.id.nothingaccount);
 
-            List<account> allaccount = new ArrayList<>();
+            List<account> allaccount = dbase.getAllaccount();
 
-            fdb.collection("account")
-                    .whereEqualTo("account_status",1)
-                    .orderBy("account_name", Query.Direction.ASCENDING)
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                allaccount.clear();
-                                for (DocumentSnapshot document : task.getResult()) {
-                                    if(document.getId()==null){
-                                        break;
-                                    }
-                                    Date c=null;
-                                    Object dtStart;
+            if(allaccount.size()==0){
+                nothing.setVisibility(View.VISIBLE);
+            }
+            else{
+                nothing.setVisibility(View.GONE);
+            }
 
-                                    int temp = 0;
+            /*if(document.getData().get("account_lastused")==null){
+                temp = 1;
+                dtStart = document.getData().get("account_createdate");
+            }else {
+                dtStart = document.getData().get("account_lastused");
+            }*/
 
-                                    if(document.getData().get("account_lastused")==null){
-                                        temp = 1;
-                                        dtStart = document.getData().get("account_createdate");
-                                    }else {
-                                        dtStart = document.getData().get("account_lastused");
-                                    }
+            adapterviewaccountsmenu adapter = new adapterviewaccountsmenu(contexts,allaccount);
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(contexts.getApplicationContext());
+            accountlis.setLayoutManager(mLayoutManager);
+            accountlis.setItemAnimator(new DefaultItemAnimator());
+            accountlis.addItemDecoration(new MyDividerItemDecoration(contexts, LinearLayoutManager.VERTICAL, 16));
+            accountlis.setAdapter(adapter);
 
-                                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-                                    allaccount.add(new account(document.getData().get("account_name").toString(),document.getData().get("account_category").toString(),dtStart,document.getData().get("account_balance").toString(),document.getData().get("account_balance_current").toString(),document.getData().get("username").toString(),Integer.parseInt(document.getData().get("account_status").toString()),document.getData().get("account_currency").toString(),document.getData().get("account_fullcurency").toString(),temp));
-                                    Log.d("Get data account", document.getId() + " => " + document.getData());
-                                }
-                                if(allaccount.size()==0){
-                                    nothing.setVisibility(View.VISIBLE);
-                                }
-                                else{
-                                    nothing.setVisibility(View.GONE);
-                                }
-                                adapterviewaccountsmenu adapter = new adapterviewaccountsmenu(contexts,allaccount);
-                                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(contexts.getApplicationContext());
-                                accountlis.setLayoutManager(mLayoutManager);
-                                accountlis.setItemAnimator(new DefaultItemAnimator());
-                                accountlis.addItemDecoration(new MyDividerItemDecoration(contexts, LinearLayoutManager.VERTICAL, 16));
-                                accountlis.setAdapter(adapter);
-                            } else {
-                                Log.w("Get account error", "Error getting documents.", task.getException());
-                            }
-                        }
-                    });
 
             holder.buttonviewoption.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -496,7 +495,7 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
                                 }
                                     finalMRealm1.beginTransaction();
                                     dataincset score1 = new dataincset(value.floatValue(), (float) finalI, datesdata.get(finalI));
-                                    Log.e("replace", "/" + String.valueOf(thisYear) + " " + datesdata.get(finalI));
+                                    //Log.e("replace", "/" + String.valueOf(thisYear) + " " + datesdata.get(finalI));
                                     finalMRealm1.copyToRealm(score1);
                                     finalMRealm1.commitTransaction();
 
@@ -679,7 +678,7 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
                                     }
                                     finalMRealm1.beginTransaction();
                                     dataexpset score1 = new dataexpset(value.floatValue(), (float) finalI, datesdata.get(finalI));
-                                    Log.e("replace", "/" + String.valueOf(thisYear) + " " + datesdata.get(finalI));
+                                    //Log.e("replace", "/" + String.valueOf(thisYear) + " " + datesdata.get(finalI));
                                     finalMRealm1.copyToRealm(score1);
                                     finalMRealm1.commitTransaction();
 

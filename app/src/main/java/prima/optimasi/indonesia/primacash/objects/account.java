@@ -16,6 +16,7 @@ public class account{
     String username;
     int account_status;
     int createorlast;
+    String lastused;
 
     public account(){
 
@@ -48,6 +49,11 @@ public class account{
 
 
     //setter
+
+
+    public void setLastused(String lastused) {
+        this.lastused = lastused;
+    }
 
     public void setAccount_currency(String account_currency) {
         this.account_currency = account_currency;
@@ -100,6 +106,10 @@ public class account{
 
     public String getAccount_category(){
         return account_category;
+    }
+
+    public String getLastused() {
+        return lastused;
     }
 
     public String getUsername(){
