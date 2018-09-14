@@ -65,12 +65,12 @@ public class adapterviewaccountsmenu extends RecyclerView.Adapter<adapterviewacc
 
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
-        if(accountlis.get(position).getCreateorlast()==1){
+        if(accountlis.get(position).getCreateorlast()==0){
             date =(Date) accountlis.get(position).getAccount_createdate();
             holder.accdetail.setText("Created : "+df.format(date));
         }
         else {
-            holder.accdetail.setText("Last Used : "+accountlis.get(position).getAccount_createdate().toString());
+            holder.accdetail.setText("Last Used : "+df.format(accountlis.get(position).getLastused()));
         }
 
         holder.accbalance.setText(formatter.format(Double.parseDouble(accountlis.get(position).getAccount_balance_current()))+" "+accountlis.get(position).getAccount_currency());

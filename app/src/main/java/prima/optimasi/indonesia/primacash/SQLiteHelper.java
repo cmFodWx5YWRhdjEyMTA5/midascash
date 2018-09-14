@@ -317,7 +317,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 td.setFullaccount_currency(c.getString(c.getColumnIndex(KEY_ACCOUNT_FULLCURRENCY)));
 
                 Date date=null;
-                cal.setTimeInMillis(c.getColumnIndex(KEY_CATEGORY_CREATEDATE));
+                cal.setTimeInMillis(c.getLong(c.getColumnIndex(KEY_ACCOUNT_CREATEDATE)));
 
                 date = cal.getTime() ;
 
