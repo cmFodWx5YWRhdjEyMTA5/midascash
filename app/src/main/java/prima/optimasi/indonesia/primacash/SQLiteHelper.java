@@ -278,7 +278,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             td.setFullaccount_currency(c.getString(c.getColumnIndex(KEY_ACCOUNT_FULLCURRENCY)));
 
             Date date=null;
-            cal.setTimeInMillis(c.getColumnIndex(KEY_CATEGORY_CREATEDATE));
+            cal.setTimeInMillis(c.getLong(c.getColumnIndex(KEY_ACCOUNT_CREATEDATE)));
 
             date = cal.getTime() ;
 
@@ -412,9 +412,12 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         Date date=(Date) accs.getAccount_createdate();
         cal.setTimeInMillis(date.getTime());
 
-
         values.put(KEY_ACCOUNT_CREATEDATE, cal.getTimeInMillis());
-        values.put(KEY_ACCOUNT_CREATEORLAST,accs.getCreateorlast());
+
+        cal = Calendar.getInstance();
+
+        values.put(KEY_ACCOUNT_LASTUSED,cal.getTimeInMillis());
+        values.put(KEY_ACCOUNT_CREATEORLAST,1);
         values.put(KEY_ACCOUNT_NAME,accs.getAccount_name());
         values.put(KEY_USERNAME,accs.getUsername());
 
