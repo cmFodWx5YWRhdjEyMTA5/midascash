@@ -69,6 +69,7 @@ import prima.optimasi.indonesia.primacash.objects.dataincset;
 import prima.optimasi.indonesia.primacash.objects.expense;
 import prima.optimasi.indonesia.primacash.objects.income;
 import prima.optimasi.indonesia.primacash.objects.incomeexpense;
+import prima.optimasi.indonesia.primacash.transactionactivity.accountlist;
 import prima.optimasi.indonesia.primacash.transactionactivity.listexpense;
 import prima.optimasi.indonesia.primacash.transactionactivity.listincome;
 
@@ -347,6 +348,13 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
 
             if(allaccount.size()==0){
                 nothing.setVisibility(View.VISIBLE);
+                nothing.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent a = new Intent(contexts,accountlist.class);
+                        contexts.startActivity(a);
+                    }
+                });
             }
             else{
                 nothing.setVisibility(View.GONE);
@@ -427,7 +435,7 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
 
             int thisYear = calendar.get(Calendar.YEAR);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy ");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             Calendar cal = Calendar.getInstance();
 
             cal.add(Calendar.DAY_OF_YEAR, -7);
@@ -437,146 +445,141 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
             List<String> datesdata = new ArrayList<>();
 
 // loop adding one day in each iteration
-           for(int i = 0; i< 7; i++){
-               cal.add(Calendar.DAY_OF_YEAR, 1);
+            for(int i = 0; i< 7; i++) {
+                cal.add(Calendar.DAY_OF_YEAR, 1);
 
-               datesdata.add(sdf.format(cal.getTime()));
-                if(i==0){
-                    perios=perios+sdf.format(cal.getTime())+" - ";
+                datesdata.add(sdf.format(cal.getTime()));
+                if (i == 0) {
+                    perios = perios + sdf.format(cal.getTime()) + " - ";
                 }
-                if(i==6){
-                    perios=perios+sdf.format(cal.getTime());
+                if (i == 6) {
+                    perios = perios + sdf.format(cal.getTime());
                 }
 
                 System.out.println(sdf.format(cal.getTime()));
                 int finalI = i;
-               Realm finalMRealm = mRealm;
+                Realm finalMRealm = mRealm;
+
 
             }
 
             final int[] count = {0};
             for(int i =0 ; i<datesdata.size();i++) {
-                int finalI = i;
+
+                List<income> raw = dbase.getAllincome();
 
                 Realm finalMRealm1 = mRealm;
                 String finalPerios = perios;
 
+                Double value = 0.0d;
 
-                fdb.collection("income")
-                        .whereEqualTo("income_isdone", "1")
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                Double value = 0.0d;
-                                if (task.isSuccessful()) {
-                                    count[0]++;
-                                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                        Date date1 = null;
-                                        Date date2 = null;
+                Date date1 = null;
+                Date date2 = null;
 
-                                        try {
-                                            date1=sdf.parse(document.getData().get("income_date").toString());
-                                            try {
-                                                date2=sdf.parse(datesdata.get(finalI));
-                                                if(date1.equals(date2)){
-                                                    value = value + Double.parseDouble(document.getData().get("income_amount").toString());
-                                                }
-                                            } catch (ParseException e) {
-                                                e.printStackTrace();
-                                            }
-                                        } catch (ParseException e) {
-                                            e.printStackTrace();
-                                        }
+                //count[0]++;
 
+                for (int j = 0; j < raw.size(); j++) {
 
-
+                    if (raw.get(j).getIncome_isdone()==1){
+                        try {
+                            Log.e("date data", "onBindViewHolder: "+raw.get(j).getIncome_date() );
+                            date1 = sdf.parse(raw.get(j).getIncome_date());
+                            try {
+                                date2 = sdf.parse(datesdata.get(i));
+                                if (date1.equals(date2)) {
+                                    value = value + raw.get(j).getIncome_amount();
                                 }
-                                    finalMRealm1.beginTransaction();
-                                    dataincset score1 = new dataincset(value.floatValue(), (float) finalI, datesdata.get(finalI));
-                                    //Log.e("replace", "/" + String.valueOf(thisYear) + " " + datesdata.get(finalI));
-                                    finalMRealm1.copyToRealm(score1);
-                                    finalMRealm1.commitTransaction();
-
-                                    barChart.invalidate();
-                                    barChart.getAxisLeft().setDrawGridLines(false);
-                                    barChart.getXAxis().setDrawGridLines(false);
-                                    barChart.setExtraBottomOffset(5f);
-
-                                    barChart.getXAxis().setLabelCount(7);
-                                    barChart.getXAxis().setGranularity(1f);
-
-                                    // no description text
-                                    barChart.getDescription().setEnabled(false);
-
-                                    // enable touch gestures
-                                    barChart.setTouchEnabled(true);
-
-                                    if (barChart instanceof BarLineChartBase) {
-
-                                        BarLineChartBase mChart = (BarLineChartBase) barChart;
-
-                                        mChart.setDrawGridBackground(false);
-
-                                        // enable scaling and dragging
-                                        mChart.setDragEnabled(true);
-                                        mChart.setScaleEnabled(true);
-
-                                        // if disabled, scaling can be done on x- and y-axis separately
-                                        mChart.setPinchZoom(false);
-
-                                        YAxis leftAxis = mChart.getAxisLeft();
-                                        leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
-                                        leftAxis.setTextSize(8f);
-                                        leftAxis.setTextColor(Color.BLACK);
-
-                                        XAxis xAxis = mChart.getXAxis();
-                                        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-                                        xAxis.setTextSize(8f);
-                                        xAxis.setTextColor(Color.BLACK);
-
-                                        mChart.getAxisRight().setEnabled(false);
-                                    }
-
-                                    RealmResults<dataincset> results = mRealm.where(dataincset.class).findAll();
-
-                                    IAxisValueFormatter formatter = new IAxisValueFormatter() {
-                                        @Override
-                                        public String getFormattedValue(float value, AxisBase axis) {
-                                            return datesdata.get((int) value).replace("/" + String.valueOf(thisYear), "");
-                                        }
-                                    };
-                                    barChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
-
-                                    barChart.getXAxis().setValueFormatter(formatter);
-
-                                    // BAR-CHART
-                                    RealmBarDataSet<dataincset> barDataSet = new RealmBarDataSet<dataincset>(results, "ranges", "firebaseincome");
-                                    barDataSet.setColor(generator.green);
-                                    barDataSet.setLabel("Income Period " + finalPerios);
-
-                                    ArrayList<IBarDataSet> barDataSets = new ArrayList<IBarDataSet>();
-                                    barDataSets.add(barDataSet);
-
-                                    BarData barData = new BarData(barDataSets);
-
-                                    barChart.setData(barData);
-                                    barChart.setFitBars(true);
-                                    barChart.animateY(1400, Easing.EasingOption.EaseInOutQuart);
-
-                                    barChart.invalidate();
-
-                                    if(count[0]==datesdata.size()){
-                                        mRealm.close();
-                                    }
-
-                                } else {
-                                    Log.w("data", "Error getting documents.", task.getException());
-                                }
+                            } catch (ParseException e) {
+                                e.printStackTrace();
                             }
-                        });
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+
+                finalMRealm1.beginTransaction();
+                dataincset score1 = new dataincset(value.floatValue(), (float) i, datesdata.get(i));
+                //Log.e("replace", "/" + String.valueOf(thisYear) + " " + datesdata.get(finalI));
+                finalMRealm1.copyToRealm(score1);
+                finalMRealm1.commitTransaction();
+
+                barChart.invalidate();
+                barChart.getAxisLeft().setDrawGridLines(false);
+                barChart.getXAxis().setDrawGridLines(false);
+                barChart.setExtraBottomOffset(5f);
+
+                barChart.getXAxis().setLabelCount(7);
+                barChart.getXAxis().setGranularity(1f);
+
+                // no description text
+                barChart.getDescription().setEnabled(false);
+
+                // enable touch gestures
+                barChart.setTouchEnabled(true);
+
+                if (barChart instanceof BarLineChartBase) {
+
+                    BarLineChartBase mChart = (BarLineChartBase) barChart;
+
+                    mChart.setDrawGridBackground(false);
+
+                    // enable scaling and dragging
+                    mChart.setDragEnabled(true);
+                    mChart.setScaleEnabled(true);
+
+                    // if disabled, scaling can be done on x- and y-axis separately
+                    mChart.setPinchZoom(false);
+
+                    YAxis leftAxis = mChart.getAxisLeft();
+                    leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
+                    leftAxis.setTextSize(8f);
+                    leftAxis.setTextColor(Color.BLACK);
+
+                    XAxis xAxis = mChart.getXAxis();
+                    xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+                    xAxis.setTextSize(8f);
+                    xAxis.setTextColor(Color.BLACK);
+
+                    mChart.getAxisRight().setEnabled(false);
+                }
+
+                RealmResults<dataincset> results = mRealm.where(dataincset.class).findAll();
+
+                IAxisValueFormatter formatter = new IAxisValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value, AxisBase axis) {
+                        return datesdata.get((int) value).replace("/" + String.valueOf(thisYear), "");
+                    }
+                };
+                barChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
+
+                barChart.getXAxis().setValueFormatter(formatter);
+
+                // BAR-CHART
+                RealmBarDataSet<dataincset> barDataSet = new RealmBarDataSet<dataincset>(results, "ranges", "firebaseincome");
+                barDataSet.setColor(generator.green);
+                barDataSet.setLabel("Income Period " + finalPerios);
+
+                ArrayList<IBarDataSet> barDataSets = new ArrayList<IBarDataSet>();
+                barDataSets.add(barDataSet);
+
+                BarData barData = new BarData(barDataSets);
+
+                barChart.setData(barData);
+                barChart.setFitBars(true);
+                barChart.animateY(1400, Easing.EasingOption.EaseInOutQuart);
+
+                barChart.invalidate();
+
+                if (count[0] == datesdata.size()) {
+                    mRealm.close();
+                }
+
                 count[0]++;
+
+
             }
 
             holder.layoutextra.addView(incomel7d);
@@ -609,7 +612,7 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
 
             int thisYear = calendar.get(Calendar.YEAR);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy ");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             Calendar cal = Calendar.getInstance();
 
             cal.add(Calendar.DAY_OF_YEAR, -7);
@@ -638,127 +641,118 @@ public class mainactivityviews extends RecyclerView.Adapter<mainactivityviews.My
 
             final int[] count = {0};
             for(int i =0 ; i<datesdata.size();i++) {
+                List<expense> raw = dbase.getAllexpense();
                 int finalI = i;
 
                 Realm finalMRealm1 = mRealm;
                 String finalPerios = perios;
 
+                Double value = 0.0d;
 
-                fdb.collection("expense")
-                        .whereEqualTo("expense_isdone", "1")
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                Double value = 0.0d;
-                                if (task.isSuccessful()) {
-                                    count[0]++;
-                                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                                    for (QueryDocumentSnapshot document : task.getResult()) {
-                                        Date date1 = null;
-                                        Date date2 = null;
+                Date date1 = null;
+                Date date2 = null;
 
-                                        try {
-                                            date1=sdf.parse(document.getData().get("expense_date").toString());
-                                            try {
-                                                date2=sdf.parse(datesdata.get(finalI));
-                                                if(date1.equals(date2)){
-                                                    value = value + Double.parseDouble(document.getData().get("expense_amount").toString());
-                                                }
-                                            } catch (ParseException e) {
-                                                e.printStackTrace();
-                                            }
-                                        } catch (ParseException e) {
-                                            e.printStackTrace();
-                                        }
+                //count[0]++;
 
+                for (int j = 0; j < raw.size(); j++) {
 
-
-                                        Log.d("Get data expense", datesdata.get(finalI) + document.getId() + " => " + document.getData());
-                                    }
-                                    finalMRealm1.beginTransaction();
-                                    dataexpset score1 = new dataexpset(value.floatValue(), (float) finalI, datesdata.get(finalI));
-                                    //Log.e("replace", "/" + String.valueOf(thisYear) + " " + datesdata.get(finalI));
-                                    finalMRealm1.copyToRealm(score1);
-                                    finalMRealm1.commitTransaction();
-
-                                    barChart.invalidate();
-                                    barChart.getAxisLeft().setDrawGridLines(false);
-                                    barChart.getXAxis().setDrawGridLines(false);
-                                    barChart.setExtraBottomOffset(5f);
-
-                                    barChart.getXAxis().setLabelCount(7);
-                                    barChart.getXAxis().setGranularity(1f);
-
-                                    // no description text
-                                    barChart.getDescription().setEnabled(false);
-
-                                    // enable touch gestures
-                                    barChart.setTouchEnabled(true);
-
-                                    if (barChart instanceof BarLineChartBase) {
-
-                                        BarLineChartBase mChart = (BarLineChartBase) barChart;
-
-                                        mChart.setDrawGridBackground(false);
-
-                                        // enable scaling and dragging
-                                        mChart.setDragEnabled(true);
-                                        mChart.setScaleEnabled(true);
-
-                                        // if disabled, scaling can be done on x- and y-axis separately
-                                        mChart.setPinchZoom(false);
-
-                                        YAxis leftAxis = mChart.getAxisLeft();
-                                        leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
-                                        leftAxis.setTextSize(8f);
-                                        leftAxis.setTextColor(Color.BLACK);
-
-                                        XAxis xAxis = mChart.getXAxis();
-                                        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-                                        xAxis.setTextSize(8f);
-                                        xAxis.setTextColor(Color.BLACK);
-
-                                        mChart.getAxisRight().setEnabled(false);
-                                    }
-
-                                    RealmResults<dataexpset> results = mRealm.where(dataexpset.class).findAll();
-
-                                    IAxisValueFormatter formatter = new IAxisValueFormatter() {
-                                        @Override
-                                        public String getFormattedValue(float value, AxisBase axis) {
-                                            return datesdata.get((int) value).replace("/" + String.valueOf(thisYear), "");
-                                        }
-                                    };
-                                    barChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
-
-                                    barChart.getXAxis().setValueFormatter(formatter);
-
-                                    // BAR-CHART
-                                    RealmBarDataSet<dataexpset> barDataSet = new RealmBarDataSet<dataexpset>(results, "ranges", "firebaseincome");
-                                    barDataSet.setColor(generator.red);
-                                    barDataSet.setLabel("Expense Period " + finalPerios);
-
-                                    ArrayList<IBarDataSet> barDataSets = new ArrayList<IBarDataSet>();
-                                    barDataSets.add(barDataSet);
-
-                                    BarData barData = new BarData(barDataSets);
-
-                                    barChart.setData(barData);
-                                    barChart.setFitBars(true);
-                                    barChart.animateY(1400, Easing.EasingOption.EaseInOutQuart);
-
-                                    barChart.invalidate();
-
-                                    if(count[0]==datesdata.size()){
-                                        mRealm.close();
-                                    }
-
-                                } else {
-                                    Log.w("data", "Error getting documents.", task.getException());
+                    if (raw.get(j).getexpense_isdone()==1){
+                        try {
+                            date1 = sdf.parse(raw.get(j).getexpense_date());
+                            try {
+                                date2 = sdf.parse(datesdata.get(i));
+                                if (date1.equals(date2)) {
+                                    value = value + raw.get(j).getexpense_amount();
                                 }
+                            } catch (ParseException e) {
+                                e.printStackTrace();
                             }
-                        });
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+
+                count[0]++;
+
+                finalMRealm1.beginTransaction();
+                dataexpset score1 = new dataexpset(value.floatValue(), (float) finalI, datesdata.get(finalI));
+                //Log.e("replace", "/" + String.valueOf(thisYear) + " " + datesdata.get(finalI));
+                finalMRealm1.copyToRealm(score1);
+                finalMRealm1.commitTransaction();
+
+                barChart.invalidate();
+                barChart.getAxisLeft().setDrawGridLines(false);
+                barChart.getXAxis().setDrawGridLines(false);
+                barChart.setExtraBottomOffset(5f);
+
+                barChart.getXAxis().setLabelCount(7);
+                barChart.getXAxis().setGranularity(1f);
+
+                // no description text
+                barChart.getDescription().setEnabled(false);
+
+                // enable touch gestures
+                barChart.setTouchEnabled(true);
+
+                if (barChart instanceof BarLineChartBase) {
+
+                    BarLineChartBase mChart = (BarLineChartBase) barChart;
+
+                    mChart.setDrawGridBackground(false);
+
+                    // enable scaling and dragging
+                    mChart.setDragEnabled(true);
+                    mChart.setScaleEnabled(true);
+
+                    // if disabled, scaling can be done on x- and y-axis separately
+                    mChart.setPinchZoom(false);
+
+                    YAxis leftAxis = mChart.getAxisLeft();
+                    leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
+                    leftAxis.setTextSize(8f);
+                    leftAxis.setTextColor(Color.BLACK);
+
+                    XAxis xAxis = mChart.getXAxis();
+                    xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+                    xAxis.setTextSize(8f);
+                    xAxis.setTextColor(Color.BLACK);
+
+                    mChart.getAxisRight().setEnabled(false);
+                }
+
+                RealmResults<dataexpset> results = mRealm.where(dataexpset.class).findAll();
+
+                IAxisValueFormatter formatter = new IAxisValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value, AxisBase axis) {
+                        return datesdata.get((int) value).replace("/" + String.valueOf(thisYear), "");
+                    }
+                };
+                barChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
+
+                barChart.getXAxis().setValueFormatter(formatter);
+
+                // BAR-CHART
+                RealmBarDataSet<dataexpset> barDataSet = new RealmBarDataSet<dataexpset>(results, "ranges", "firebaseincome");
+                barDataSet.setColor(generator.red);
+                barDataSet.setLabel("Expense Period " + finalPerios);
+
+                ArrayList<IBarDataSet> barDataSets = new ArrayList<IBarDataSet>();
+                barDataSets.add(barDataSet);
+
+                BarData barData = new BarData(barDataSets);
+
+                barChart.setData(barData);
+                barChart.setFitBars(true);
+                barChart.animateY(1400, Easing.EasingOption.EaseInOutQuart);
+
+                barChart.invalidate();
+
+                if(count[0]==datesdata.size()){
+                    mRealm.close();
+                }
                 count[0]++;
             }
 

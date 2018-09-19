@@ -84,7 +84,7 @@ public class accountlist extends AppCompatActivity{
 
     SQLiteHelper dbase;
 
-    RecyclerView accountlist;
+    RecyclerView accountlis;
 
     List<account> allaccount;
     List<firebasedocument> alldoc;
@@ -101,7 +101,7 @@ public class accountlist extends AppCompatActivity{
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        accountlist = findViewById(R.id.lvaccount);
+        accountlis = findViewById(R.id.lvaccount);
 
         db = FirebaseFirestore.getInstance();
 
@@ -133,9 +133,9 @@ public class accountlist extends AppCompatActivity{
 
         adapter = new adapteraccounts(accountlist.this,accountlist.this,allaccount);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        accountlist.setLayoutManager(mLayoutManager);
-        accountlist.setItemAnimator(new DefaultItemAnimator());
-        accountlist.setAdapter(adapter);
+        accountlis.setLayoutManager(mLayoutManager);
+        accountlis.setItemAnimator(new DefaultItemAnimator());
+        accountlis.setAdapter(adapter);
 /*
         db.collection("account")
                 .orderBy("account_name", Query.Direction.ASCENDING)
@@ -207,10 +207,15 @@ public class accountlist extends AppCompatActivity{
 
             List<String> spinneritem = new ArrayList<String>();
             spinneritem.add("Select One");
+
             List<category> allcat = dbase.getAllcategory();
+
             for (int a=0;a<allcat.size();a++){
                 spinneritem.add(allcat.get(a).getCategory_name());
             }
+            spinneritem.add("New Category");
+
+
 
             //translatedcategory.add(allcategory.get(i).getCategory_name()+allcategory.get(i).getCategory_image());
 
@@ -237,6 +242,22 @@ public class accountlist extends AppCompatActivity{
             adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
             accountcategory.setAdapter(adapter);
 
+            accountcategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if(accountcategory.getSelectedItem().toString().equals("New Category")){
+                        Intent category = new Intent(accountlist.this,categorylist.class);
+                        startActivity(category);
+
+                        accountcategory.setSelection(0);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
             editaccount.setVisibility(View.GONE);
 
             dialogBuilder.setPositiveButton("Save", null);

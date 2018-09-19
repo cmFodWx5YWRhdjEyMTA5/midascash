@@ -16,7 +16,7 @@ public class account{
     String username;
     int account_status;
     int createorlast;
-    String lastused;
+    Object lastused;
 
     public account(){
 
@@ -51,7 +51,7 @@ public class account{
     //setter
 
 
-    public void setLastused(String lastused) {
+    public void setLastused(Object lastused) {
         this.lastused = lastused;
     }
 
@@ -108,7 +108,7 @@ public class account{
         return account_category;
     }
 
-    public String getLastused() {
+    public Object getLastused() {
         return lastused;
     }
 

@@ -50,7 +50,10 @@ import prima.optimasi.indonesia.primacash.MainActivity;
 import prima.optimasi.indonesia.primacash.R;
 import prima.optimasi.indonesia.primacash.SQLiteHelper;
 import prima.optimasi.indonesia.primacash.generator;
+import prima.optimasi.indonesia.primacash.objects.account;
 import prima.optimasi.indonesia.primacash.objects.category;
+import prima.optimasi.indonesia.primacash.objects.income;
+import prima.optimasi.indonesia.primacash.objects.expense;
 import prima.optimasi.indonesia.primacash.recycleview.adapterviewcategory;
 
 /**
@@ -537,6 +540,32 @@ public class categorylist extends AppCompatActivity {
                                         String finalTempcategory1 = finalTempcategory;
 
                                         dbase.deletecategory(finalHolder.textView.getText().toString());
+
+                                        List<account> acc = dbase.getAllaccount();
+                                        List<income> inc = dbase.getAllincome();
+                                        List<expense> exp = dbase.getAllexpense();
+
+                                        for(int i=0;i<acc.size();i++){
+                                            if(acc.get(i).getAccount_category().equals(finalTempcategory)){
+                                                account acc1 = dbase.getaccount(acc.get(i).getAccount_name());
+                                                acc1.setAccount_category("empty");
+                                                dbase.updateaccount(acc1,generator.userlogin,acc1.getAccount_name());
+                                            }
+                                        }
+                                        for(int i=0;i<inc.size();i++){
+                                            if(inc.get(i).getIncome_category().equals(finalTempcategory)){
+                                                income inc1 = dbase.getincome(inc.get(i).getIncome_id());
+                                                inc1.setIncome_category("empty");
+                                                dbase.updateincome(inc1,inc1.getIncome_id(),generator.userlogin);
+                                            }
+                                        }
+                                        for(int i=0;i<exp.size();i++){
+                                            if(exp.get(i).getexpense_category().equals(finalTempcategory)){
+                                                expense acc1 = dbase.getexpense(exp.get(i).getexpense_id());
+                                                acc1.setexpense_category("empty");
+                                                dbase.updateexpense(acc1,acc1.getexpense_id(),generator.userlogin);
+                                            }
+                                        }
 
                                         dialog.dismiss();
                                             Toast.makeText(categorylist.this, "Category "+finalHolder.textView.getText().toString()+" Deleted", Toast.LENGTH_SHORT).show();

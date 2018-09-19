@@ -10,8 +10,23 @@ public class transfer implements Comparable<transfer> {
     String transfer_src,transfer_dest,transfer_notes,usernametrf;
     String transfer_date,transfer_createdate;
     double transfer_amount,transfer_rate;
-    String transfer_isdone;
+    int transfer_isdone;
+    String transfer_category,transfer_id;
+
     String transferdoc;
+    byte[] image_chosen;
+
+    public byte[] getImage_chosen() {
+        return image_chosen;
+    }
+
+    public int getTransfer_isdone() {
+        return transfer_isdone;
+    }
+
+    public String getTransfer_category() {
+        return transfer_category;
+    }
 
     public String getUsernametrf() {
         return usernametrf;
@@ -49,6 +64,14 @@ public class transfer implements Comparable<transfer> {
         return transfer_amount;
     }
 
+    public void setImage_chosen(byte[] image_chosen) {
+        this.image_chosen = image_chosen;
+    }
+
+    public void setTransfer_id(String transfer_id) {
+        this.transfer_id = transfer_id;
+    }
+
     public void setUsernametrf(String usernametrf) {
         this.usernametrf = usernametrf;
     }
@@ -77,7 +100,7 @@ public class transfer implements Comparable<transfer> {
         this.transfer_date = transfer_date;
     }
 
-    public void setTransfer_isdone(String transfer_isdone) {
+    public void setTransfer_isdone(int transfer_isdone) {
         this.transfer_isdone = transfer_isdone;
     }
 
@@ -89,9 +112,6 @@ public class transfer implements Comparable<transfer> {
         this.transfer_amount = transfer_amount;
     }
 
-    public String getTransfer_isdone() {
-        return transfer_isdone;
-    }
 
 
     @Override

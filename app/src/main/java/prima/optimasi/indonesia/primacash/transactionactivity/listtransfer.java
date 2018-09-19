@@ -60,6 +60,7 @@ import java.util.Map;
 
 import prima.optimasi.indonesia.primacash.MainActivity;
 import prima.optimasi.indonesia.primacash.R;
+import prima.optimasi.indonesia.primacash.SQLiteHelper;
 import prima.optimasi.indonesia.primacash.commaedittext;
 import prima.optimasi.indonesia.primacash.formula.calculatordialog;
 import prima.optimasi.indonesia.primacash.generator;
@@ -70,6 +71,8 @@ import prima.optimasi.indonesia.primacash.recycleview.adapterviewtransferlist;
 public class listtransfer extends AppCompatActivity{
 
     RecyclerView recycler;
+
+    SQLiteHelper dbase;
 
     adapterviewtransferlist adaptertransfer;
 
@@ -84,6 +87,8 @@ public class listtransfer extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transfer);
 
+        dbase = new SQLiteHelper(this);
+
         db = FirebaseFirestore.getInstance();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -95,48 +100,25 @@ public class listtransfer extends AppCompatActivity{
 
         nothing = findViewById(R.id.layoutnothing);
 
-        db.collection("transfer")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document1 : task.getResult()) {
-                                transfer data = new transfer();
-                                data.setTransferdoc(document1.getId());
-                                data.setTransfer_amount(Double.parseDouble(document1.getData().get("transfer_amount").toString()));
-                                data.setTransfer_rate(Double.parseDouble(document1.getData().get("transfer_rate").toString()));
-                                data.setTransfer_date(document1.getData().get("transfer_date").toString());
-                                data.setTransfer_notes(document1.getData().get("transfer_notes").toString());
-                                data.setTransfer_src(document1.getData().get("transfer_src").toString());
-                                data.setTransfer_dest(document1.getData().get("transfer_dest").toString());
-                                data.setTransfer_isdone(document1.getData().get("transfer_isdone").toString());
+        datatransfer = dbase.getAlltransfer();
 
+        Collections.sort(datatransfer);
+        Collections.reverse(datatransfer);
 
-                                datatransfer.add(data);
-                                Collections.sort(datatransfer);
-                                Collections.reverse(datatransfer);
-                            }
+        adaptertransfer = new adapterviewtransferlist(listtransfer.this,datatransfer);
 
-                            adaptertransfer = new adapterviewtransferlist(listtransfer.this,datatransfer);
+        if(adaptertransfer.getItemCount()==0){
+            recycler.setVisibility(View.GONE);
 
-                            if(adaptertransfer.getItemCount()==0){
-                                recycler.setVisibility(View.GONE);
+        }
+        else {
+            recycler.setVisibility(View.VISIBLE);
+        }
 
-                            }
-                            else {
-                                recycler.setVisibility(View.VISIBLE);
-                            }
-
-                            RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(listtransfer.this, 1);
-                            recycler.setLayoutManager(mLayoutManager);
-                            recycler.setItemAnimator(new DefaultItemAnimator());
-                            recycler.setAdapter(adaptertransfer);
-                        } else {
-                            Log.d("data", "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(listtransfer.this, 1);
+        recycler.setLayoutManager(mLayoutManager);
+        recycler.setItemAnimator(new DefaultItemAnimator());
+        recycler.setAdapter(adaptertransfer);
     }
 
     @Override
@@ -1060,41 +1042,24 @@ public class listtransfer extends AppCompatActivity{
         }
 
         public void reloaddata(){
-            db.collection("transfer")
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                datatransfer.clear();
-                                if(adaptertransfer!=null){
-                                    adaptertransfer.notifyDataSetChanged();
-                                }
-                                for (QueryDocumentSnapshot document1 : task.getResult()) {
-                                    transfer data = new transfer();
-                                    data.setTransferdoc(document1.getId());
-                                    data.setTransfer_amount(Double.parseDouble(document1.getData().get("transfer_amount").toString()));
-                                    data.setTransfer_rate(Double.parseDouble(document1.getData().get("transfer_rate").toString()));
-                                    data.setTransfer_date(document1.getData().get("transfer_date").toString());
-                                    data.setTransfer_notes(document1.getData().get("transfer_notes").toString());
-                                    data.setTransfer_src(document1.getData().get("transfer_src").toString());
-                                    data.setTransfer_dest(document1.getData().get("transfer_dest").toString());
+
+            datatransfer.clear();
 
 
-                                    datatransfer.add(data);
-                                    Collections.sort(datatransfer);
-                                    Collections.reverse(datatransfer);
-                                }
+            if(adaptertransfer!=null){
+                adaptertransfer.notifyDataSetChanged();
+            }
 
-                                if(adaptertransfer!=null){
-                                    adaptertransfer.notifyDataSetChanged();
-                                }
+            datatransfer = dbase.getAlltransfer();
 
-                            } else {
-                                Log.d("data", "Error getting documents: ", task.getException());
-                            }
-                        }
-                    });
+
+            Collections.sort(datatransfer);
+            Collections.reverse(datatransfer);
+
+            if(adaptertransfer!=null){
+                adaptertransfer.notifyDataSetChanged();
+            }
+
         }
     }
 

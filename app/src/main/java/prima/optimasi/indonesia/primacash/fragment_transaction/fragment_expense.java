@@ -290,6 +290,10 @@ public class fragment_expense extends Fragment {
 
                                 dbase.createexpense(newexpense, generator.userlogin);
 
+                                if(generator.adapter!=null){
+                                    generator.adapter.notifyDataSetChanged();
+                                }
+
                                 getActivity().finish();
 
                                 Toast.makeText(con,"New expense Saved",Toast.LENGTH_SHORT).show();

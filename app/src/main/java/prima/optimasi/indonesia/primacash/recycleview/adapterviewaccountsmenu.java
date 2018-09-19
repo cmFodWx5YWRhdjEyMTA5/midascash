@@ -70,7 +70,8 @@ public class adapterviewaccountsmenu extends RecyclerView.Adapter<adapterviewacc
             holder.accdetail.setText("Created : "+df.format(date));
         }
         else {
-            holder.accdetail.setText("Last Used : "+df.format(accountlis.get(position).getLastused()));
+            Date data = (Date) accountlis.get(position).getLastused();
+            holder.accdetail.setText("Last Used : "+df.format(data));
         }
 
         holder.accbalance.setText(formatter.format(Double.parseDouble(accountlis.get(position).getAccount_balance_current()))+" "+accountlis.get(position).getAccount_currency());

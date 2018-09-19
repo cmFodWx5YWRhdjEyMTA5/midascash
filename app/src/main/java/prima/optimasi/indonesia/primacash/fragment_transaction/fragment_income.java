@@ -289,6 +289,10 @@ public class fragment_income extends Fragment {
 
                                 getActivity().finish();
 
+                                if(generator.adapter!=null){
+                                    generator.adapter.notifyDataSetChanged();
+                                }
+
                                 Toast.makeText(con,"New Income Saved",Toast.LENGTH_SHORT).show();
                                     /*Date c = Calendar.getInstance().getTime();
                                     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

@@ -20,6 +20,7 @@ import prima.optimasi.indonesia.primacash.objects.account;
 import prima.optimasi.indonesia.primacash.objects.category;
 import prima.optimasi.indonesia.primacash.objects.expense;
 import prima.optimasi.indonesia.primacash.objects.income;
+import prima.optimasi.indonesia.primacash.objects.transfer;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
 
@@ -106,6 +107,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String KEY_TRANSFER_NOTES = "transfer_notes";
     private static final String KEY_TRANSFER_AMOUNT = "transfer_amount";
     private static final String KEY_TRANSFER_CATEGORY = "transfer_category";
+    private static final String KEY_TRANSFER_ISDONE = "transfer_isdone";
+    private static final String KEY_TRANSFER_ID = "transfer_id";
 
     //income
 
@@ -168,8 +171,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             + " DATETIME,"+ KEY_EXPENSE_IMAGE + " TEXT," + KEY_EXPENSE_TO + " TEXT," + KEY_EXPENSE_ACCOUNT + " TEXT" +")";
 
     private static final String CREATE_TABLE_TRANSFER ="CREATE TABLE "
-            + TABLE_TRANSFER + "(" + KEY_USERNAME + " TEXT,"
-            + KEY_TRANSFER_CREATEDATE+ " DATETIME," + KEY_TRANSFER_AMOUNT + " TEXT," + KEY_TRANSFER_IMAGECHOSEN + " BLOB,"
+            + TABLE_TRANSFER + "(" + KEY_USERNAME + " TEXT," + KEY_TRANSFER_ID + " TEXT,"
+            + KEY_TRANSFER_CREATEDATE+ " DATETIME," + KEY_TRANSFER_AMOUNT + " TEXT," + KEY_TRANSFER_IMAGECHOSEN + " BLOB," + KEY_TRANSFER_ISDONE + " INTEGER,"
             + KEY_TRANSFER_DEST + " TEXT," + KEY_TRANSFER_NOTES + " TEXT," +KEY_TRANSFER_SRC+ " TEXT,"+ KEY_TRANSFER_DATE
             + " DATETIME,"+ KEY_TRANSFER_RATE + " REAL," + KEY_TRANSFER_CATEGORY + " TEXT)";
 
@@ -283,6 +286,14 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             date = cal.getTime() ;
 
             td.setAccount_createdate(date);
+
+            date=null;
+            cal.setTimeInMillis(c.getLong(c.getColumnIndex(KEY_ACCOUNT_LASTUSED)));
+
+            date = cal.getTime() ;
+
+            td.setLastused(date);
+
             td.setAccount_balance(c.getString(c.getColumnIndex(KEY_ACCOUNT_BALANCE)));
             td.setAccount_balance_current(c.getString(c.getColumnIndex(KEY_ACCOUNT_BALANCE_CURRENT)));
             td.setCreateorlast(c.getInt(c.getColumnIndex(KEY_ACCOUNT_CREATEORLAST)));
@@ -322,6 +333,14 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 date = cal.getTime() ;
 
                 td.setAccount_createdate(date);
+
+                date=null;
+                cal.setTimeInMillis(c.getLong(c.getColumnIndex(KEY_ACCOUNT_LASTUSED)));
+
+                date = cal.getTime() ;
+
+                td.setLastused(date);
+
                 td.setAccount_balance(c.getString(c.getColumnIndex(KEY_ACCOUNT_BALANCE)));
                 td.setAccount_balance_current(c.getString(c.getColumnIndex(KEY_ACCOUNT_BALANCE_CURRENT)));
                 td.setCreateorlast(c.getInt(c.getColumnIndex(KEY_ACCOUNT_CREATEORLAST)));
@@ -993,6 +1012,171 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public void deleteexpense(String incs) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_EXPENSE, KEY_EXPENSE_ID + " = ?",
+                new String[] {  incs});
+    }
+
+    //------------------------- expense methods ------------------------//
+
+
+    public long createtransfer(transfer accs, String user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_TRANSFER_SRC, accs.getTransfer_src());
+        values.put(KEY_TRANSFER_DEST, accs.getTransfer_dest());
+        values.put(KEY_TRANSFER_NOTES, accs.getTransfer_notes());
+        values.put(KEY_TRANSFER_ISDONE, accs.getTransfer_isdone());
+
+        values.put(KEY_TRANSFER_ID,random());
+        values.put(KEY_TRANSFER_RATE,accs.getTransfer_rate());
+
+        values.put(KEY_TRANSFER_DATE,accs.getTransfer_date());
+
+        if(accs.getImage_chosen()==null){
+
+        }
+        else {
+            values.put(KEY_TRANSFER_IMAGECHOSEN, accs.getImage_chosen());
+        }
+
+        Date c = Calendar.getInstance().getTime();
+        System.out.println("Current time => " + c);
+
+        values.put(KEY_TRANSFER_CREATEDATE, Calendar.getInstance().getTimeInMillis());
+
+        values.put(KEY_TRANSFER_AMOUNT, accs.getTransfer_amount());
+
+        values.put(KEY_USERNAME,user);
+
+        // insert row
+        long todo_id = db.insert(TABLE_TRANSFER, null, values);
+
+        return todo_id;
+    }
+
+    public transfer getTransfer(String transferid) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectQuery = "SELECT  * FROM " + TABLE_TRANSFER+ " WHERE "
+                + KEY_TRANSFER_ID + " = '" + transferid+"'";
+
+        Log.e(LOG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if( c != null && c.moveToFirst() ){
+
+            transfer td = new transfer();
+            td.setTransfer_dest(c.getString(c.getColumnIndex(KEY_TRANSFER_DEST)));
+            td.setTransfer_src(c.getString(c.getColumnIndex(KEY_TRANSFER_SRC)));
+            td.setTransfer_amount(c.getInt(c.getColumnIndex(KEY_TRANSFER_AMOUNT)));
+            td.setTransfer_date(c.getString(c.getColumnIndex(KEY_TRANSFER_DATE)));
+            td.setTransfer_isdone(c.getInt(c.getColumnIndex(KEY_TRANSFER_ISDONE)));
+
+            td.setTransfer_id(c.getString(c.getColumnIndex(KEY_TRANSFER_ID)));
+            td.setTransfer_notes(c.getString(c.getColumnIndex(KEY_TRANSFER_NOTES)));
+            td.setUsernametrf(c.getString(c.getColumnIndex(KEY_USERNAME)));
+
+            td.setImage_chosen(c.getBlob(c.getColumnIndex(KEY_TRANSFER_IMAGECHOSEN)));
+
+
+            Date date=null;
+            cal.setTimeInMillis(c.getColumnIndex(KEY_TRANSFER_CREATEDATE));
+            DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+
+            date = cal.getTime();
+            td.setTransfer_createdate(format.format(date));
+
+            return  td;
+        }
+        else {
+            return null;
+        }
+    }
+
+    public List<transfer> getAlltransfer() {
+        List<transfer> todos = new ArrayList<transfer>();
+        String selectQuery = "SELECT  * FROM " + TABLE_TRANSFER;
+
+        Log.e(LOG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if( c != null && c.moveToFirst()){
+            do {
+                transfer td = new transfer();
+                td.setTransfer_dest(c.getString(c.getColumnIndex(KEY_TRANSFER_DEST)));
+                td.setTransfer_src(c.getString(c.getColumnIndex(KEY_TRANSFER_SRC)));
+                td.setTransfer_amount(c.getInt(c.getColumnIndex(KEY_TRANSFER_AMOUNT)));
+                td.setTransfer_date(c.getString(c.getColumnIndex(KEY_TRANSFER_DATE)));
+                td.setTransfer_isdone(c.getInt(c.getColumnIndex(KEY_TRANSFER_ISDONE)));
+                td.setTransfer_id(c.getString(c.getColumnIndex(KEY_TRANSFER_ID)));
+                td.setTransfer_notes(c.getString(c.getColumnIndex(KEY_TRANSFER_NOTES)));
+                td.setUsernametrf(c.getString(c.getColumnIndex(KEY_USERNAME)));
+
+                td.setImage_chosen(c.getBlob(c.getColumnIndex(KEY_TRANSFER_IMAGECHOSEN)));
+
+                Date date=null;
+                cal.setTimeInMillis(c.getColumnIndex(KEY_TRANSFER_CREATEDATE));
+                DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+
+                date = cal.getTime();
+                td.setTransfer_createdate(format.format(date));
+
+                todos.add(td);
+                // adding to todo list
+            } while (c.moveToNext());
+        }
+
+        return todos;
+    }
+
+
+    /**
+     * Updating a todo
+     */
+    public int updatetransfer(transfer accs,String incid,String user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_TRANSFER_DEST, accs.getTransfer_dest());
+        values.put(KEY_TRANSFER_SRC, accs.getTransfer_src());
+        values.put(KEY_TRANSFER_NOTES, accs.getTransfer_notes());
+        values.put(KEY_TRANSFER_ISDONE, accs.getTransfer_isdone());
+
+
+        if(accs.getImage_chosen()==null){
+
+        }
+        else {
+            values.put(KEY_TRANSFER_IMAGECHOSEN, accs.getImage_chosen());
+        }
+        values.put(KEY_TRANSFER_ID,incid);
+
+        values.put(KEY_TRANSFER_DATE,accs.getTransfer_date());
+
+        Date c = Calendar.getInstance().getTime();
+        System.out.println("Current time => " + c);
+
+        values.put(KEY_TRANSFER_CREATEDATE, Calendar.getInstance().getTimeInMillis());
+
+        values.put(KEY_TRANSFER_AMOUNT, accs.getTransfer_amount());
+
+        values.put(KEY_USERNAME,user);
+
+        // updating row
+        return db.update(TABLE_TRANSFER, values, KEY_TRANSFER_ID + " = ?",
+                new String[] { incid });
+    }
+
+    /**
+     * Deleting a todo
+     */
+    public void deletetransfer(String incs) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_TRANSFER, KEY_TRANSFER_ID + " = ?",
                 new String[] {  incs});
     }
 

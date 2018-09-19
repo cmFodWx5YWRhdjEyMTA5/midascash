@@ -83,6 +83,7 @@ import prima.optimasi.indonesia.primacash.objects.account;
 import prima.optimasi.indonesia.primacash.objects.category;
 import prima.optimasi.indonesia.primacash.objects.expense;
 import prima.optimasi.indonesia.primacash.objects.income;
+import prima.optimasi.indonesia.primacash.objects.transfer;
 import prima.optimasi.indonesia.primacash.recycleview.mainactivityviews;
 import prima.optimasi.indonesia.primacash.transactionactivity.listexpense;
 
@@ -655,6 +656,10 @@ public class generator {
     
     public static void newtransfer(Context context){
 
+        SQLiteHelper dbase = new SQLiteHelper(context);
+
+
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         TextView chosenacc,currchosen,currdef,chosendate,allcurrencyselected;
@@ -737,35 +742,23 @@ public class generator {
         choseacc.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                                @Override
                                                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                                                   db.collection("account")
-                                                           .whereEqualTo("account_name", choseacc.getSelectedItem().toString())
-                                                           .get()
-                                                           .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                               @Override
-                                                               public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-                                                                   if (task.isSuccessful()) {
-                                                                       for (DocumentSnapshot document : task.getResult()) {
 
-                                                                           String[] parts = document.getData().get("account_fullcurency").toString().split("-");
-                                                                           String part1 = parts[0]; // 004
-                                                                           String part2 = parts[1]; // 034556
-                                                                           currdef.setText(part2.replace(" ", ""));
 
-                                                                           if(currdef.getText().toString().equals(currchosen.getText().toString().replace(" ",""))){
-                                                                               inputrate.setText("1.00");
-                                                                               inputrate.setEnabled(false);
-                                                                           }
-                                                                           else {
-                                                                               inputrate.setEnabled(true);
-                                                                           }
-                                                                       }
-                                                                   } else {
-                                                                       Log.e("", "Error getting documents.", task.getException());
-                                                                   }
+                                                   account acc = dbase.getaccount(choseacc.getSelectedItem().toString());
 
-                                                               }
-                                                           });
+                                                   String[] parts = acc.getFullaccount_currency().split("-");
+                                                   String part1 = parts[0]; // 004
+                                                   String part2 = parts[1]; // 034556
+                                                   currdef.setText(part2.replace(" ", ""));
+
+                                                   if(currdef.getText().toString().equals(currchosen.getText().toString().replace(" ",""))){
+                                                       inputrate.setText("1.00");
+                                                       inputrate.setEnabled(false);
+                                                   }
+                                                   else {
+                                                       inputrate.setEnabled(true);
+                                                   }
                                                }
                                                @Override
                                                public void onNothingSelected(AdapterView<?> adapterView) {
@@ -793,34 +786,25 @@ public class generator {
             }
         });
 
-        db.collection("account")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+        List<account> acclis = dbase.getAllaccount();
 
-                        if (task.isSuccessful()) {
-                            for (DocumentSnapshot document : task.getResult()) {
-                                Log.e("getting data", document.getId() + " => " + document.getData());
-                                account.add(document.getData().get("account_name").toString());
-                            }
-                            ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, account);
-                            spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                            choseacc.setAdapter(spinnerArrayAdapter);
-                            if(currdef.getText().toString().equals(currchosen.getText().toString().replace(" ",""))){
-                                inputrate.setText("1.00");
-                                inputrate.setEnabled(false);
-                            }
-                            else {
-                                inputrate.setEnabled(true);
-                            }
-                        } else {
-                            Log.e("", "Error getting documents.", task.getException());
-                        }
+        account.clear();
 
-                    }
-                });
+        for (int i=0;i<acclis.size();i++) {
 
+            account.add(acclis.get(i).getAccount_name());
+        }
+
+        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, account);
+        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        choseacc.setAdapter(spinnerArrayAdapter);
+        if(currdef.getText().toString().equals(currchosen.getText().toString().replace(" ",""))){
+            inputrate.setText("1.00");
+            inputrate.setEnabled(false);
+        }
+        else {
+            inputrate.setEnabled(true);
+        }
 
         chosenacc.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -885,170 +869,97 @@ public class generator {
                                 if (choseacc.getSelectedItem().toString().equals(chosenacc.getText().toString())) {
                                     Toast.makeText(context, "Transfer source and destination can't be same", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    db.collection("account")
-                                            .whereEqualTo("account_name", chosenacc.getText().toString())
-                                            .get()
-                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                    if (task.isSuccessful()) {
-                                                        for (QueryDocumentSnapshot document1 : task.getResult()) {
-                                                            Double check = generator.makedouble(document1.getData().get("account_balance_current").toString());
-                                                            if((generator.makedouble(inputrate.getText().toString().replace(",",""))*generator.makedouble(trfvalue.getText().toString().replace(",","")))>check){
-                                                                Toast.makeText(context, "Your Account Have insufficient Balance", Toast.LENGTH_SHORT).show();
-                                                            }
-                                                            else {
 
-                                                                //Dismiss once everything is OK.
-                                                                Toast.makeText(context, "Saving Transfer", Toast.LENGTH_SHORT).show();
+                                    account acc = dbase.getaccount(chosenacc.getText().toString());
 
-                                                                Map<String,Object> mapdata = new HashMap<>();
+                                    Double check = generator.makedouble(acc.getAccount_balance_current());
 
-                                                                Date date22 = Calendar.getInstance().getTime();
+                                    if((generator.makedouble(inputrate.getText().toString().replace(",",""))*generator.makedouble(trfvalue.getText().toString().replace(",","")))>check){
+                                        Toast.makeText(context, "Your Account Have insufficient Balance", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else{
+                                        //Dismiss once everything is OK.
+                                        Toast.makeText(context, "Saving Transfer", Toast.LENGTH_SHORT).show();
 
-                                                                Date today22 = new Date();
-                                                                SimpleDateFormat format22 = new SimpleDateFormat("dd/MM/yyyy");
-                                                                Date chosendated=null;
-                                                                try {
-                                                                    chosendated = format22.parse(chosendate.getText().toString());
-                                                                } catch (ParseException e) {
-                                                                    e.printStackTrace();
-                                                                }
-                                                                String temp ="1";
-
-                                                                if(chosendated.after(date22)) {
-                                                                    temp = "0";
-                                                                }
-
-                                                                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-                                                                mapdata.put("transfer_createdate",date22);
-                                                                mapdata.put("transfer_amount",trfvalue.getText().toString().replace(",",""));
-                                                                mapdata.put("transfer_rate",inputrate.getText().toString().replace(",",""));
-                                                                mapdata.put("transfer_dest",choseacc.getSelectedItem().toString());
-                                                                mapdata.put("transfer_src",chosenacc.getText().toString());
-                                                                mapdata.put("transfer_notes",notesdata.getText().toString());
-                                                                mapdata.put("transfer_date",chosendate.getText().toString());
+                                        transfer trf = new transfer();
 
 
+                                        Date date22 = Calendar.getInstance().getTime();
 
-                                                                mapdata.put("transfer_datesys",chosendated.getTime());
-                                                                mapdata.put("transfer_isdated","0");
-                                                                mapdata.put("transfer_isdone",temp);
-                                                                // mapdata.put("transfer_repeat_time",repeattimedata);
-                                                                // mapdata.put("transfer_repeat_period",repeatperioddata);
-                                                                //  mapdata.put("transfer_repeat_count",repeatcountdata);
-                                                                mapdata.put("username", generator.userlogin);
+                                        Date today22 = new Date();
+                                        SimpleDateFormat format22 = new SimpleDateFormat("dd/MM/yyyy");
+                                        Date chosendated=null;
+                                        try {
+                                            chosendated = format22.parse(chosendate.getText().toString());
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
+                                        }
+                                        String temp ="1";
 
+                                        if(chosendated.after(date22)) {
+                                            temp = "0";
+                                        }
 
-                                                                db.collection("transfer")
-                                                                        .add(mapdata)
-                                                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                                            @Override
-                                                                            public void onSuccess(DocumentReference documentReference) {
-// wrong from here
-                                                                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                                                                                Date strDate = null;
-                                                                                try {
-                                                                                    strDate = sdf.parse(chosendate.getText().toString());
-                                                                                } catch (ParseException e) {
-                                                                                    e.printStackTrace();
-                                                                                }
-                                                                                Log.e("date 1", chosendate.getText().toString());
-                                                                                Log.e("date 2", sdf.format(new Date()));
+                                        trf.setTransfer_amount(generator.makedouble(trfvalue.getText().toString().replace(",","")));
+                                        trf.setTransfer_rate(generator.makedouble(inputrate.getText().toString().replace(",","")));
+                                        trf.setTransfer_dest(choseacc.getSelectedItem().toString());
+                                        trf.setTransfer_src(chosenacc.getText().toString());
+                                        trf.setTransfer_notes(notesdata.getText().toString());
+                                        trf.setTransfer_date(chosendate.getText().toString());
+                                        trf.setTransfer_isdone(Integer.parseInt(temp));
+                                        // mapdata.put("transfer_repeat_time",repeattimedata);
+                                        // mapdata.put("transfer_repeat_period",repeatperioddata);
+                                        //  mapdata.put("transfer_repeat_count",repeatcountdata);
+                                        trf.setUsernametrf(generator.userlogin);
 
-                                                                                if (strDate.before(new Date()) || strDate.equals(new Date())) {
-                                                                                    Log.e("date is before", "same");
+                                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                                        Date strDate = null;
+                                        try {
+                                            strDate = sdf.parse(chosendate.getText().toString());
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
+                                        }
+                                        Log.e("date 1", chosendate.getText().toString());
+                                        Log.e("date 2", sdf.format(new Date()));
 
-                                                                                    db.collection("account")
-                                                                                            .whereEqualTo("account_name", chosenacc.getText().toString())
-                                                                                            .get()
-                                                                                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                                                @Override
-                                                                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                                                                                    if (task.isSuccessful()) {
-                                                                                                        for (QueryDocumentSnapshot document : task.getResult()) {
-                                                                                                            db.collection("account")
-                                                                                                                    .whereEqualTo("account_name", choseacc.getSelectedItem().toString())
-                                                                                                                    .get()
-                                                                                                                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                                                                        @Override
-                                                                                                                        public void onComplete(@NonNull Task<QuerySnapshot> task1) {
-                                                                                                                            if (task1.isSuccessful()) {
-                                                                                                                                for (QueryDocumentSnapshot document1 : task1.getResult()) {
-                                                                                                                                    Double source =  Double.parseDouble(document.getData().get("account_balance_current").toString());
-                                                                                                                                    Double destination =  Double.parseDouble(document1.getData().get("account_balance_current").toString());
+                                        if (strDate.before(new Date()) || strDate.equals(new Date())) {
+                                            Log.e("date is before", "same");
 
-                                                                                                                                    Double rate = Double.parseDouble(inputrate.getText().toString().replace(",",""))*Double.parseDouble(trfvalue.getText().toString().replace(",",""));
+                                            account acc1 = dbase.getaccount(choseacc.getSelectedItem().toString());
 
+                                            Double source =  Double.parseDouble(acc.getAccount_balance_current());
+                                            Double destination =  Double.parseDouble(acc1.getAccount_balance_current());
 
-                                                                                                                                    Map<String, Object> datasrc1 = new HashMap<>();
-                                                                                                                                    datasrc1.put("account_balance_current", String.valueOf(source-Double.parseDouble(trfvalue.getText().toString().replace(",",""))));
+                                            Double rate = Double.parseDouble(inputrate.getText().toString().replace(",",""))*Double.parseDouble(trfvalue.getText().toString().replace(",",""));
 
-                                                                                                                                    db.collection("account").document(document.getId())
-                                                                                                                                            .set(datasrc1, SetOptions.merge());
+                                            acc.setAccount_balance_current(String.valueOf(source-Double.parseDouble(trfvalue.getText().toString().replace(",",""))));
+                                            dbase.updateaccount(acc,generator.userlogin,acc.getAccount_name());
 
+                                            acc1.setAccount_balance_current(String.valueOf(destination+rate));
+                                            dbase.updateaccount(acc1,generator.userlogin,acc1.getAccount_name());
 
-                                                                                                                                    Map<String, Object> datadest1 = new HashMap<>();
-                                                                                                                                    datadest1.put("account_balance_current", String.valueOf(destination+rate) );
-
-                                                                                                                                    db.collection("account").document(document1.getId())
-                                                                                                                                            .set(datadest1, SetOptions.merge());
-
-                                                                                                                                    if(generator.adapter!=null){
-                                                                                                                                        generator.adapter.notifyDataSetChanged();
-                                                                                                                                    }
-                                                                                                                                    build.dismiss();
-                                                                                                                                    Toast.makeText(context, "Transfer Data Added", Toast.LENGTH_SHORT).show();
-                                                                                                                                    Log.e("Add data", "DocumentSnapshot added with ID: " + documentReference.getId());
-                                                                                                                                }
-                                                                                                                            } else {
-                                                                                                                                Log.d("Documentdata", "Error getting documents: ", task.getException());
-                                                                                                                            }
-                                                                                                                        }
-                                                                                                                    });
-                                                                                                        }
-                                                                                                    } else {
-                                                                                                        Log.d("Documentdata", "Error getting documents: ", task.getException());
-                                                                                                    }
-                                                                                                }
-                                                                                            });
-                                                                                }
-                                                                                else {
-                                                                                    Log.e("date is after", "not same");
-                                                                                    if(generator.adapter!=null){
-                                                                                        generator.adapter.notifyDataSetChanged();
-                                                                                    }
-
-                                                                                    build.dismiss();
-                                                                                    Toast.makeText(context, "Transfer Data Added", Toast.LENGTH_SHORT).show();
-                                                                                    Log.e("Add data", "DocumentSnapshot added with ID: " + documentReference.getId());
-                                                                                }
+                                            if(generator.adapter!=null){
+                                                generator.adapter.notifyDataSetChanged();
+                                            }
+                                            build.dismiss();
 
 
 
+                                            Toast.makeText(context, "Transfer Data Added", Toast.LENGTH_SHORT).show();
 
-                                                                            }
-                                                                        })
-                                                                        .addOnFailureListener(new OnFailureListener() {
-                                                                            @Override
-                                                                            public void onFailure(@NonNull Exception e) {
-                                                                                Toast.makeText(context, "Error : Please Contact Support or Retry", Toast.LENGTH_SHORT).show();
-                                                                                Log.e("error data add", "Error adding document", e);
-                                                                            }
-                                                                        });
+                                        }
+                                        else {
+                                            Log.e("date is after", "not same");
+                                            if (generator.adapter != null) {
+                                                generator.adapter.notifyDataSetChanged();
+                                            }
 
-                                                            }
+                                            build.dismiss();
+                                            Toast.makeText(context, "Transfer Data Added", Toast.LENGTH_SHORT).show();
+                                        }
 
-                                                        }
-
-
-
-                                                    } else {
-                                                        Log.d("Documentdata", "Error getting documents: ", task.getException());
-                                                    }
-                                                }
-                                            });
+                                        dbase.createtransfer(trf,generator.userlogin);
+                                    }
                                 }
                             }
                         }
