@@ -64,6 +64,10 @@ public class transfer implements Comparable<transfer> {
         return transfer_amount;
     }
 
+    public String getTransfer_id() {
+        return transfer_id;
+    }
+
     public void setImage_chosen(byte[] image_chosen) {
         this.image_chosen = image_chosen;
     }
@@ -103,6 +107,7 @@ public class transfer implements Comparable<transfer> {
     public void setTransfer_isdone(int transfer_isdone) {
         this.transfer_isdone = transfer_isdone;
     }
+
 
     public void setTransfer_createdate(String transfer_createdate) {
         this.transfer_createdate = transfer_createdate;

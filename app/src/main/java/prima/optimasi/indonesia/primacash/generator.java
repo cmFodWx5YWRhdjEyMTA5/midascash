@@ -879,7 +879,6 @@ public class generator {
                                     }
                                     else{
                                         //Dismiss once everything is OK.
-                                        Toast.makeText(context, "Saving Transfer", Toast.LENGTH_SHORT).show();
 
                                         transfer trf = new transfer();
 

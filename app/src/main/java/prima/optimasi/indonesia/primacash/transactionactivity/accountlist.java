@@ -71,6 +71,9 @@ import prima.optimasi.indonesia.primacash.extramenuactivity.accounttransactions;
 import prima.optimasi.indonesia.primacash.formula.calculatordialog;
 import prima.optimasi.indonesia.primacash.generator;
 import prima.optimasi.indonesia.primacash.objects.account;
+import prima.optimasi.indonesia.primacash.objects.income;
+import prima.optimasi.indonesia.primacash.objects.expense;
+import prima.optimasi.indonesia.primacash.objects.transfer;
 import prima.optimasi.indonesia.primacash.objects.category;
 import prima.optimasi.indonesia.primacash.objects.firebasedocument;
 
@@ -816,6 +819,42 @@ public class accountlist extends AppCompatActivity{
                                                                 reloaddata();
                                                                 Toast.makeText(accountlist.this, acc.getAccount_name() + "Edited to " + accountname.getText().toString(), Toast.LENGTH_SHORT).show();
                                                             }
+
+                                                            List<income> inc = dbase.getAllincome();
+                                                            List<expense> exp = dbase.getAllexpense();
+                                                            List<transfer> trf = dbase.getAlltransfer();
+
+                                                            for(int i=0;i<inc.size();i++){
+                                                                if(inc.get(i).getIncome_account().equals(accountname.getText().toString())){
+                                                                    income anc = new income();
+                                                                    anc=inc.get(i);
+                                                                    anc.setIncome_account("Empty");
+                                                                    dbase.updateincome(anc,anc.getIncome_id(),generator.userlogin);
+                                                                }
+                                                            }
+                                                            for(int i=0;i<exp.size();i++){
+                                                                if(exp.get(i).getexpense_account().equals(accountname.getText().toString())){
+                                                                    expense axp = new expense();
+                                                                    axp = exp.get(i);
+                                                                    axp.setexpense_account("Empty");
+                                                                    dbase.updateexpense(axp,axp.getexpense_id(),generator.userlogin);
+                                                                }
+                                                            }
+                                                            for(int i=0;i<trf.size();i++){
+                                                                if(trf.get(i).getTransfer_dest().equals(accountname.getText().toString())) {
+                                                                    transfer arf = new transfer();
+                                                                    arf = trf.get(i);
+                                                                    arf.setTransfer_dest("Empty");
+                                                                    dbase.updatetransfer(arf,arf.getTransfer_id(),generator.userlogin);
+                                                                }
+
+                                                                if(trf.get(i).getTransfer_src().equals(accountname.getText().toString())) {
+                                                                    transfer arf = new transfer();
+                                                                    arf = trf.get(i);
+                                                                    arf.setTransfer_src("Empty");
+                                                                    dbase.updatetransfer(arf,arf.getTransfer_id(),generator.userlogin);
+                                                                }
+                                                            }
     // Toast.makeText(accountlist.this, accountname.getText().toString() + " is Already Registered or Account Name Is Empty", Toast.LENGTH_SHORT).show();
 
 
@@ -974,6 +1013,42 @@ public class accountlist extends AppCompatActivity{
                                             dbase.deleteaccount(holder.accountname.getText().toString());
                                             Toast.makeText(accountlist.this,"Deleted Account "+ holder.accountname.getText().toString(),Toast.LENGTH_SHORT).show();
                                             reloaddata();
+
+                                            List<income> inc = dbase.getAllincome();
+                                            List<expense> exp = dbase.getAllexpense();
+                                            List<transfer> trf = dbase.getAlltransfer();
+
+                                            for(int i=0;i<inc.size();i++){
+                                                if(inc.get(i).getIncome_account().equals(holder.accountname.getText().toString())){
+                                                    income anc = new income();
+                                                    anc=inc.get(i);
+                                                    anc.setIncome_account("Empty");
+                                                    dbase.updateincome(anc,anc.getIncome_id(),generator.userlogin);
+                                                }
+                                            }
+                                            for(int i=0;i<exp.size();i++){
+                                                if(exp.get(i).getexpense_account().equals(holder.accountname.getText().toString())){
+                                                    expense axp = new expense();
+                                                    axp = exp.get(i);
+                                                    axp.setexpense_account("Empty");
+                                                    dbase.updateexpense(axp,axp.getexpense_id(),generator.userlogin);
+                                                }
+                                            }
+                                            for(int i=0;i<trf.size();i++){
+                                                if(trf.get(i).getTransfer_dest().equals(holder.accountname.getText().toString())) {
+                                                    transfer arf = new transfer();
+                                                    arf = trf.get(i);
+                                                    arf.setTransfer_dest("Empty");
+                                                    dbase.updatetransfer(arf,arf.getTransfer_id(),generator.userlogin);
+                                                }
+
+                                                if(trf.get(i).getTransfer_src().equals(holder.accountname.getText().toString())) {
+                                                    transfer arf = new transfer();
+                                                    arf = trf.get(i);
+                                                    arf.setTransfer_src("Empty");
+                                                    dbase.updatetransfer(arf,arf.getTransfer_id(),generator.userlogin);
+                                                }
+                                            }
                                             /*
 
                                             fdb.collection("account").document("fixing")

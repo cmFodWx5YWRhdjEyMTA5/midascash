@@ -76,6 +76,7 @@ import prima.optimasi.indonesia.primacash.formula.calculatordialog;
 import prima.optimasi.indonesia.primacash.generator;
 import prima.optimasi.indonesia.primacash.objects.account;
 import prima.optimasi.indonesia.primacash.objects.category;
+import prima.optimasi.indonesia.primacash.transactionactivity.categorylist;
 import prima.optimasi.indonesia.primacash.transactionactivity.expense;
 
 public class fragment_expense extends Fragment {
@@ -560,6 +561,13 @@ public class fragment_expense extends Fragment {
                     valuemyobjectlist.add(b);
                 }
 
+                MyListObject b = new MyListObject();
+                b.setCategoryname("Manage Category");
+                b.setImage(generator.images.length-1);
+                //b.setHiddendata(document.getId());
+                //b.setCreatedate(document.getData().get("category_createdate"));
+                valuemyobjectlist.add(b);
+
                 adapter = new MySimpleArrayAdapter(getActivity(), R.layout.row_layout_category, valuemyobjectlist);
                 adapter.notifyDataSetChanged();
                 if (list.getAdapter() == null) {
@@ -676,10 +684,16 @@ public class fragment_expense extends Fragment {
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    viewcat.setImageDrawable(finalHolder2.imageView.getDrawable());
-                    categorytext.setText(finalHolder2.textView.getText().toString());
-                    categoryimage = rowItem.getImage();
-                    dialog.dismiss();
+                    if(finalHolder2.textView.getText().toString().equals("Manage Category")){
+                        Intent a = new Intent(getActivity(),categorylist.class);
+                        startActivity(a);
+                    }
+                    else {
+                        viewcat.setImageDrawable(finalHolder2.imageView.getDrawable());
+                        categorytext.setText(finalHolder2.textView.getText().toString());
+                        categoryimage = rowItem.getImage();
+                        dialog.dismiss();
+                    }
                 }
             });
 

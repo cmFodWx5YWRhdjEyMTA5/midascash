@@ -76,7 +76,10 @@ import prima.optimasi.indonesia.primacash.formula.calculatordialog;
 import prima.optimasi.indonesia.primacash.generator;
 import prima.optimasi.indonesia.primacash.objects.account;
 import prima.optimasi.indonesia.primacash.objects.category;
+import prima.optimasi.indonesia.primacash.transactionactivity.categorylist;
 import prima.optimasi.indonesia.primacash.transactionactivity.income;
+
+import static android.app.Activity.RESULT_OK;
 
 public class fragment_income extends Fragment {
 
@@ -557,6 +560,12 @@ public class fragment_income extends Fragment {
                     //b.setCreatedate(document.getData().get("category_createdate"));
                     valuemyobjectlist.add(b);
                 }
+                MyListObject b = new MyListObject();
+                b.setCategoryname("Manage Categories");
+                b.setImage(generator.images.length-1);
+                //b.setHiddendata(document.getId());
+                //b.setCreatedate(document.getData().get("category_createdate"));
+                valuemyobjectlist.add(b);
 
                 adapter = new MySimpleArrayAdapter(getActivity(), R.layout.row_layout_category, valuemyobjectlist);
                 adapter.notifyDataSetChanged();
@@ -674,10 +683,16 @@ public class fragment_income extends Fragment {
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    viewcat.setImageDrawable(finalHolder2.imageView.getDrawable());
-                    categorytext.setText(finalHolder2.textView.getText().toString());
-                    categoryimage = rowItem.getImage();
-                    dialog.dismiss();
+                    if(finalHolder2.textView.getText().toString().equals("Manage Categories")){
+                        Intent a = new Intent(getActivity(),categorylist.class);
+                        startActivity(a);
+                    }
+                    else {
+                        viewcat.setImageDrawable(finalHolder2.imageView.getDrawable());
+                        categorytext.setText(finalHolder2.textView.getText().toString());
+                        categoryimage = rowItem.getImage();
+                        dialog.dismiss();
+                    }
                 }
             });
 
@@ -884,7 +899,7 @@ public class fragment_income extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 1004 && resultCode == Activity.RESULT_OK) {
+        if (requestCode == 1004 && resultCode == RESULT_OK) {
 
             Log.e("camera sucessful",requestCode + " ");
             /*ImageView imageView = (ImageView) child.findViewById(R.id.incimgdata);
@@ -900,7 +915,7 @@ public class fragment_income extends Fragment {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             imagedata = baos.toByteArray();
         }
-        else if(requestCode == 4 && resultCode == Activity.RESULT_OK){
+        else if(requestCode == 4 && resultCode == RESULT_OK){
             Log.e("galery sucessful",requestCode + " ");
             Uri selectedImage = data.getData();
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
@@ -922,5 +937,6 @@ public class fragment_income extends Fragment {
             imagedata = baos.toByteArray();
         }
     }
+
 }
 
