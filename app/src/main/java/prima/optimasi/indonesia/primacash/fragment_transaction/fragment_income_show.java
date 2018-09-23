@@ -388,6 +388,10 @@ public class fragment_income_show extends Fragment {
                                                 reloaddata();
                                             }
 
+                                            if(generator.adapter!=null){
+                                                generator.adapter.notifyDataSetChanged();
+                                            }
+
 
 
 

@@ -41,6 +41,7 @@ import android.widget.Toast;
 import io.realm.Realm;
 
 
+import com.annimon.stream.function.ThrowableIntConsumer;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -344,9 +345,16 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        }else if (generator.isdashboard) {
+            finish(); // finish activity
         } else {
-            super.onBackPressed();
+            mainview.removeAllViews();
+            View dashboards = inflate.inflate(R.layout.layout_main, null);
+            loadmainmenu(dashboards);
+            mainview.addView(dashboards);
+            generator.isdashboard=true;
         }
+
     }
 
     @Override
@@ -517,7 +525,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_dashboard) {
-            generator.mainmenurefresh =1;
+            generator.isdashboard =true;
             mainview.removeAllViews();
             View dashboards = inflate.inflate(R.layout.layout_main,null);
             loadmainmenu(dashboards);
@@ -525,6 +533,7 @@ public class MainActivity extends AppCompatActivity
 
             // Handle the camera action
         } else if (id == R.id.nav_Transaction) {
+            generator.isdashboard=false;
             mainview.removeAllViews();
             View transaction = inflate.inflate(R.layout.layout_transaction_two,null);
             transactionmethod(transaction);
@@ -540,6 +549,7 @@ public class MainActivity extends AppCompatActivity
             Intent a = new Intent(MainActivity.this, accountlist.class);
             startActivity(a);
         } else if (id == R.id.nav_report) {
+            generator.isdashboard=false;
             mainview.removeAllViews();
             View report = inflate.inflate(R.layout.layout_report_three,null);
             reportmethod(report);

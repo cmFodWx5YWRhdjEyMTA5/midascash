@@ -3,6 +3,7 @@ package prima.optimasi.indonesia.primacash.recycleview;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +74,7 @@ public class adapterviewaccountsmenu extends RecyclerView.Adapter<adapterviewacc
             Date data = (Date) accountlis.get(position).getLastused();
             holder.accdetail.setText("Last Used : "+df.format(data));
         }
-
+        Log.e("data acc", "onBindViewHolder:  "+ accountlis.get(position).getAccount_balance_current() );
         holder.accbalance.setText(formatter.format(Double.parseDouble(accountlis.get(position).getAccount_balance_current()))+" "+accountlis.get(position).getAccount_currency());
 
         if(Double.parseDouble(accountlis.get(position).getAccount_balance_current())>=0){

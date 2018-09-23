@@ -185,7 +185,7 @@ public class listtransfer extends AppCompatActivity{
             holder.trfnotes.setText(transferlis.get(position).getTransfer_notes());
             holder.trfsrc.setText(transferlis.get(position).getTransfer_src());
             holder.trfdest.setText(transferlis.get(position).getTransfer_dest());
-            holder.trfisdone=holder.trfisdone;
+            holder.trfisdone=String.valueOf(transferlis.get(position).getTransfer_isdone());
 
             holder.linear.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -947,70 +947,34 @@ public class listtransfer extends AppCompatActivity{
                                     builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
-                                            db.collection("transfer").document(transferlis.get(position).getTransferdoc())
-                                                    .delete()
-                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void aVoid) {
 
-                                                            if(holder.trfisdone.equals("0")){
+                                            Log.e("data", "onClick: "+holder.trfisdone );
+                                            if(holder.trfisdone.equals("0")){
 
-                                                            }
-                                                            else {
-                                                                db.collection("account")
-                                                                        .get()
-                                                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                                                            @Override
-                                                                            public void onComplete(@NonNull Task<QuerySnapshot> task1) {
-                                                                                if (task1.isSuccessful()) {
-                                                                                    for (QueryDocumentSnapshot document : task1.getResult()) {
+                                            }
+                                            else if(holder.trfisdone.equals("1")){
+                                                    prima.optimasi.indonesia.primacash.objects.account acc = dbase.getaccount(transferlis.get(position).getTransfer_src());
 
-                                                                                        Map<String, Object> data = new HashMap<>();
+                                                    Double result=generator.makedouble(holder.trfvalue.getText().toString().replace(",",""))*generator.makedouble(holder.trfrate.getText().toString().replace(",",""));
+                                                    acc.setAccount_balance_current( String.valueOf(generator.makedouble(acc.getAccount_balance_current())+result));
+                                                    dbase.updateaccount(acc,generator.userlogin,transferlis.get(position).getTransfer_src());
 
+                                                    acc = dbase.getaccount(transferlis.get(position).getTransfer_dest());
+                                                    result=generator.makedouble(holder.trfvalue.getText().toString().replace(",",""))*generator.makedouble(holder.trfrate.getText().toString().replace(",",""));
+                                                    acc.setAccount_balance_current(String.valueOf(generator.makedouble(acc.getAccount_balance_current())-result));
 
-                                                                                        if(holder.trfsrc.getText().equals(document.getData().get("account_name"))){
-                                                                                            Double result=generator.makedouble(holder.trfvalue.getText().toString().replace(",",""))*generator.makedouble(holder.trfrate.getText().toString().replace(",",""));
-                                                                                            data.put("account_balance_current", String.valueOf(generator.makedouble(document.getData().get("account_balance_current").toString())+generator.makedouble(holder.trfvalue.getText().toString().replace(",",""))));
+                                                    dbase.updateaccount(acc,generator.userlogin,transferlis.get(position).getTransfer_dest());
+                                            }
 
+                                            dbase.deletetransfer(transferlis.get(position).getTransfer_id());
 
-                                                                                            db.collection("account").document(document.getId())
-                                                                                                    .set(data, SetOptions.merge());
-                                                                                        }
+                                            reloaddata();
 
-                                                                                        if(holder.trfdest.getText().equals(document.getData().get("account_name"))){
-                                                                                            Double result=generator.makedouble(holder.trfvalue.getText().toString().replace(",",""))*generator.makedouble(holder.trfrate.getText().toString().replace(",",""));
-                                                                                            data.put("account_balance_current", String.valueOf(generator.makedouble(document.getData().get("account_balance_current").toString())-(generator.makedouble(holder.trfvalue.getText().toString().replace(",","")))*generator.makedouble(holder.trfrate.getText().toString().replace(",",""))));
+                                            if(generator.adapter!=null){
+                                                generator.adapter.notifyDataSetChanged();
+                                            }
+                                            Toast.makeText(contexts, "Deleted selected Transfer Data", Toast.LENGTH_SHORT).show();
 
-                                                                                            db.collection("account").document(document.getId())
-                                                                                                    .set(data, SetOptions.merge());
-                                                                                        }
-
-
-                                                                                    }
-                                                                                } else {
-                                                                                    Log.d("Documentdata", "Error getting documents: ", task1.getException());
-                                                                                }
-                                                                            }
-                                                                        });
-                                                            }
-
-
-                                                            datatransfer.clear();
-                                                            adaptertransfer.notifyDataSetChanged();
-                                                            reloaddata();
-
-                                                            if(generator.adapter!=null){
-                                                                generator.adapter.notifyDataSetChanged();
-                                                            }
-                                                            Toast.makeText(contexts, "Deleted selected Transfer Data", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    })
-                                                    .addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception e) {
-                                                            Toast.makeText(contexts, "Fail Delete selected Transfer data", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    });
                                         }
                                     });
 
@@ -1045,20 +1009,20 @@ public class listtransfer extends AppCompatActivity{
 
             datatransfer.clear();
 
+            List<transfer> trans = dbase.getAlltransfer();
+
+            for(int i = 0 ; i < trans.size();i++){
+                datatransfer.add(trans.get(i));
+                Collections.sort(datatransfer);
+                Collections.reverse(datatransfer);
+            }
+
+
 
             if(adaptertransfer!=null){
                 adaptertransfer.notifyDataSetChanged();
             }
 
-            datatransfer = dbase.getAlltransfer();
-
-
-            Collections.sort(datatransfer);
-            Collections.reverse(datatransfer);
-
-            if(adaptertransfer!=null){
-                adaptertransfer.notifyDataSetChanged();
-            }
 
         }
     }

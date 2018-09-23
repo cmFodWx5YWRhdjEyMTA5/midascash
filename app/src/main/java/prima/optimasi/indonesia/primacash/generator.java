@@ -94,6 +94,7 @@ import static android.content.Context.MODE_PRIVATE;
  */
 
 public class generator {
+    public static  boolean isdashboard = true;
     public static int issignedin=0;
 
     public static int activitychecker=0;
@@ -321,7 +322,7 @@ public class generator {
             }
 
         };
-        new DatePickerDialog(context,R.style.datepickergreen, date1, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+        new DatePickerDialog(context,R.style.datepickerorange, date1, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     public static void choseaccount(Context context, TextView selectedacc, TextView changecurrency){
@@ -740,32 +741,31 @@ public class generator {
         currdef.setText(generator.defaultcurrency);
 
         choseacc.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                               @Override
-                                               public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+               @Override
+               public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                   account acc = dbase.getaccount(choseacc.getSelectedItem().toString());
 
+                   String[] parts = acc.getFullaccount_currency().split("-");
+                   String part1 = parts[0]; // 004
+                   String part2 = parts[1]; // 034556
+                   currdef.setText(part2.replace(" ", ""));
 
+                   if(currdef.getText().toString().equals(currchosen.getText().toString().replace(" ",""))){
+                       inputrate.setText("1.00");
+                       inputrate.setEnabled(false);
+                   }
+                   else {
+                       inputrate.setEnabled(true);
+                   }
+               }
+               @Override
+               public void onNothingSelected(AdapterView<?> adapterView) {
 
-                                                   account acc = dbase.getaccount(choseacc.getSelectedItem().toString());
-
-                                                   String[] parts = acc.getFullaccount_currency().split("-");
-                                                   String part1 = parts[0]; // 004
-                                                   String part2 = parts[1]; // 034556
-                                                   currdef.setText(part2.replace(" ", ""));
-
-                                                   if(currdef.getText().toString().equals(currchosen.getText().toString().replace(" ",""))){
-                                                       inputrate.setText("1.00");
-                                                       inputrate.setEnabled(false);
-                                                   }
-                                                   else {
-                                                       inputrate.setEnabled(true);
-                                                   }
-                                               }
-                                               @Override
-                                               public void onNothingSelected(AdapterView<?> adapterView) {
-
-                                               }
-                                           }
+               }
+           }
         );
+
+
 
 
 
@@ -821,8 +821,7 @@ public class generator {
         });
 
         if(generator.newaccountrf.equals("")){
-            generator.choseaccount1(context,chosenacc,allcurrencyselected,currchosen);
-
+            chosenacc.setTextColor(Color.BLUE);
         }
         else {
             chosenacc.setText(generator.newaccountrf);

@@ -1071,6 +1071,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             td.setTransfer_src(c.getString(c.getColumnIndex(KEY_TRANSFER_SRC)));
             td.setTransfer_amount(c.getInt(c.getColumnIndex(KEY_TRANSFER_AMOUNT)));
             td.setTransfer_date(c.getString(c.getColumnIndex(KEY_TRANSFER_DATE)));
+            td.setTransfer_rate(c.getDouble(c.getColumnIndex(KEY_TRANSFER_RATE)));
             td.setTransfer_isdone(c.getInt(c.getColumnIndex(KEY_TRANSFER_ISDONE)));
 
             td.setTransfer_id(c.getString(c.getColumnIndex(KEY_TRANSFER_ID)));
@@ -1108,6 +1109,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             do {
                 transfer td = new transfer();
                 td.setTransfer_dest(c.getString(c.getColumnIndex(KEY_TRANSFER_DEST)));
+                td.setTransfer_rate(c.getDouble(c.getColumnIndex(KEY_TRANSFER_RATE)));
                 td.setTransfer_src(c.getString(c.getColumnIndex(KEY_TRANSFER_SRC)));
                 td.setTransfer_amount(c.getInt(c.getColumnIndex(KEY_TRANSFER_AMOUNT)));
                 td.setTransfer_date(c.getString(c.getColumnIndex(KEY_TRANSFER_DATE)));
@@ -1143,6 +1145,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_TRANSFER_DEST, accs.getTransfer_dest());
         values.put(KEY_TRANSFER_SRC, accs.getTransfer_src());
+        values.put(KEY_TRANSFER_RATE, accs.getTransfer_rate());
         values.put(KEY_TRANSFER_NOTES, accs.getTransfer_notes());
         values.put(KEY_TRANSFER_ISDONE, accs.getTransfer_isdone());
 

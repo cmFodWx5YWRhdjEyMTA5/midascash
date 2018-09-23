@@ -381,6 +381,10 @@ public class fragment_expense_show extends Fragment {
                                                 reloaddata();
                                             }
 
+                                            if(generator.adapter!=null){
+                                                generator.adapter.notifyDataSetChanged();
+                                            }
+
                                             /*DocumentReference docRef = fdb.collection("expense").document(holder.documenref);
                                             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                 @Override

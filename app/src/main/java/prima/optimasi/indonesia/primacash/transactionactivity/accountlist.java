@@ -828,7 +828,7 @@ public class accountlist extends AppCompatActivity{
                                                                 if(inc.get(i).getIncome_account().equals(accountname.getText().toString())){
                                                                     income anc = new income();
                                                                     anc=inc.get(i);
-                                                                    anc.setIncome_account("Empty");
+                                                                    anc.setIncome_account(accountname.getText().toString());
                                                                     dbase.updateincome(anc,anc.getIncome_id(),generator.userlogin);
                                                                 }
                                                             }
@@ -836,7 +836,7 @@ public class accountlist extends AppCompatActivity{
                                                                 if(exp.get(i).getexpense_account().equals(accountname.getText().toString())){
                                                                     expense axp = new expense();
                                                                     axp = exp.get(i);
-                                                                    axp.setexpense_account("Empty");
+                                                                    axp.setexpense_account(accountname.getText().toString());
                                                                     dbase.updateexpense(axp,axp.getexpense_id(),generator.userlogin);
                                                                 }
                                                             }
@@ -844,14 +844,14 @@ public class accountlist extends AppCompatActivity{
                                                                 if(trf.get(i).getTransfer_dest().equals(accountname.getText().toString())) {
                                                                     transfer arf = new transfer();
                                                                     arf = trf.get(i);
-                                                                    arf.setTransfer_dest("Empty");
+                                                                    arf.setTransfer_dest(accountname.getText().toString());
                                                                     dbase.updatetransfer(arf,arf.getTransfer_id(),generator.userlogin);
                                                                 }
 
                                                                 if(trf.get(i).getTransfer_src().equals(accountname.getText().toString())) {
                                                                     transfer arf = new transfer();
                                                                     arf = trf.get(i);
-                                                                    arf.setTransfer_src("Empty");
+                                                                    arf.setTransfer_src(accountname.getText().toString());
                                                                     dbase.updatetransfer(arf,arf.getTransfer_id(),generator.userlogin);
                                                                 }
                                                             }
